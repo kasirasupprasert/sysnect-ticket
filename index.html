@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSNECT Ticket Dashboard</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-nav: #0f172a;  
+      --bg-card: #ffffff;
+      --text-main: #334155; 
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      
+      --color-new: #3b82f6;
+      --color-assigned: #f59e0b;
+      --color-pending: #ef4444;
+      --color-solved: #10b981;
+      --color-closed: #64748b;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Kanit', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    .navbar-custom { background-color: var(--bg-nav); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 12px 24px; }
+    
+    .search-box { background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #ffffff; padding: 8px 20px; width: 100%; max-width: 280px; transition: all 0.3s; }
+    .search-box::placeholder { color: #94a3b8; }
+    .search-box:focus { background-color: rgba(255, 255, 255, 0.15); color: white; outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+    
+    /* สไตล์สำหรับตัวกรองที่แยกกัน */
+    .filter-group { display: flex; align-items: center; background-color: rgba(255, 255, 255, 0.05); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
+    .filter-group i { color: #94a3b8; margin-right: 8px; font-size: 0.9rem; }
+    .filter-select { background-color: transparent; border: none; color: #ffffff; font-size: 0.9rem; cursor: pointer; outline: none; padding-right: 15px;}
+    .filter-select option { background-color: var(--bg-nav); color: #ffffff; }
+    .filter-select:focus { outline: none; box-shadow: none; }
+    
+    .btn-refresh { background-color: #3b82f6; color: #fff; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+    .btn-refresh:hover { background-color: #2563eb; color: #fff; transform: translateY(-1px); }
+    
+    .btn-export { background-color: transparent; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px; transition: all 0.2s; }
+    .btn-export:hover { background-color: #10b981; border-color: #10b981; color: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+
+    .dashboard-header { margin-bottom: 2.5rem; position: relative;}
+    .dashboard-title { font-weight: 700; color: #0f172a; letter-spacing: -0.5px; font-size: 2rem;}
+    
+    .live-badge { font-size: 0.8rem; background: #dcfce7; color: #0369a1; padding: 4px 10px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 10px; border: 1px solid #bae6fd; }
+    .live-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+
+    .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; margin: 0 auto 40px auto; max-width: 900px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; }
+
+    .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
+    .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
+
+    .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: #f8fafc; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
+    .legend-item:hover { transform: translateX(5px); background: white; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .legend-left { display: flex; align-items: center; }
+    .legend-color { width: 12px; height: 12px; border-radius: 3px; margin-right: 14px; }
+
+    .kpi-pill { display: inline-flex; align-items: center; background: white; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem;}
+    .kpi-pill i { color: #3b82f6; margin-right: 8px; }
+
+    .offcanvas { background-color: #f8fafc; color: var(--text-main); border-left: 1px solid var(--border-color); width: 600px; max-width: 100%; box-shadow: -20px 0 40px rgba(0,0,0,0.05) !important; }
+    .offcanvas-header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 20px 30px; }
+    
+    @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+    .ticket-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease; opacity: 0; animation: slideInUp 0.4s ease-out forwards; }
+    .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #cbd5e1; }
+    
+    .meta-tag { display: inline-flex; align-items: center; font-size: 0.8rem; color: #64748b; background-color: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0; }
+    .desc-block { background-color: #f8fafc; border-left: 3px solid #cbd5e1; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-main); }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
+    .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+    .loading-spinner { font-size: 3rem; color: #3b82f6; margin-bottom: 15px; animation: spin 1.5s linear infinite; }
+  </style>
+</head>
+<body>
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <i class="fas fa-satellite-dish loading-spinner"></i>
+    <h4 class="fw-bold" style="letter-spacing: 2px; color: #0f172a;">SYSNECT</h4>
+    <p class="text-muted mt-2">Connecting to systems...</p>
+    <div class="spinner-border mt-3" style="width: 1.5rem; height: 1.5rem; color: #3b82f6;" role="status"></div>
+  </div>
+
+  <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">
+        <i class="fas fa-layer-group text-primary me-2"></i>SYSNECT
+      </a>
+      
+      <button class="navbar-toggler shadow-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <div class="position-relative my-3 my-lg-0 me-auto ms-lg-4 w-100" style="max-width: 280px;">
+          <i class="fas fa-search position-absolute opacity-50" style="left: 18px; top: 11px; color: #fff;"></i>
+          <input type="text" id="searchInput" class="form-control search-box ps-5" placeholder="Search ID or Title...">
+        </div>
+        
+        <div class="d-flex flex-column flex-lg-row gap-3 mt-2 mt-lg-0 align-items-lg-center">
+          
+          <div class="filter-group">
+            <i class="far fa-calendar-alt"></i>
+            <select id="timeFilter" class="filter-select">
+              <option value="all">All Time (ทั้งหมด)</option>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="this_week">This Week</option>
+              <option value="last_month">Last Month</option>
+              <option value="this_month">This Month</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <i class="fas fa-filter"></i>
+            <select id="statusFilter" class="filter-select">
+              <option value="all">All Status (ทุกสถานะ)</option>
+              <option value="New">New</option>
+              <option value="Assigned">Assigned</option>
+              <option value="Pending">Pending</option>
+              <option value="Solved">Solved</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+
+          <button class="btn btn-refresh px-4" id="btnRefresh"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
+          
+          <button class="btn btn-export px-4" id="btnExport" title="ดาวน์โหลดเป็นไฟล์ Excel/CSV"><i class="fas fa-download me-2"></i>Export</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid py-5">
+    <div class="dashboard-header text-center">
+      <h2 class="dashboard-title">
+        Ticket Management Overview 
+        <span class="live-badge"><div class="live-dot"></div> LIVE</span>
+      </h2>
+      <div id='stats' class="mt-4"></div>
+    </div>
+
+    <div class="main-panel">
+      <div class="chart-section">
+        <canvas id="ticketChart"></canvas>
+      </div>
+      <div class="legend-section" id="customLegend">
+      </div>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="ticketSidebar">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title fw-bold" id="sidebarTitle">Ticket Logs</h5>
+      <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-4 p-md-5" id="ticketListContainer">
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <script>
+    const statusConfig = {
+      "New": { color: "#3b82f6", icon: "fa-asterisk" },
+      "Assigned": { color: "#f59e0b", icon: "fa-tasks" },
+      "Pending": { color: "#ef4444", icon: "fa-hourglass-half" },
+      "Solved": { color: "#10b981", icon: "fa-check-double" },
+      "Closed": { color: "#64748b", icon: "fa-archive" }
+    };
+
+    let ticketChart;
+    let projectsData = [];         
+    let filteredProjectsData = []; 
+    let apiUpdatedAt = '-';
+    let apiTotalCount = 0;
+
+    async function fetchDashboardData(isAuto = false) {
+      const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook/index'; 
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const syncIcon = document.getElementById('syncIcon');
+      
+      try {
+        if (!isAuto && loadingOverlay) {
+            loadingOverlay.classList.remove('hidden');
+        } else if (isAuto && syncIcon) {
+            syncIcon.classList.add('fa-spin');
+        }
+        
+        const response = await fetch(n8nWebhookUrl);
+        const data = await response.json();
+        
+        if(!data || !data.tickets){ throw new Error('Invalid API response'); }
+        
+        projectsData = (data.tickets || []).map(ticket => {
+          let s = String(ticket.status || "New").trim();
+          s = s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+          if (!statusConfig[s]) s = "New";
+          ticket.status = s;
+          return ticket;
+        });
+        
+        apiUpdatedAt = data.updated_at ?? '-';
+        apiTotalCount = data.total ?? projectsData.length;
+        
+        filterAndRenderData();
+        
+      } catch (error) {
+        console.error('ไม่สามารถดึงข้อมูลได้:', error);
+        const stats = document.getElementById('stats');
+        if(stats && !isAuto) {
+            stats.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> Data fetch failed.</span>';
+        }
+      } finally {
+        setTimeout(() => {
+          if (loadingOverlay) loadingOverlay.classList.add('hidden');
+          if (syncIcon) syncIcon.classList.remove('fa-spin');
+        }, 500);
+      }
+    }
+
+    function parseTicketDate(dateStr) {
+      if (!dateStr) return new Date(0);
+      const parts = String(dateStr).split('-');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+      }
+      return new Date(dateStr); 
+    }
+
+    function filterAndRenderData() {
+      const filterValue = document.getElementById('timeFilter').value;
+      const statusValue = document.getElementById('statusFilter').value; // ค่าจาก Status Filter
+      const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      filteredProjectsData = projectsData.filter(t => {
+        let isMatch = true;
+        
+        // 1. กรองจาก Search
+        if (searchValue) {
+          const searchIn = String((t.title || "") + " " + (t.id || "")).toLowerCase();
+          if (/^\d+$/.test(searchValue)) {
+            const regex = new RegExp("(^|[^\\d])" + searchValue + "([^\\d]|$)");
+            isMatch = regex.test(searchIn);
+          } else {
+            isMatch = searchIn.includes(searchValue);
+          }
+        }
+        if (!isMatch) return false;
+
+        // 2. กรองจาก Dropdown Status 
+        if (statusValue !== 'all' && t.status !== statusValue) {
+            return false;
+        }
+
+        // 3. กรองจาก Time Filter
+        const tDate = parseTicketDate(t.date || "");
+        const tStart = new Date(tDate.getFullYear(), tDate.getMonth(), tDate.getDate());
+        
+        switch(filterValue) {
+          case 'today': return tStart.getTime() === todayStart.getTime();
+          case 'yesterday':
+            const yesterdayStart = new Date(todayStart);
+            yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+            return tStart.getTime() === yesterdayStart.getTime();
+          case 'this_week':
+            const dayOfWeek = now.getDay();
+            const startOfWeek = new Date(todayStart);
+            startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
+            return tStart >= startOfWeek && tStart <= todayStart;
+          case 'last_month': 
+            const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            return tDate.getFullYear() === lastMonthDate.getFullYear() && tDate.getMonth() === lastMonthDate.getMonth();
+          case 'this_month':
+            return tDate.getFullYear() === now.getFullYear() && tDate.getMonth() === now.getMonth();
+          case 'all':
+          default:
+            return true;
+        }
+      });
+
+      const stats = document.getElementById('stats');
+      if (stats) {
+        stats.innerHTML = `
+          <div class="kpi-pill">
+            <i class="fas fa-chart-line"></i> แสดงผล: ${filteredProjectsData.length} / ${apiTotalCount} รายการ
+          </div>
+          <div class="kpi-pill">
+            <i class="fas fa-sync-alt"></i> อัปเดตล่าสุด: ${apiUpdatedAt}
+          </div>
+        `;
+      }
+
+      initChart(filteredProjectsData);
+    }
+
+    const centerTextPlugin = {
+      id: 'centerText',
+      beforeDraw: function(chart) {
+        const width = chart.width, height = chart.height, ctx = chart.ctx;
+        ctx.restore();
+        const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        ctx.font = "500 1.2rem Kanit";
+        ctx.fillStyle = "#64748b";
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "center";
+        ctx.fillText("Total Filtered", width / 2, height / 2 - 25);
+        ctx.font = "bold 4.5rem Kanit"; 
+        ctx.fillStyle = "#0f172a"; 
+        ctx.fillText(total, width / 2, height / 2 + 15);
+        ctx.save();
+      }
+    };
+
+    function initChart(data) {
+      const counts = { "New": 0, "Assigned": 0, "Pending": 0, "Solved": 0, "Closed": 0 };
+      data.forEach(ticket => {
+        if (counts[ticket.status] !== undefined) {
+          counts[ticket.status]++;
+        } else {
+           counts["New"]++;
+        }
+      });
+
+      const legendContainer = document.getElementById('customLegend');
+      legendContainer.innerHTML = '';
+      const order = ["New", "Assigned", "Pending", "Solved", "Closed"];
+      
+      order.forEach(status => {
+        const cColor = statusConfig[status].color;
+        const cCount = counts[status];
+        
+        const itemHtml = `
+          <div class="legend-item" onclick="openSidebar('${status}')">
+            <div class="legend-left">
+              <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
+              <span>${status.toUpperCase()}</span>
+            </div>
+            <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
+          </div>
+        `;
+        legendContainer.insertAdjacentHTML('beforeend', itemHtml);
+      });
+
+      const ctx = document.getElementById('ticketChart').getContext('2d');
+      if (ticketChart) ticketChart.destroy();
+
+      ticketChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: order,
+          datasets: [{
+            data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
+            backgroundColor: [
+              statusConfig["New"].color, statusConfig["Assigned"].color,
+              statusConfig["Pending"].color, statusConfig["Solved"].color,
+              statusConfig["Closed"].color
+            ],
+            borderWidth: 8, 
+            borderColor: '#ffffff', 
+            hoverOffset: 15
+          }]
+        },
+        plugins: [centerTextPlugin],
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '78%', 
+          animation: { animateRotate: true, animateScale: true, duration: 1500, easing: 'easeOutQuart' },
+          plugins: {
+            legend: { display: false }, 
+            tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.95)', padding: 12, titleFont: { family: 'Kanit', size: 14 }, bodyFont: { family: 'Kanit', size: 14 }, cornerRadius: 8 }
+          },
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const clickedIndex = elements[0].index;
+              const clickedStatus = order[clickedIndex];
+              openSidebar(clickedStatus);
+            }
+          }
+        }
+      });
+    }
+
+    const sidebarElement = document.getElementById('ticketSidebar');
+    const bsOffcanvas = new bootstrap.Offcanvas(sidebarElement);
+    const listContainer = document.getElementById('ticketListContainer');
+    const sidebarTitle = document.getElementById('sidebarTitle');
+
+    function stripHTML(html) {
+      if (!html) return "";
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || doc.body.innerText || "";
+    }
+
+    function openSidebar(status) {
+      sidebarTitle.innerHTML = `<i class="fas ${statusConfig[status].icon} me-2" style="color:${statusConfig[status].color}"></i> STATUS: <span style="color:${statusConfig[status].color}">${status.toUpperCase()}</span>`;
+      
+      const filteredTickets = filteredProjectsData.filter(t => t.status === status);
+      listContainer.innerHTML = ''; 
+      
+      if(filteredTickets.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4" style="color: #cbd5e1;"></i><h5 class="fw-bold text-secondary">No Records Found</h5><p class="small">ไม่มีข้อมูลในสถานะนี้ตามเงื่อนไขที่ค้นหา</p></div>';
+      } else {
+        filteredTickets.forEach((ticket, index) => {
+          const color = statusConfig[ticket.status].color;
+          
+          let realId = String(ticket.id || "-");
+          let longText = String(ticket.title || "");
+          
+          if (/^\d+$/.test(longText)) { 
+             realId = longText; 
+             longText = String(ticket.id || "-");  
+          } else if (/^\d+$/.test(realId)) {
+             // do nothing
+          } else {
+             const matchId = realId.match(/\b\d{6,}\b/);
+             if(matchId) realId = matchId[0];
+          }
+
+          let finalLocation = String(ticket.location || "");
+          if (finalLocation.trim() === "") {
+              if (longText.includes('|')) {
+                  const parts = longText.split('|');
+                  if (parts.length > 1) {
+                      finalLocation = parts[1].trim().split(' ')[0]; 
+                  }
+              }
+              if (finalLocation.trim() === "") finalLocation = "ไม่ระบุ";
+          }
+
+          const rawSummary = String(ticket.ai_summary || ticket.description || "");
+          let cleanSummary = stripHTML(rawSummary).trim();
+          
+          if (longText && longText !== realId) {
+             if (cleanSummary) {
+                 cleanSummary = `<strong>รายละเอียด:</strong><br>${longText}<br><br>${cleanSummary}`;
+             } else {
+                 cleanSummary = longText;
+             }
+          }
+
+          if(!cleanSummary) {
+             cleanSummary = "<span class='text-muted fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
+          }
+          
+          const cardHtml = `
+            <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <span class="text-primary fw-bold" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</span>
+                  <h5 class="fw-bold text-dark mt-1 mb-0 lh-base" style="font-size: 1.1rem;">${ticket.category || 'General Operations'}</h5>
+                </div>
+                <span class="badge" style="background-color: ${color}10; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px;">
+                  <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
+                </span>
+              </div>
+              <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
+                <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: #94a3b8;"></i> ${finalLocation}</span>
+                <span class="meta-tag"><i class="far fa-calendar me-1" style="color: #94a3b8;"></i> ${ticket.date || "-"}</span>
+              </div>
+              <div class="desc-block">
+                <p class="text-secondary mb-0 text-wrap text-break" style="font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
+                  ${cleanSummary}
+                </p>
+              </div>
+            </div>
+          `;
+          listContainer.insertAdjacentHTML('beforeend', cardHtml);
+        });
+      }
+      bsOffcanvas.show();
+    }
+    
+    // --- ระบบ Export Data เป็นไฟล์ CSV (Excel เปิดได้) ---
+    document.getElementById('btnExport').addEventListener('click', () => {
+      if (filteredProjectsData.length === 0) {
+        alert("ไม่มีข้อมูลสำหรับส่งออก (Export) กรุณาปรับเงื่อนไขการค้นหา");
+        return;
+      }
+      
+      // กำหนด Header (ใส่ BOM เพื่อให้อ่านภาษาไทยใน Excel ได้)
+      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
+      csvContent += "ID,Category,Status,Date,Location,Title,Description\n";
+
+      // ดึงข้อมูลแต่ละแถวมาต่อกัน
+      filteredProjectsData.forEach(t => {
+        let id = `"${String(t.id).replace(/"/g, '""')}"`;
+        let cat = `"${String(t.category).replace(/"/g, '""')}"`;
+        let stat = `"${String(t.status).replace(/"/g, '""')}"`;
+        let dt = `"${String(t.date).replace(/"/g, '""')}"`;
+        let loc = `"${String(t.location).replace(/"/g, '""')}"`;
+        let title = `"${String(t.title).replace(/"/g, '""')}"`;
+        
+        let descClean = stripHTML(String(t.ai_summary || t.description || "")).replace(/\n/g, ' ');
+        let desc = `"${descClean.replace(/"/g, '""')}"`;
+
+        csvContent += `${id},${cat},${stat},${dt},${loc},${title},${desc}\n`;
+      });
+
+      // สั่งให้ Browser ดาวน์โหลด
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `sysnect_tickets_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    document.getElementById('searchInput').addEventListener('input', () => { filterAndRenderData(); });
+    document.getElementById('timeFilter').addEventListener('change', () => { filterAndRenderData(); });
+    document.getElementById('statusFilter').addEventListener('change', () => { filterAndRenderData(); });
+    document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
+
+    window.onload = () => { 
+      fetchDashboardData(false); 
+      setInterval(() => { fetchDashboardData(true); }, 60000);
+    };
+  </script>
+</body>
+</html>
