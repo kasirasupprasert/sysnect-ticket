@@ -173,7 +173,6 @@
             <i class="fas fa-moon" id="themeIcon"></i>
           </button>
 
-          <!-- ปุ่มเรียกเมนู Info -->
           <button class="btn-theme-toggle" style="color: #60a5fa;" type="button" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-expanded="false" title="ข้อมูลระบบ & ตั้งค่า">
             <i class="fas fa-info-circle"></i>
           </button>
@@ -182,13 +181,11 @@
     </div>
   </nav>
 
-  <!-- แผงเมนูย่อ (Collapsible Info Panel) -->
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold mb-0"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
         
-        <!-- สวิตช์เปิด-ปิดเสียงแจ้งเตือน -->
         <div class="form-check form-switch fs-5">
           <input class="form-check-input" type="checkbox" id="alertSwitch" style="cursor: pointer;">
           <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer;">เปิดระบบแจ้งเตือน (Active Alerts)</label>
@@ -273,23 +270,15 @@
     let apiUpdatedAt = '-';
     let apiTotalCount = 0;
     
-    // --- ตัวแปรสำหรับระบบแจ้งเตือนเชิงรุก ---
     let knownTicketIds = new Set();
     let isFirstLoad = true;
 
-    // --- ระบบเสียงและ Desktop Notification ---
     const alertSwitch = document.getElementById('alertSwitch');
-    
-    // โหลดค่าการตั้งค่าจาก Browser
-    if (localStorage.getItem('sysnectAlerts') === 'true') {
-        alertSwitch.checked = true;
-    }
+    if (localStorage.getItem('sysnectAlerts') === 'true') { alertSwitch.checked = true; }
 
     alertSwitch.addEventListener('change', (e) => {
         localStorage.setItem('sysnectAlerts', e.target.checked);
-        if (e.target.checked && "Notification" in window) {
-            Notification.requestPermission(); // ขออนุญาตเบราว์เซอร์เมื่อเปิดสวิตช์
-        }
+        if (e.target.checked && "Notification" in window) Notification.requestPermission();
     });
 
     function playNotificationSound() {
@@ -300,13 +289,13 @@
             const gainNode = audioCtx.createGain();
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
-            oscillator.type = 'sine'; // เสียงนุ่มๆ
-            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // โน้ต A5
+            oscillator.type = 'sine'; 
+            oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); 
             gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
             oscillator.start();
             gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.4);
             oscillator.stop(audioCtx.currentTime + 0.4);
-        } catch(e) { console.log("Audio API not supported"); }
+        } catch(e) {}
     }
 
     function showDesktopNotification(count, latestTitle) {
@@ -319,7 +308,6 @@
         }
     }
 
-    // --- ฟังก์ชันจัดการ Theme มืด/สว่าง ---
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
     
@@ -350,11 +338,8 @@
       const syncIcon = document.getElementById('syncIcon');
       
       try {
-        if (!isAuto && loadingOverlay) {
-            loadingOverlay.classList.remove('hidden');
-        } else if (isAuto && syncIcon) {
-            syncIcon.classList.add('fa-spin');
-        }
+        if (!isAuto && loadingOverlay) loadingOverlay.classList.remove('hidden');
+        else if (isAuto && syncIcon) syncIcon.classList.add('fa-spin');
         
         const response = await fetch(n8nWebhookUrl);
         const data = await response.json();
@@ -369,11 +354,8 @@
           return ticket;
         });
         
-        // --- ระบบดักจับแจ้งเตือน (Active Alerts Logic) ---
         const fetchedIds = new Set(projectsData.map(t => t.id));
-        
         if (!isFirstLoad) {
-            // หาว่ามี ID ไหนบ้างที่เพิ่งโผล่มาใหม่ และไม่ได้อยู่ในรอบก่อนหน้า
             const newTickets = projectsData.filter(t => !knownTicketIds.has(t.id));
             if (newTickets.length > 0) {
                 playNotificationSound();
@@ -389,11 +371,8 @@
         filterAndRenderData();
         
       } catch (error) {
-        console.error('ไม่สามารถดึงข้อมูลได้:', error);
         const stats = document.getElementById('stats');
-        if(stats && !isAuto) {
-            stats.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> Data fetch failed.</span>';
-        }
+        if(stats && !isAuto) stats.innerHTML = '<span class="text-danger"><i class="fas fa-exclamation-triangle me-1"></i> Data fetch failed.</span>';
       } finally {
         setTimeout(() => {
           if (loadingOverlay) loadingOverlay.classList.add('hidden');
@@ -433,9 +412,7 @@
         }
         if (!isMatch) return false;
 
-        if (statusValue !== 'all' && t.status !== statusValue) {
-            return false;
-        }
+        if (statusValue !== 'all' && t.status !== statusValue) return false;
 
         const tDate = parseTicketDate(t.date || "");
         const tStart = new Date(tDate.getFullYear(), tDate.getMonth(), tDate.getDate());
@@ -546,16 +523,12 @@
               statusConfig["Pending"].color, statusConfig["Solved"].color,
               statusConfig["Closed"].color
             ],
-            borderWidth: 8, 
-            borderColor: chartBorderColor, 
-            hoverOffset: 15
+            borderWidth: 8, borderColor: chartBorderColor, hoverOffset: 15
           }]
         },
         plugins: [centerTextPlugin],
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '78%', 
+          responsive: true, maintainAspectRatio: false, cutout: '78%', 
           animation: { animateRotate: true, animateScale: true, duration: 1500, easing: 'easeOutQuart' },
           plugins: {
             legend: { display: false }, 
@@ -564,8 +537,7 @@
           onClick: (event, elements) => {
             if (elements.length > 0) {
               const clickedIndex = elements[0].index;
-              const clickedStatus = order[clickedIndex];
-              openSidebar(clickedStatus);
+              openSidebar(order[clickedIndex]);
             }
           }
         }
@@ -601,8 +573,7 @@
           if (/^\d+$/.test(longText)) { 
              realId = longText; 
              longText = String(ticket.id || "-");  
-          } else if (/^\d+$/.test(realId)) {
-          } else {
+          } else if (!/^\d+$/.test(realId)) {
              const matchId = realId.match(/\b\d{6,}\b/);
              if(matchId) realId = matchId[0];
           }
@@ -611,9 +582,7 @@
           if (finalLocation.trim() === "") {
               if (longText.includes('|')) {
                   const parts = longText.split('|');
-                  if (parts.length > 1) {
-                      finalLocation = parts[1].trim().split(' ')[0]; 
-                  }
+                  if (parts.length > 1) { finalLocation = parts[1].trim().split(' ')[0]; }
               }
               if (finalLocation.trim() === "") finalLocation = "ไม่ระบุ";
           }
@@ -622,16 +591,10 @@
           let cleanSummary = stripHTML(rawSummary).trim();
           
           if (longText && longText !== realId) {
-             if (cleanSummary) {
-                 cleanSummary = `<strong>รายละเอียด:</strong><br>${longText}<br><br>${cleanSummary}`;
-             } else {
-                 cleanSummary = longText;
-             }
+             cleanSummary = cleanSummary ? `<strong>รายละเอียด:</strong><br>${longText}<br><br>${cleanSummary}` : longText;
           }
 
-          if(!cleanSummary) {
-             cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
-          }
+          if(!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
           
           const cardHtml = `
             <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
@@ -661,33 +624,67 @@
       bsOffcanvas.show();
     }
     
+    // --- ฟังก์ชัน Export ไฟล์ CSV ปรับปรุงใหม่ให้ตรงกับหน้าจอ ---
     document.getElementById('btnExport').addEventListener('click', () => {
       if (filteredProjectsData.length === 0) {
         alert("ไม่มีข้อมูลสำหรับส่งออก (Export) กรุณาปรับเงื่อนไขการค้นหา");
         return;
       }
-      let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-      csvContent += "ID,Category,Status,Date,Location,Title,Description\n";
+      
+      let csvContent = "ID,Category,Status,Date,Location,Title,Description\n";
 
       filteredProjectsData.forEach(t => {
-        let id = `"${String(t.id).replace(/"/g, '""')}"`;
-        let cat = `"${String(t.category).replace(/"/g, '""')}"`;
-        let stat = `"${String(t.status).replace(/"/g, '""')}"`;
-        let dt = `"${String(t.date).replace(/"/g, '""')}"`;
-        let loc = `"${String(t.location).replace(/"/g, '""')}"`;
-        let title = `"${String(t.title).replace(/"/g, '""')}"`;
-        let descClean = stripHTML(String(t.ai_summary || t.description || "")).replace(/\n/g, ' ');
-        let desc = `"${descClean.replace(/"/g, '""')}"`;
+        // ใช้ Logic จัดการข้อมูลให้ตรงกับที่โชว์บนหน้าจอเป๊ะๆ
+        let realId = String(t.id || "-");
+        let longText = String(t.title || "");
+        
+        if (/^\d+$/.test(longText)) { 
+           realId = longText; 
+           longText = String(t.id || "-");  
+        } else if (!/^\d+$/.test(realId)) {
+           const matchId = realId.match(/\b\d{6,}\b/);
+           if(matchId) realId = matchId[0];
+        }
+
+        let finalLocation = String(t.location || "");
+        if (finalLocation.trim() === "") {
+            if (longText.includes('|')) {
+                const parts = longText.split('|');
+                if (parts.length > 1) { finalLocation = parts[1].trim().split(' ')[0]; }
+            }
+            if (finalLocation.trim() === "") finalLocation = "ไม่ระบุ";
+        }
+
+        const rawSummary = String(t.ai_summary || t.description || "");
+        let cleanSummary = stripHTML(rawSummary).trim();
+        if (longText && longText !== realId) {
+            cleanSummary = cleanSummary ? `${longText} - ${cleanSummary}` : longText;
+        }
+        if(!cleanSummary) {
+            cleanSummary = "ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้";
+        }
+
+        let id = `"${realId.replace(/"/g, '""')}"`;
+        let cat = `"${String(t.category || "").replace(/"/g, '""')}"`;
+        let stat = `"${String(t.status || "").replace(/"/g, '""')}"`;
+        let dt = `"${String(t.date || "").replace(/"/g, '""')}"`;
+        let loc = `"${finalLocation.replace(/"/g, '""')}"`;
+        let title = `"${longText.replace(/"/g, '""')}"`;
+        let desc = `"${cleanSummary.replace(/"/g, '""').replace(/\n/g, ' ')}"`;
+        
         csvContent += `${id},${cat},${stat},${dt},${loc},${title},${desc}\n`;
       });
 
-      const encodedUri = encodeURI(csvContent);
+      // ใช้ Blob เพื่อความเสถียรและรองรับภาษาไทย
+      const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
+      link.setAttribute("href", url);
       link.setAttribute("download", `sysnect_tickets_${new Date().toISOString().slice(0,10)}.csv`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      URL.revokeObjectURL(url); // คืน Memory ให้ระบบ
     });
 
     document.getElementById('searchInput').addEventListener('input', () => { filterAndRenderData(); });
