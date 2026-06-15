@@ -75,7 +75,6 @@
     .dashboard-title { font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; font-size: 2rem; transition: color 0.3s ease; }
     .live-badge { font-size: 0.8rem; background: #dcfce7; color: #0369a1; padding: 4px 10px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 10px; border: 1px solid #bae6fd; }
     
-    /* เอฟเฟกต์ไฟกระพริบสำหรับป้าย Priority */
     .live-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite; }
     .pulse-danger { animation: pulseRed 1.5s infinite; }
     
@@ -86,42 +85,13 @@
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
-    .legend-item { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      font-size: 0.95rem; 
-      font-weight: 600; 
-      color: var(--text-main); 
-      background: var(--bg-main); 
-      padding: 12px 20px; 
-      border-radius: 8px; 
-      cursor: pointer; 
-      transition: all 0.2s ease; 
-      border: 1px solid var(--border-color); 
-    }
-    
-    .legend-item:hover { 
-      transform: translateX(5px); 
-      background: var(--bg-card); 
-      border-color: #3b82f6; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
-    }
-    
-    .legend-left { 
-      display: flex; 
-      align-items: center; 
-      gap: 12px; /* เพิ่มระยะห่างระหว่างจุดสีกับตัวอักษร */
-    }
-    
-    .legend-color { 
-      width: 12px; 
-      height: 12px; 
-      border-radius: 3px; 
-      display: block; /* บังคับให้แสดงผล */
-      flex-shrink: 0; 
-    }
-    .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem; transition: all 0.3s ease;}
+    .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
+    .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .legend-left { display: flex; align-items: center; gap: 12px; }
+    .legend-color { width: 12px; height: 12px; border-radius: 3px; display: block; flex-shrink: 0; }
+
+    /* ปรับ margin ให้ Pill ห่อตัวได้เมื่อหน้าจอเล็กลง */
+    .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 6px 12px 6px; font-size: 0.9rem; transition: all 0.3s ease;}
     .kpi-pill i { color: #3b82f6; margin-right: 8px; }
 
     .offcanvas { background-color: var(--bg-main); color: var(--text-main); border-left: 1px solid var(--border-color); width: 600px; max-width: 100%; box-shadow: -20px 0 40px rgba(0,0,0,0.05) !important; transition: all 0.3s ease; }
@@ -222,7 +192,6 @@
     </div>
   </nav>
 
-  <!-- แผงเมนูย่อ (Collapsible Info Panel) -->
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
@@ -269,7 +238,6 @@
     </div>
   </div>
 
-  <!-- Changelog Modal -->
   <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
@@ -280,7 +248,15 @@
         <div class="modal-body p-4">
           
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.1 - Design Upgrade ✨</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.2 - Time Span Logic 🕒</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
+              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.1 - Design Upgrade ✨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>ปรับปรุง Layout หน้าต่าง Sidebar จัดกลุ่มป้ายกำกับ Meta ให้สวยงามขึ้น ป้องกันปัญหาข้อความยาวทะลุกรอบ</li>
               <li>ปรับดีไซน์ป้าย Priority ให้เป็นแบบ Soft UI สีพาสเทลขอบมน สบายตา</li>
@@ -292,14 +268,13 @@
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI</li>
               <li>เพิ่มป้ายกำกับ (Badge) แจ้งเตือนความด่วนบนการ์ดในหน้า Dashboard</li>
-              <li>เพิ่มเอฟเฟกต์ไฟกระพริบสีแดงสำหรับงานที่จัดอยู่ในหมวด "ด่วนมาก"</li>
             </ul>
           </div>
 
           <div class="mb-4">
             <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ในจุดเดียว</li>
+              <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ใน Dropdown เดียว</li>
             </ul>
           </div>
 
@@ -323,7 +298,7 @@
         Ticket Management Overview 
         <span class="live-badge"><div class="live-dot"></div> LIVE</span>
       </h2>
-      <div id='stats' class="mt-4"></div>
+      <div id='stats' class="mt-4 d-flex flex-wrap justify-content-center"></div>
     </div>
 
     <div class="main-panel">
@@ -365,7 +340,6 @@
     let knownTicketIds = new Set();
     let isFirstLoad = true;
 
-    // ระบบแจ้งเตือน
     const alertSwitch = document.getElementById('alertSwitch');
     if (localStorage.getItem('sysnectAlerts') === 'true') { alertSwitch.checked = true; }
 
@@ -401,7 +375,6 @@
         }
     }
 
-    // ฟังก์ชัน Theme Toggle
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
     
@@ -534,9 +507,38 @@
 
       const stats = document.getElementById('stats');
       if (stats) {
+        
+        // --- ระบบคำนวณระยะเวลา (Time Span) อัตโนมัติ ---
+        let timeSpanText = "ไม่มีข้อมูล";
+        if (filteredProjectsData.length > 0) {
+            const dates = filteredProjectsData
+                .map(t => parseTicketDate(t.date || ""))
+                .filter(d => d.getTime() > 0)
+                .sort((a, b) => a - b);
+                
+            if (dates.length > 0) {
+                const oldest = dates[0];
+                const newest = dates[dates.length - 1];
+                const diffTime = Math.abs(newest - oldest);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                
+                if (diffDays <= 1) {
+                    timeSpanText = "1 วัน";
+                } else if (diffDays < 30) {
+                    timeSpanText = `${diffDays} วัน`;
+                } else {
+                    const diffMonths = (diffDays / 30).toFixed(1);
+                    timeSpanText = `${diffMonths.replace('.0', '')} เดือน`;
+                }
+            }
+        }
+
         stats.innerHTML = `
           <div class="kpi-pill">
             <i class="fas fa-chart-line"></i> แสดงผล: ${filteredProjectsData.length} / ${apiTotalCount} รายการ
+          </div>
+          <div class="kpi-pill" title="ระยะเวลาของข้อมูลที่แสดงอยู่">
+            <i class="fas fa-calendar-day"></i> ข้อมูลย้อนหลัง: ${timeSpanText}
           </div>
           <div class="kpi-pill">
             <i class="fas fa-sync-alt"></i> อัปเดตล่าสุด: ${apiUpdatedAt}
@@ -587,16 +589,15 @@
         const cColor = statusConfig[status].color;
         const cCount = counts[status];
         
-        // ตรวจสอบในส่วนนี้ของฟังก์ชัน initChart ว่ายังมี div class="legend-color" อยู่ไหม
-const itemHtml = `
-  <div class="legend-item" onclick="openSidebar('${status}')">
-    <div class="legend-left">
-      <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
-      <span>${status.toUpperCase()}</span>
-    </div>
-    <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
-  </div>
-`;
+        const itemHtml = `
+          <div class="legend-item" onclick="openSidebar('${status}')">
+            <div class="legend-left">
+              <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
+              <span>${status.toUpperCase()}</span>
+            </div>
+            <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
+          </div>
+        `;
         legendContainer.insertAdjacentHTML('beforeend', itemHtml);
       });
 
@@ -649,7 +650,6 @@ const itemHtml = `
       return doc.body.textContent || doc.body.innerText || "";
     }
 
-    // สร้างป้าย Priority แบบ Soft UI
     function getPriorityBadge(prioCode) {
       let p = String(prioCode || "3").toLowerCase();
       if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') {
@@ -707,42 +707,29 @@ const itemHtml = `
 
           if(!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
           
-          // เปลี่ยนโครงสร้าง Layout ให้ยืดหยุ่น ป้องกันข้อความทับ Badge
           const cardHtml = `
             <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
-              
-              <!-- ส่วนหัว: จัด Layout ใหม่ แยกซ้าย-ขวา -->
               <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
-                
-                <!-- ฝั่งซ้าย (ยืดหยุ่นได้ หดได้) -->
                 <div style="min-width: 0;">
                   <div class="text-primary fw-bold text-break mb-1" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
                   <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
                 </div>
-                
-                <!-- ฝั่งขวา (ล็อกขนาดไม่ให้ถูกเบียด) -->
                 <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
                   <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px; white-space: nowrap;">
                     <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
                   </span>
                   ${getPriorityBadge(ticket.priority)}
                 </div>
-
               </div>
-
-              <!-- ส่วน Meta Tags -->
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
                 <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
                 <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
               </div>
-              
-              <!-- ส่วนรายละเอียด -->
               <div class="desc-block">
                 <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
                   ${cleanSummary}
                 </p>
               </div>
-
             </div>
           `;
           listContainer.insertAdjacentHTML('beforeend', cardHtml);
