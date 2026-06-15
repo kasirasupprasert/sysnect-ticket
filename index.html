@@ -74,18 +74,53 @@
     .dashboard-header { margin-top: 2rem; margin-bottom: 2.5rem; position: relative;}
     .dashboard-title { font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; font-size: 2rem; transition: color 0.3s ease; }
     .live-badge { font-size: 0.8rem; background: #dcfce7; color: #0369a1; padding: 4px 10px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 10px; border: 1px solid #bae6fd; }
+    
+    /* เอฟเฟกต์ไฟกระพริบสำหรับป้าย Priority */
     .live-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite; }
+    .pulse-danger { animation: pulseRed 1.5s infinite; }
+    
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
     .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; margin: 0 auto 40px auto; max-width: 900px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; transition: all 0.3s ease; }
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
-    .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
-    .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .legend-left { display: flex; align-items: center; }
-    .legend-color { width: 12px; height: 12px; border-radius: 3px; margin-right: 14px; }
-
+    .legend-item { 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+      font-size: 0.95rem; 
+      font-weight: 600; 
+      color: var(--text-main); 
+      background: var(--bg-main); 
+      padding: 12px 20px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      transition: all 0.2s ease; 
+      border: 1px solid var(--border-color); 
+    }
+    
+    .legend-item:hover { 
+      transform: translateX(5px); 
+      background: var(--bg-card); 
+      border-color: #3b82f6; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+    }
+    
+    .legend-left { 
+      display: flex; 
+      align-items: center; 
+      gap: 12px; /* เพิ่มระยะห่างระหว่างจุดสีกับตัวอักษร */
+    }
+    
+    .legend-color { 
+      width: 12px; 
+      height: 12px; 
+      border-radius: 3px; 
+      display: block; /* บังคับให้แสดงผล */
+      flex-shrink: 0; 
+    }
     .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem; transition: all 0.3s ease;}
     .kpi-pill i { color: #3b82f6; margin-right: 8px; }
 
@@ -106,7 +141,6 @@
     ::-webkit-scrollbar-track { background: var(--bg-main); }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-card); opacity: 0.95; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
     .loading-overlay.hidden { opacity: 0; visibility: hidden; }
@@ -188,10 +222,10 @@
     </div>
   </nav>
 
+  <!-- แผงเมนูย่อ (Collapsible Info Panel) -->
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        
         <div class="d-flex align-items-center">
           <h5 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
           <div class="form-check form-switch fs-5 ms-4">
@@ -199,9 +233,7 @@
             <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer; color: var(--text-main);">เปิดระบบแจ้งเตือน (Active Alerts)</label>
           </div>
         </div>
-
         <button type="button" class="btn-close shadow-none" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-label="Close" title="ปิดหน้าต่างนี้"></button>
-
       </div>
 
       <div class="row g-4">
@@ -210,6 +242,13 @@
             <div class="feature-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-bolt"></i></div>
             <h6 class="fw-bold" style="color: var(--text-main);">Real-time Sync</h6>
             <p class="small mb-0" style="color: var(--text-muted);">ดึงข้อมูล Ticket อัตโนมัติทุก 1 นาทีแบบเบื้องหลัง ไม่รบกวนการทำงานของหน้าจอหลัก</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="feature-box">
+            <div class="feature-icon bg-danger bg-opacity-10 text-danger"><i class="fas fa-fire"></i></div>
+            <h6 class="fw-bold" style="color: var(--text-main);">Priority Badges</h6>
+            <p class="small mb-0" style="color: var(--text-muted);">มีป้ายแจ้งเตือนระดับความสำคัญ (Priority) พร้อมเอฟเฟกต์ไฟกระพริบสำหรับงานที่ด่วนมาก</p>
           </div>
         </div>
         <div class="col-md-3">
@@ -223,36 +262,44 @@
           <div class="feature-box">
             <div class="feature-icon bg-success bg-opacity-10 text-success"><i class="fas fa-chart-pie"></i></div>
             <h6 class="fw-bold" style="color: var(--text-main);">Dynamic Analytics</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีตามเงื่อนไขการค้นหา ทั้งเวลาและสถานะ</p>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="feature-box">
-            <div class="feature-icon bg-info bg-opacity-10 text-info"><i class="fas fa-file-excel"></i></div>
-            <h6 class="fw-bold" style="color: var(--text-main);">Data Export</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">กดปุ่มเดียวเพื่อส่งออกรายงาน Ticket ที่คัดกรองแล้ว เป็นไฟล์ Excel/CSV รองรับภาษาไทย 100%</p>
+            <p class="small mb-0" style="color: var(--text-muted);">วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีพร้อมระบบ Data Export ออกเป็นไฟล์ Excel</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Changelog Modal -->
   <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
         <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-          <h5 class="modal-title fw-bold"><i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต (Changelog)</h5>
+          <h5 class="modal-title fw-bold"><i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต</h5>
           <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
         </div>
         <div class="modal-body p-4">
           
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.3.0 - Latest Update</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.1 - Design Upgrade ✨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>แก้ไขบั๊กสีตัวหนังสือในหน้า Info ให้รองรับ Dark Mode 100%</li>
-              <li>เพิ่มปุ่ม (X) ปิดหน้าต่างคุณสมบัติระบบ (Info Panel) เพื่อการใช้งานที่สะดวกขึ้น</li>
-              <li>ยุบรวมเมนูตั้งค่าและเครื่องมือไว้ใน Dropdown (More Options) เพื่อความสะอาดตาของ Navbar</li>
-              <li>เพิ่มปุ่ม "ประวัติการอัปเดต" ให้ผู้ใช้งานติดตามฟีเจอร์ใหม่ๆ ได้ง่ายขึ้น</li>
+              <li>ปรับปรุง Layout หน้าต่าง Sidebar จัดกลุ่มป้ายกำกับ Meta ให้สวยงามขึ้น ป้องกันปัญหาข้อความยาวทะลุกรอบ</li>
+              <li>ปรับดีไซน์ป้าย Priority ให้เป็นแบบ Soft UI สีพาสเทลขอบมน สบายตา</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.0 - Priority System 🔥</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI</li>
+              <li>เพิ่มป้ายกำกับ (Badge) แจ้งเตือนความด่วนบนการ์ดในหน้า Dashboard</li>
+              <li>เพิ่มเอฟเฟกต์ไฟกระพริบสีแดงสำหรับงานที่จัดอยู่ในหมวด "ด่วนมาก"</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ในจุดเดียว</li>
             </ul>
           </div>
 
@@ -260,20 +307,11 @@
             <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
-              <li>อัปเกรดระบบ Export เป็นไฟล์ CSV (แก้ปัญหาภาษาไทยและข้อมูลสลับช่อง)</li>
               <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
-              <li>ออกแบบ Layout ของการ์ดใหม่ให้เป็นสไตล์ Clean & Minimalist มากขึ้น</li>
+              <li>อัปเกรดระบบ Export เป็นไฟล์ CSV</li>
             </ul>
           </div>
-
-          <div>
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เปิดใช้งานระบบ Ticket Dashboard เชื่อมต่อ GLPI ผ่าน n8n อย่างเต็มรูปแบบ</li>
-              <li>เพิ่มกราฟโดนัทสรุปยอดแยกตาม Status</li>
-            </ul>
-          </div>
-
+          
         </div>
       </div>
     </div>
@@ -457,7 +495,6 @@
 
       filteredProjectsData = projectsData.filter(t => {
         let isMatch = true;
-        
         if (searchValue) {
           const searchIn = String((t.title || "") + " " + (t.id || "")).toLowerCase();
           if (/^\d+$/.test(searchValue)) {
@@ -468,7 +505,6 @@
           }
         }
         if (!isMatch) return false;
-
         if (statusValue !== 'all' && t.status !== statusValue) return false;
 
         const tDate = parseTicketDate(t.date || "");
@@ -551,15 +587,16 @@
         const cColor = statusConfig[status].color;
         const cCount = counts[status];
         
-        const itemHtml = `
-          <div class="legend-item" onclick="openSidebar('${status}')">
-            <div class="legend-left">
-              <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
-              <span>${status.toUpperCase()}</span>
-            </div>
-            <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
-          </div>
-        `;
+        // ตรวจสอบในส่วนนี้ของฟังก์ชัน initChart ว่ายังมี div class="legend-color" อยู่ไหม
+const itemHtml = `
+  <div class="legend-item" onclick="openSidebar('${status}')">
+    <div class="legend-left">
+      <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
+      <span>${status.toUpperCase()}</span>
+    </div>
+    <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
+  </div>
+`;
         legendContainer.insertAdjacentHTML('beforeend', itemHtml);
       });
 
@@ -612,6 +649,23 @@
       return doc.body.textContent || doc.body.innerText || "";
     }
 
+    // สร้างป้าย Priority แบบ Soft UI
+    function getPriorityBadge(prioCode) {
+      let p = String(prioCode || "3").toLowerCase();
+      if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') {
+        return `<span class="badge pulse-danger" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-fire me-1"></i>ด่วนมาก</span>`;
+      } 
+      else if (p.includes('high') || p === '4') {
+        return `<span class="badge" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-exclamation-triangle me-1"></i>ด่วน</span>`;
+      } 
+      else if (p.includes('medium') || p === '3') {
+        return `<span class="badge" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-grip-lines me-1"></i>ปานกลาง</span>`;
+      } 
+      else {
+        return `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-arrow-down me-1"></i>ทั่วไป</span>`;
+      }
+    }
+
     function openSidebar(status) {
       sidebarTitle.innerHTML = `<i class="fas ${statusConfig[status].icon} me-2" style="color:${statusConfig[status].color}"></i> STATUS: <span style="color:${statusConfig[status].color}">${status.toUpperCase()}</span>`;
       
@@ -653,26 +707,42 @@
 
           if(!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
           
+          // เปลี่ยนโครงสร้าง Layout ให้ยืดหยุ่น ป้องกันข้อความทับ Badge
           const cardHtml = `
             <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
-              <div class="d-flex justify-content-between align-items-start mb-3">
-                <div>
-                  <span class="text-primary fw-bold" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</span>
-                  <h5 class="fw-bold mt-1 mb-0 lh-base" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
+              
+              <!-- ส่วนหัว: จัด Layout ใหม่ แยกซ้าย-ขวา -->
+              <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+                
+                <!-- ฝั่งซ้าย (ยืดหยุ่นได้ หดได้) -->
+                <div style="min-width: 0;">
+                  <div class="text-primary fw-bold text-break mb-1" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
+                  <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
                 </div>
-                <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px;">
-                  <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
-                </span>
+                
+                <!-- ฝั่งขวา (ล็อกขนาดไม่ให้ถูกเบียด) -->
+                <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
+                  <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px; white-space: nowrap;">
+                    <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
+                  </span>
+                  ${getPriorityBadge(ticket.priority)}
+                </div>
+
               </div>
+
+              <!-- ส่วน Meta Tags -->
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
                 <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
                 <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
               </div>
+              
+              <!-- ส่วนรายละเอียด -->
               <div class="desc-block">
                 <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
                   ${cleanSummary}
                 </p>
               </div>
+
             </div>
           `;
           listContainer.insertAdjacentHTML('beforeend', cardHtml);
@@ -688,7 +758,7 @@
         return;
       }
       
-      let csvContent = "ID,Category,Status,Date,Location,Title,Description\n";
+      let csvContent = "ID,Priority,Category,Status,Date,Location,Title,Description\n";
 
       filteredProjectsData.forEach(t => {
         let realId = String(t.id || "-");
@@ -719,8 +789,15 @@
         if(!cleanSummary) {
             cleanSummary = "ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้";
         }
+        
+        let prioText = "Medium";
+        let p = String(t.priority || "3").toLowerCase();
+        if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') prioText = "Very High";
+        else if (p.includes('high') || p === '4') prioText = "High";
+        else if (p.includes('low') || p === '2' || p === '1') prioText = "Low";
 
         let id = `"${realId.replace(/"/g, '""')}"`;
+        let prio = `"${prioText}"`;
         let cat = `"${String(t.category || "").replace(/"/g, '""')}"`;
         let stat = `"${String(t.status || "").replace(/"/g, '""')}"`;
         let dt = `"${String(t.date || "").replace(/"/g, '""')}"`;
@@ -728,7 +805,7 @@
         let title = `"${longText.replace(/"/g, '""')}"`;
         let desc = `"${cleanSummary.replace(/"/g, '""').replace(/\n/g, ' ')}"`;
         
-        csvContent += `${id},${cat},${stat},${dt},${loc},${title},${desc}\n`;
+        csvContent += `${id},${prio},${cat},${stat},${dt},${loc},${title},${desc}\n`;
       });
 
       const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
