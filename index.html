@@ -83,8 +83,6 @@
 
     .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
     .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .legend-left { display: flex; align-items: center; }
-    .legend-color { width: 12px; height: 12px; border-radius: 3px; margin-right: 14px; }
 
     .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem; transition: all 0.3s ease;}
     .kpi-pill i { color: #3b82f6; margin-right: 8px; }
@@ -106,11 +104,15 @@
     ::-webkit-scrollbar-track { background: var(--bg-main); }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-card); opacity: 0.95; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
     .loading-overlay.hidden { opacity: 0; visibility: hidden; }
     .loading-spinner { font-size: 3rem; color: #3b82f6; margin-bottom: 15px; animation: spin 1.5s linear infinite; }
+
+    /* Admin Styles */
+    .admin-only { display: none !important; }
+    body.is-admin .admin-only { display: block !important; }
+    body.is-admin .user-only { display: none !important; }
   </style>
 </head>
 <body>
@@ -180,6 +182,11 @@
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel"><i class="fas fa-info-circle text-info me-3" style="width: 16px;"></i>คุณสมบัติระบบ (Features Info)</a></li>
               <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changelogModal"><i class="fas fa-history text-primary me-3" style="width: 16px;"></i>ประวัติการอัปเดต (Changelog)</a></li>
+              <li><hr class="dropdown-divider"></li>
+              
+              <!-- เมนูสำหรับระบบ Login -->
+              <li class="user-only"><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-sign-in-alt text-secondary me-3" style="width: 16px;"></i>Admin Login</a></li>
+              <li class="admin-only"><a class="dropdown-item fw-bold text-danger" href="#" id="btnLogout"><i class="fas fa-sign-out-alt me-3" style="width: 16px;"></i>Logout (Admin)</a></li>
             </ul>
           </div>
 
@@ -188,12 +195,16 @@
     </div>
   </nav>
 
+  <!-- แผงเมนูย่อ (Collapsible Info Panel) -->
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
         
         <div class="d-flex align-items-center">
-          <h5 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
+          <h5 class="fw-bold mb-0" style="color: var(--text-main);">
+            <i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features
+            <span class="badge bg-danger ms-2 admin-only" style="font-size: 0.7rem; vertical-align: middle;">ADMIN MODE</span>
+          </h5>
           <div class="form-check form-switch fs-5 ms-4">
             <input class="form-check-input" type="checkbox" id="alertSwitch" style="cursor: pointer;">
             <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer; color: var(--text-main);">เปิดระบบแจ้งเตือน (Active Alerts)</label>
@@ -201,79 +212,70 @@
         </div>
 
         <button type="button" class="btn-close shadow-none" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-label="Close" title="ปิดหน้าต่างนี้"></button>
-
       </div>
 
-      <div class="row g-4">
-        <div class="col-md-3">
-          <div class="feature-box">
-            <div class="feature-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-bolt"></i></div>
-            <h6 class="fw-bold" style="color: var(--text-main);">Real-time Sync</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">ดึงข้อมูล Ticket อัตโนมัติทุก 1 นาทีแบบเบื้องหลัง ไม่รบกวนการทำงานของหน้าจอหลัก</p>
-          </div>
+      <!-- คอนเทนเนอร์สำหรับแสดงฟีเจอร์ -->
+      <div class="row g-4" id="featuresContainer">
+        <!-- ข้อมูลถูกสร้างด้วย Javascript -->
+      </div>
+
+      <!-- ฟอร์มสำหรับ Admin เพิ่มฟีเจอร์ -->
+      <div class="admin-only mt-4 p-3 rounded" style="background: var(--bg-main); border: 1px dashed var(--border-color);">
+        <h6 class="fw-bold text-danger mb-3"><i class="fas fa-plus-circle me-1"></i> เพิ่มฟีเจอร์ใหม่ (Admin)</h6>
+        <div class="row g-2">
+          <div class="col-md-2"><input type="text" id="addFeatIcon" class="form-control form-control-sm" placeholder="Icon (เช่น fa-star)"></div>
+          <div class="col-md-3"><input type="text" id="addFeatTitle" class="form-control form-control-sm" placeholder="หัวข้อ (Title)"></div>
+          <div class="col-md-5"><input type="text" id="addFeatDesc" class="form-control form-control-sm" placeholder="คำอธิบาย (Description)"></div>
+          <div class="col-md-2"><button class="btn btn-danger btn-sm w-100 fw-bold" onclick="addFeature()">เพิ่มฟีเจอร์</button></div>
         </div>
-        <div class="col-md-3">
-          <div class="feature-box">
-            <div class="feature-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-bell"></i></div>
-            <h6 class="fw-bold" style="color: var(--text-main);">Active Alerts</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมี Ticket ส่งเข้ามาใหม่</p>
-          </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Changelog Modal -->
+  <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+          <h5 class="modal-title fw-bold">
+            <i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต 
+            <span class="badge bg-danger ms-2 admin-only" style="font-size: 0.7rem; vertical-align: middle;">ADMIN MODE</span>
+          </h5>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
         </div>
-        <div class="col-md-3">
-          <div class="feature-box">
-            <div class="feature-icon bg-success bg-opacity-10 text-success"><i class="fas fa-chart-pie"></i></div>
-            <h6 class="fw-bold" style="color: var(--text-main);">Dynamic Analytics</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีตามเงื่อนไขการค้นหา ทั้งเวลาและสถานะ</p>
+        <div class="modal-body p-4">
+          
+          <!-- ฟอร์มสำหรับ Admin เพิ่ม Changelog -->
+          <div class="admin-only mb-4 p-3 rounded" style="background: var(--bg-main); border: 1px dashed var(--border-color);">
+            <h6 class="fw-bold text-danger mb-2"><i class="fas fa-plus-circle me-1"></i> เพิ่มอัปเดตใหม่</h6>
+            <input type="text" id="addClVersion" class="form-control form-control-sm mb-2" placeholder="เวอร์ชัน (เช่น v1.4.0)">
+            <textarea id="addClDetails" class="form-control form-control-sm mb-2" rows="2" placeholder="รายละเอียด (แบ่งข้อด้วย Enter)"></textarea>
+            <button class="btn btn-danger btn-sm w-100 fw-bold" onclick="addChangelog()">เพิ่มบันทึก</button>
           </div>
-        </div>
-        <div class="col-md-3">
-          <div class="feature-box">
-            <div class="feature-icon bg-info bg-opacity-10 text-info"><i class="fas fa-file-excel"></i></div>
-            <h6 class="fw-bold" style="color: var(--text-main);">Data Export</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">กดปุ่มเดียวเพื่อส่งออกรายงาน Ticket ที่คัดกรองแล้ว เป็นไฟล์ Excel/CSV รองรับภาษาไทย 100%</p>
+
+          <!-- คอนเทนเนอร์สำหรับแสดง Changelog -->
+          <div id="changelogContainer">
+            <!-- ข้อมูลถูกสร้างด้วย Javascript -->
           </div>
+
         </div>
       </div>
     </div>
   </div>
 
-  <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
-        <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-          <h5 class="modal-title fw-bold"><i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต (Changelog)</h5>
-          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
-        </div>
-        <div class="modal-body p-4">
-          
-          <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.3.0 - Latest Update</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>แก้ไขบั๊กสีตัวหนังสือในหน้า Info ให้รองรับ Dark Mode 100%</li>
-              <li>เพิ่มปุ่ม (X) ปิดหน้าต่างคุณสมบัติระบบ (Info Panel) เพื่อการใช้งานที่สะดวกขึ้น</li>
-              <li>ยุบรวมเมนูตั้งค่าและเครื่องมือไว้ใน Dropdown (More Options) เพื่อความสะอาดตาของ Navbar</li>
-              <li>เพิ่มปุ่ม "ประวัติการอัปเดต" ให้ผู้ใช้งานติดตามฟีเจอร์ใหม่ๆ ได้ง่ายขึ้น</li>
-            </ul>
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+      <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border-radius: 16px; border: none;">
+        <div class="modal-body p-4 text-center">
+          <div class="mb-3">
+            <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+            <h5 class="fw-bold">Admin Login</h5>
+            <p class="small text-muted">กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบหลังบ้าน<br>(รหัสผ่านจำลอง: admin123)</p>
           </div>
-
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
-              <li>อัปเกรดระบบ Export เป็นไฟล์ CSV (แก้ปัญหาภาษาไทยและข้อมูลสลับช่อง)</li>
-              <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
-              <li>ออกแบบ Layout ของการ์ดใหม่ให้เป็นสไตล์ Clean & Minimalist มากขึ้น</li>
-            </ul>
-          </div>
-
-          <div>
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เปิดใช้งานระบบ Ticket Dashboard เชื่อมต่อ GLPI ผ่าน n8n อย่างเต็มรูปแบบ</li>
-              <li>เพิ่มกราฟโดนัทสรุปยอดแยกตาม Status</li>
-            </ul>
-          </div>
-
+          <input type="password" id="adminPassword" class="form-control text-center mb-3" placeholder="••••••••" onkeypress="if(event.key === 'Enter') handleLogin()">
+          <button class="btn btn-primary w-100 fw-bold rounded-pill" onclick="handleLogin()">Login</button>
         </div>
       </div>
     </div>
@@ -310,6 +312,139 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
+    // ==========================================
+    // 1. ระบบจัดการ Admin & ข้อมูล (Local Data Simulation)
+    // ==========================================
+    
+    // โหลดสถานะ Admin จาก localStorage
+    let isAdmin = localStorage.getItem('sysnectAdmin') === 'true';
+    if(isAdmin) document.body.classList.add('is-admin');
+
+    // ฟังก์ชันเข้าสู่ระบบ
+    function handleLogin() {
+        const pass = document.getElementById('adminPassword').value;
+        if(pass === 'admin123') {
+            localStorage.setItem('sysnectAdmin', 'true');
+            document.body.classList.add('is-admin');
+            
+            // ปิด Modal
+            const modalEl = document.getElementById('loginModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if(modal) modal.hide();
+            
+            document.getElementById('adminPassword').value = '';
+            alert("เข้าสู่ระบบ Admin สำเร็จ! ปลดล็อกเครื่องมือเพิ่มข้อมูลแล้ว");
+        } else {
+            alert("รหัสผ่านไม่ถูกต้อง!");
+        }
+    }
+
+    // ฟังก์ชันออกจากระบบ
+    document.getElementById('btnLogout').addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.setItem('sysnectAdmin', 'false');
+        document.body.classList.remove('is-admin');
+        alert("ออกจากระบบ Admin เรียบร้อย");
+    });
+
+    // --- ข้อมูลเริ่มต้น (Default Data) ---
+    const defaultFeatures = [
+        { icon: "fa-bolt", color: "primary", title: "Real-time Sync", desc: "ดึงข้อมูล Ticket อัตโนมัติทุก 1 นาทีแบบเบื้องหลัง ไม่รบกวนการทำงาน" },
+        { icon: "fa-bell", color: "warning", title: "Active Alerts", desc: "ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมีงานใหม่" },
+        { icon: "fa-chart-pie", color: "success", title: "Dynamic Analytics", desc: "วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีตามเงื่อนไขการค้นหา" },
+        { icon: "fa-file-excel", color: "info", title: "Data Export", desc: "ส่งออกรายงานเป็นไฟล์ Excel/CSV รองรับภาษาไทย 100%" }
+    ];
+
+    const defaultChangelogs = [
+        { version: "v1.3.0 - Latest Update", details: ["แก้ไขบั๊กสีตัวหนังสือในหน้า Info ให้รองรับ Dark Mode 100%", "เพิ่มปุ่ม (X) ปิดหน้าต่างคุณสมบัติระบบเพื่อความสะดวก", "ยุบรวมเมนูตั้งค่าและเครื่องมือไว้ใน Dropdown (More Options)", "พัฒนาระบบ Admin Login (จำลอง) ให้ปรับแก้ข้อมูลหน้าเว็บได้"] },
+        { version: "v1.2.0", details: ["เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น", "อัปเกรดระบบ Export เป็นไฟล์ CSV ให้เสถียรขึ้น", "เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts)"] },
+        { version: "v1.0.0", details: ["เปิดใช้งานระบบ Ticket Dashboard เชื่อมต่อ GLPI", "เพิ่มกราฟโดนัทสรุปยอดแยกตาม Status"] }
+    ];
+
+    // โหลดข้อมูลจาก LocalStorage ถ้าไม่มีให้ใช้ค่า Default
+    let featuresData = JSON.parse(localStorage.getItem('sysnectFeatures')) || defaultFeatures;
+    let changelogData = JSON.parse(localStorage.getItem('sysnectChangelog')) || defaultChangelogs;
+
+    // Render ข้อมูลลงหน้าจอ
+    function renderFeatures() {
+        const container = document.getElementById('featuresContainer');
+        container.innerHTML = '';
+        featuresData.forEach(f => {
+            const html = `
+            <div class="col-md-3">
+              <div class="feature-box">
+                <div class="feature-icon bg-${f.color} bg-opacity-10 text-${f.color}"><i class="fas ${f.icon}"></i></div>
+                <h6 class="fw-bold" style="color: var(--text-main);">${f.title}</h6>
+                <p class="small mb-0" style="color: var(--text-muted);">${f.desc}</p>
+              </div>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    function renderChangelogs() {
+        const container = document.getElementById('changelogContainer');
+        container.innerHTML = '';
+        changelogData.forEach((cl, index) => {
+            let listHtml = cl.details.map(d => `<li>${d}</li>`).join('');
+            const isLatest = index === 0;
+            const titleClass = isLatest ? "text-primary" : "";
+            
+            const html = `
+            <div class="mb-4">
+              <h6 class="fw-bold ${titleClass} mb-1" style="color: var(--text-main);">${cl.version}</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                ${listHtml}
+              </ul>
+            </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+        });
+    }
+
+    // ฟังก์ชันเพิ่มข้อมูลสำหรับ Admin
+    function addFeature() {
+        const icon = document.getElementById('addFeatIcon').value || "fa-star";
+        const title = document.getElementById('addFeatTitle').value;
+        const desc = document.getElementById('addFeatDesc').value;
+        
+        if(!title) { alert("กรุณาใส่หัวข้อ"); return; }
+        
+        const colors = ["primary", "success", "danger", "warning", "info", "secondary"];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+        featuresData.push({ icon, color: randomColor, title, desc });
+        localStorage.setItem('sysnectFeatures', JSON.stringify(featuresData));
+        renderFeatures();
+        
+        document.getElementById('addFeatIcon').value = '';
+        document.getElementById('addFeatTitle').value = '';
+        document.getElementById('addFeatDesc').value = '';
+    }
+
+    function addChangelog() {
+        const version = document.getElementById('addClVersion').value;
+        const detailsRaw = document.getElementById('addClDetails').value;
+        
+        if(!version || !detailsRaw) { alert("กรุณาใส่ข้อมูลให้ครบ"); return; }
+        
+        const detailsArray = detailsRaw.split('\n').filter(d => d.trim() !== '');
+        
+        changelogData.unshift({ version, details: detailsArray }); // ใส่ด้านบนสุด
+        localStorage.setItem('sysnectChangelog', JSON.stringify(changelogData));
+        renderChangelogs();
+        
+        document.getElementById('addClVersion').value = '';
+        document.getElementById('addClDetails').value = '';
+    }
+
+    // เรียก Render ตอนโหลดหน้าเว็บครั้งแรก
+    renderFeatures();
+    renderChangelogs();
+
+
+    // ==========================================
+    // 2. ระบบ Core Dashboard (ดึงข้อมูล กราฟ และอื่นๆ)
+    // ==========================================
     const statusConfig = {
       "New": { color: "#3b82f6", icon: "fa-asterisk" },
       "Assigned": { color: "#f59e0b", icon: "fa-tasks" },
