@@ -55,20 +55,22 @@
     
     .btn-refresh { background-color: #3b82f6; color: #fff; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     .btn-refresh:hover { background-color: #2563eb; color: #fff; transform: translateY(-1px); }
-    
-    .btn-export { background-color: transparent; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px; transition: all 0.2s; }
-    .btn-export:hover { background-color: #10b981; border-color: #10b981; color: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
 
-    .btn-theme-toggle { background-color: rgba(255, 255, 255, 0.1); color: #fcd34d; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 5px; }
-    .btn-theme-toggle:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.05); color: #fff; }
+    .btn-theme-toggle { background-color: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 5px; }
+    .btn-theme-toggle:hover { background-color: rgba(255, 255, 255, 0.2); color: #fff; }
 
-    /* เมนูย่อ (Info Panel) */
+    .dropdown-menu-custom { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0; }
+    .dropdown-menu-custom .dropdown-item { color: var(--text-main); font-size: 0.95rem; padding: 10px 20px; transition: all 0.2s; display: flex; align-items: center;}
+    .dropdown-menu-custom .dropdown-item:hover { background-color: var(--bg-main); color: #3b82f6; }
+    .dropdown-menu-custom .dropdown-divider { border-color: var(--border-color); }
+
     .info-panel { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); color: var(--text-main); position: absolute; width: 100%; z-index: 1030; box-shadow: 0 10px 30px rgba(0,0,0,0.05); transition: background-color 0.3s ease, color 0.3s ease; }
     .feature-box { background: var(--bg-main); padding: 15px; border-radius: 10px; border: 1px solid var(--border-color); height: 100%; transition: transform 0.2s; }
     .feature-box:hover { transform: translateY(-2px); border-color: #3b82f6; }
     .feature-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 10px; }
+    
+    [data-theme="dark"] .info-panel .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
 
-    /* ป้าย Live */
     .dashboard-header { margin-top: 2rem; margin-bottom: 2.5rem; position: relative;}
     .dashboard-title { font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; font-size: 2rem; transition: color 0.3s ease; }
     .live-badge { font-size: 0.8rem; background: #dcfce7; color: #0369a1; padding: 4px 10px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 10px; border: 1px solid #bae6fd; }
@@ -89,7 +91,7 @@
 
     .offcanvas { background-color: var(--bg-main); color: var(--text-main); border-left: 1px solid var(--border-color); width: 600px; max-width: 100%; box-shadow: -20px 0 40px rgba(0,0,0,0.05) !important; transition: all 0.3s ease; }
     .offcanvas-header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 20px 30px; transition: all 0.3s ease;}
-    [data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+    [data-theme="dark"] .offcanvas-header .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
 
     @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -166,16 +168,21 @@
             </select>
           </div>
 
-          <button class="btn btn-refresh px-3" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
-          <button class="btn btn-export px-3" id="btnExport" title="ดาวน์โหลด Excel/CSV"><i class="fas fa-download"></i></button>
+          <button class="btn btn-refresh px-3 ms-lg-2" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
           
-          <button class="btn-theme-toggle" id="themeToggleBtn" title="สลับโหมดมืด/สว่าง">
-            <i class="fas fa-moon" id="themeIcon"></i>
-          </button>
+          <div class="dropdown">
+            <button class="btn-theme-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="เครื่องมือเพิ่มเติม (Tools)">
+              <i class="fas fa-ellipsis-v"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
+              <li><a class="dropdown-item" href="#" id="btnExport"><i class="fas fa-file-excel text-success me-3" style="width: 16px;"></i>ส่งออกข้อมูล (Export CSV)</a></li>
+              <li><a class="dropdown-item" href="#" id="themeToggleBtn"><i class="fas fa-moon text-warning me-3" id="themeIcon" style="width: 16px;"></i>สลับโหมดหน้าจอ (Theme)</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel"><i class="fas fa-info-circle text-info me-3" style="width: 16px;"></i>คุณสมบัติระบบ (Features Info)</a></li>
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changelogModal"><i class="fas fa-history text-primary me-3" style="width: 16px;"></i>ประวัติการอัปเดต (Changelog)</a></li>
+            </ul>
+          </div>
 
-          <button class="btn-theme-toggle" style="color: #60a5fa;" type="button" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-expanded="false" title="ข้อมูลระบบ & ตั้งค่า">
-            <i class="fas fa-info-circle"></i>
-          </button>
         </div>
       </div>
     </div>
@@ -184,42 +191,89 @@
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold mb-0"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
         
-        <div class="form-check form-switch fs-5">
-          <input class="form-check-input" type="checkbox" id="alertSwitch" style="cursor: pointer;">
-          <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer;">เปิดระบบแจ้งเตือน (Active Alerts)</label>
+        <div class="d-flex align-items-center">
+          <h5 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
+          <div class="form-check form-switch fs-5 ms-4">
+            <input class="form-check-input" type="checkbox" id="alertSwitch" style="cursor: pointer;">
+            <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer; color: var(--text-main);">เปิดระบบแจ้งเตือน (Active Alerts)</label>
+          </div>
         </div>
+
+        <button type="button" class="btn-close shadow-none" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-label="Close" title="ปิดหน้าต่างนี้"></button>
+
       </div>
 
       <div class="row g-4">
         <div class="col-md-3">
           <div class="feature-box">
             <div class="feature-icon bg-primary bg-opacity-10 text-primary"><i class="fas fa-bolt"></i></div>
-            <h6 class="fw-bold">Real-time Sync</h6>
-            <p class="text-muted small mb-0">ดึงข้อมูล Ticket อัตโนมัติทุก 1 นาทีแบบเบื้องหลัง ไม่รบกวนการทำงานของหน้าจอหลัก</p>
+            <h6 class="fw-bold" style="color: var(--text-main);">Real-time Sync</h6>
+            <p class="small mb-0" style="color: var(--text-muted);">ดึงข้อมูล Ticket อัตโนมัติทุก 1 นาทีแบบเบื้องหลัง ไม่รบกวนการทำงานของหน้าจอหลัก</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="feature-box">
             <div class="feature-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-bell"></i></div>
-            <h6 class="fw-bold">Active Alerts</h6>
-            <p class="text-muted small mb-0">ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมี Ticket ส่งเข้ามาใหม่</p>
+            <h6 class="fw-bold" style="color: var(--text-main);">Active Alerts</h6>
+            <p class="small mb-0" style="color: var(--text-muted);">ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมี Ticket ส่งเข้ามาใหม่</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="feature-box">
             <div class="feature-icon bg-success bg-opacity-10 text-success"><i class="fas fa-chart-pie"></i></div>
-            <h6 class="fw-bold">Dynamic Analytics</h6>
-            <p class="text-muted small mb-0">วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีตามเงื่อนไขการค้นหา ทั้งเวลาและสถานะ</p>
+            <h6 class="fw-bold" style="color: var(--text-main);">Dynamic Analytics</h6>
+            <p class="small mb-0" style="color: var(--text-muted);">วิเคราะห์ข้อมูลสด กราฟปรับเปลี่ยนทันทีตามเงื่อนไขการค้นหา ทั้งเวลาและสถานะ</p>
           </div>
         </div>
         <div class="col-md-3">
           <div class="feature-box">
             <div class="feature-icon bg-info bg-opacity-10 text-info"><i class="fas fa-file-excel"></i></div>
-            <h6 class="fw-bold">Data Export</h6>
-            <p class="text-muted small mb-0">กดปุ่มเดียวเพื่อส่งออกรายงาน Ticket ที่คัดกรองแล้ว เป็นไฟล์ Excel/CSV รองรับภาษาไทย 100%</p>
+            <h6 class="fw-bold" style="color: var(--text-main);">Data Export</h6>
+            <p class="small mb-0" style="color: var(--text-muted);">กดปุ่มเดียวเพื่อส่งออกรายงาน Ticket ที่คัดกรองแล้ว เป็นไฟล์ Excel/CSV รองรับภาษาไทย 100%</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+          <h5 class="modal-title fw-bold"><i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต (Changelog)</h5>
+          <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
+        </div>
+        <div class="modal-body p-4">
+          
+          <div class="mb-4">
+            <h6 class="fw-bold text-primary mb-1">v1.3.0 - Latest Update</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>แก้ไขบั๊กสีตัวหนังสือในหน้า Info ให้รองรับ Dark Mode 100%</li>
+              <li>เพิ่มปุ่ม (X) ปิดหน้าต่างคุณสมบัติระบบ (Info Panel) เพื่อการใช้งานที่สะดวกขึ้น</li>
+              <li>ยุบรวมเมนูตั้งค่าและเครื่องมือไว้ใน Dropdown (More Options) เพื่อความสะอาดตาของ Navbar</li>
+              <li>เพิ่มปุ่ม "ประวัติการอัปเดต" ให้ผู้ใช้งานติดตามฟีเจอร์ใหม่ๆ ได้ง่ายขึ้น</li>
+            </ul>
+          </div>
+
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
+              <li>อัปเกรดระบบ Export เป็นไฟล์ CSV (แก้ปัญหาภาษาไทยและข้อมูลสลับช่อง)</li>
+              <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
+              <li>ออกแบบ Layout ของการ์ดใหม่ให้เป็นสไตล์ Clean & Minimalist มากขึ้น</li>
+            </ul>
+          </div>
+
+          <div>
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เปิดใช้งานระบบ Ticket Dashboard เชื่อมต่อ GLPI ผ่าน n8n อย่างเต็มรูปแบบ</li>
+              <li>เพิ่มกราฟโดนัทสรุปยอดแยกตาม Status</li>
+            </ul>
+          </div>
+
         </div>
       </div>
     </div>
@@ -273,6 +327,7 @@
     let knownTicketIds = new Set();
     let isFirstLoad = true;
 
+    // ระบบแจ้งเตือน
     const alertSwitch = document.getElementById('alertSwitch');
     if (localStorage.getItem('sysnectAlerts') === 'true') { alertSwitch.checked = true; }
 
@@ -308,22 +363,24 @@
         }
     }
 
+    // ฟังก์ชัน Theme Toggle
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     const themeIcon = document.getElementById('themeIcon');
     
     function updateThemeIcon() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         if(currentTheme === 'dark') {
-            themeIcon.className = 'fas fa-sun';
-            themeToggleBtn.style.color = '#fcd34d'; 
+            themeIcon.className = 'fas fa-sun text-warning me-3';
+            document.documentElement.style.setProperty('--btn-close-filter', 'invert(1) grayscale(100%) brightness(200%)');
         } else {
-            themeIcon.className = 'fas fa-moon';
-            themeToggleBtn.style.color = '#cbd5e1'; 
+            themeIcon.className = 'fas fa-moon text-secondary me-3';
+            document.documentElement.style.setProperty('--btn-close-filter', 'none');
         }
     }
     updateThemeIcon();
 
-    themeToggleBtn.addEventListener('click', () => {
+    themeToggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
@@ -624,8 +681,8 @@
       bsOffcanvas.show();
     }
     
-    // --- ฟังก์ชัน Export ไฟล์ CSV ปรับปรุงใหม่ให้ตรงกับหน้าจอ ---
-    document.getElementById('btnExport').addEventListener('click', () => {
+    document.getElementById('btnExport').addEventListener('click', (e) => {
+      e.preventDefault();
       if (filteredProjectsData.length === 0) {
         alert("ไม่มีข้อมูลสำหรับส่งออก (Export) กรุณาปรับเงื่อนไขการค้นหา");
         return;
@@ -634,7 +691,6 @@
       let csvContent = "ID,Category,Status,Date,Location,Title,Description\n";
 
       filteredProjectsData.forEach(t => {
-        // ใช้ Logic จัดการข้อมูลให้ตรงกับที่โชว์บนหน้าจอเป๊ะๆ
         let realId = String(t.id || "-");
         let longText = String(t.title || "");
         
@@ -675,7 +731,6 @@
         csvContent += `${id},${cat},${stat},${dt},${loc},${title},${desc}\n`;
       });
 
-      // ใช้ Blob เพื่อความเสถียรและรองรับภาษาไทย
       const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -684,7 +739,7 @@
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      URL.revokeObjectURL(url); // คืน Memory ให้ระบบ
+      URL.revokeObjectURL(url);
     });
 
     document.getElementById('searchInput').addEventListener('input', () => { filterAndRenderData(); });
