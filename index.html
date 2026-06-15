@@ -10,6 +10,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <style>
+    /* ตัวแปรสีสำหรับ Light Mode (ค่าเริ่มต้น) */
     :root {
       --bg-main: #f8fafc;
       --bg-nav: #0f172a;  
@@ -17,6 +18,9 @@
       --text-main: #334155; 
       --text-muted: #64748b;
       --border-color: #e2e8f0;
+      --chart-border: #ffffff;
+      --meta-bg: #f1f5f9;
+      --desc-bg: #f8fafc;
       
       --color-new: #3b82f6;
       --color-assigned: #f59e0b;
@@ -25,21 +29,34 @@
       --color-closed: #64748b;
     }
 
+    /* ตัวแปรสีสำหรับ Dark Mode */
+    [data-theme="dark"] {
+      --bg-main: #0f172a;
+      --bg-nav: #020617;  
+      --bg-card: #1e293b;
+      --text-main: #f8fafc; 
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --chart-border: #1e293b;
+      --meta-bg: #0f172a;
+      --desc-bg: #0f172a;
+    }
+
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
       font-family: 'Kanit', sans-serif;
       overflow-x: hidden;
       min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .navbar-custom { background-color: var(--bg-nav); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 12px 24px; }
+    .navbar-custom { background-color: var(--bg-nav); box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); padding: 12px 24px; transition: background-color 0.3s ease; }
     
     .search-box { background-color: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: #ffffff; padding: 8px 20px; width: 100%; max-width: 280px; transition: all 0.3s; }
     .search-box::placeholder { color: #94a3b8; }
     .search-box:focus { background-color: rgba(255, 255, 255, 0.15); color: white; outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
     
-    /* สไตล์สำหรับตัวกรองที่แยกกัน */
     .filter-group { display: flex; align-items: center; background-color: rgba(255, 255, 255, 0.05); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
     .filter-group i { color: #94a3b8; margin-right: 8px; font-size: 0.9rem; }
     .filter-select { background-color: transparent; border: none; color: #ffffff; font-size: 0.9rem; cursor: pointer; outline: none; padding-right: 15px;}
@@ -52,52 +69,73 @@
     .btn-export { background-color: transparent; color: #e2e8f0; border: 1px solid #475569; border-radius: 8px; transition: all 0.2s; }
     .btn-export:hover { background-color: #10b981; border-color: #10b981; color: #ffffff; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
 
+    /* ปุ่มสลับโหมด Theme Toggle */
+    .btn-theme-toggle {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fcd34d;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 38px; height: 38px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+      margin-left: 10px;
+    }
+    .btn-theme-toggle:hover { background-color: rgba(255, 255, 255, 0.2); transform: scale(1.05); color: #fff; }
+
     .dashboard-header { margin-bottom: 2.5rem; position: relative;}
-    .dashboard-title { font-weight: 700; color: #0f172a; letter-spacing: -0.5px; font-size: 2rem;}
+    .dashboard-title { font-weight: 700; color: var(--text-main); letter-spacing: -0.5px; font-size: 2rem; transition: color 0.3s ease; }
     
     .live-badge { font-size: 0.8rem; background: #dcfce7; color: #0369a1; padding: 4px 10px; border-radius: 50px; font-weight: 600; display: inline-flex; align-items: center; vertical-align: middle; margin-left: 10px; border: 1px solid #bae6fd; }
     .live-dot { width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
 
-    .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; margin: 0 auto 40px auto; max-width: 900px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; }
+    .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; margin: 0 auto 40px auto; max-width: 900px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; transition: all 0.3s ease; }
 
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
-    .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: #f8fafc; padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
-    .legend-item:hover { transform: translateX(5px); background: white; border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
+    .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .legend-left { display: flex; align-items: center; }
     .legend-color { width: 12px; height: 12px; border-radius: 3px; margin-right: 14px; }
 
-    .kpi-pill { display: inline-flex; align-items: center; background: white; padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem;}
+    .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 8px; font-size: 0.9rem; transition: all 0.3s ease;}
     .kpi-pill i { color: #3b82f6; margin-right: 8px; }
 
-    .offcanvas { background-color: #f8fafc; color: var(--text-main); border-left: 1px solid var(--border-color); width: 600px; max-width: 100%; box-shadow: -20px 0 40px rgba(0,0,0,0.05) !important; }
-    .offcanvas-header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 20px 30px; }
-    
+    .offcanvas { background-color: var(--bg-main); color: var(--text-main); border-left: 1px solid var(--border-color); width: 600px; max-width: 100%; box-shadow: -20px 0 40px rgba(0,0,0,0.05) !important; transition: all 0.3s ease; }
+    .offcanvas-header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 20px 30px; transition: all 0.3s ease;}
+    [data-theme="dark"] .btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+
     @keyframes slideInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-    .ticket-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease; opacity: 0; animation: slideInUp 0.4s ease-out forwards; }
-    .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #cbd5e1; }
+    .ticket-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; opacity: 0; animation: slideInUp 0.4s ease-out forwards; }
+    .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #3b82f6; }
     
-    .meta-tag { display: inline-flex; align-items: center; font-size: 0.8rem; color: #64748b; background-color: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0; }
-    .desc-block { background-color: #f8fafc; border-left: 3px solid #cbd5e1; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; }
+    .meta-tag { display: inline-flex; align-items: center; font-size: 0.8rem; color: var(--text-muted); background-color: var(--meta-bg); padding: 4px 10px; border-radius: 6px; font-weight: 500; border: 1px solid var(--border-color); transition: all 0.3s ease;}
+    .desc-block { background-color: var(--desc-bg); border-left: 3px solid #cbd5e1; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; transition: all 0.3s ease;}
+    [data-theme="dark"] .desc-block { border-left: 3px solid #475569; }
     
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: var(--bg-main); }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb { background: #475569; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
+    .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-card); opacity: 0.95; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
     .loading-overlay.hidden { opacity: 0; visibility: hidden; }
     .loading-spinner { font-size: 3rem; color: #3b82f6; margin-bottom: 15px; animation: spin 1.5s linear infinite; }
   </style>
 </head>
 <body>
 
+  <script>
+    const savedTheme = localStorage.getItem('sysnectTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
+
   <div id="loadingOverlay" class="loading-overlay">
     <i class="fas fa-satellite-dish loading-spinner"></i>
-    <h4 class="fw-bold" style="letter-spacing: 2px; color: #0f172a;">SYSNECT</h4>
+    <h4 class="fw-bold" style="letter-spacing: 2px; color: var(--text-main);">SYSNECT</h4>
     <p class="text-muted mt-2">Connecting to systems...</p>
     <div class="spinner-border mt-3" style="width: 1.5rem; height: 1.5rem; color: #3b82f6;" role="status"></div>
   </div>
@@ -145,8 +183,12 @@
           </div>
 
           <button class="btn btn-refresh px-4" id="btnRefresh"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
+          <button class="btn btn-export px-3" id="btnExport" title="ดาวน์โหลดเป็นไฟล์ Excel/CSV"><i class="fas fa-download"></i></button>
           
-          <button class="btn btn-export px-4" id="btnExport" title="ดาวน์โหลดเป็นไฟล์ Excel/CSV"><i class="fas fa-download me-2"></i>Export</button>
+          <button class="btn-theme-toggle" id="themeToggleBtn" title="สลับโหมดมืด/สว่าง">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
+          
         </div>
       </div>
     </div>
@@ -172,7 +214,7 @@
 
   <div class="offcanvas offcanvas-end" tabindex="-1" id="ticketSidebar">
     <div class="offcanvas-header">
-      <h5 class="offcanvas-title fw-bold" id="sidebarTitle">Ticket Logs</h5>
+      <h5 class="offcanvas-title fw-bold" id="sidebarTitle" style="color: var(--text-main);">Ticket Logs</h5>
       <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body p-4 p-md-5" id="ticketListContainer">
@@ -196,6 +238,36 @@
     let filteredProjectsData = []; 
     let apiUpdatedAt = '-';
     let apiTotalCount = 0;
+
+    // --- ฟังก์ชันจัดการ Theme มืด/สว่าง ---
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    function updateThemeIcon() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        if(currentTheme === 'dark') {
+            themeIcon.className = 'fas fa-sun';
+            themeToggleBtn.style.color = '#fcd34d'; // สีเหลืองทอง
+        } else {
+            themeIcon.className = 'fas fa-moon';
+            themeToggleBtn.style.color = '#cbd5e1'; // สีเทา
+        }
+    }
+    updateThemeIcon(); // เรียกใช้ครั้งแรก
+
+    themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('sysnectTheme', newTheme);
+        updateThemeIcon();
+        
+        // วาดกราฟใหม่เพื่อให้สีขอบและสีอักษรตรงกลางเปลี่ยนตาม Theme
+        if (ticketChart) {
+            initChart(filteredProjectsData);
+        }
+    });
 
     async function fetchDashboardData(isAuto = false) {
       const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook/index'; 
@@ -252,7 +324,7 @@
 
     function filterAndRenderData() {
       const filterValue = document.getElementById('timeFilter').value;
-      const statusValue = document.getElementById('statusFilter').value; // ค่าจาก Status Filter
+      const statusValue = document.getElementById('statusFilter').value; 
       const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
       
       const now = new Date();
@@ -261,7 +333,6 @@
       filteredProjectsData = projectsData.filter(t => {
         let isMatch = true;
         
-        // 1. กรองจาก Search
         if (searchValue) {
           const searchIn = String((t.title || "") + " " + (t.id || "")).toLowerCase();
           if (/^\d+$/.test(searchValue)) {
@@ -273,12 +344,10 @@
         }
         if (!isMatch) return false;
 
-        // 2. กรองจาก Dropdown Status 
         if (statusValue !== 'all' && t.status !== statusValue) {
             return false;
         }
 
-        // 3. กรองจาก Time Filter
         const tDate = parseTicketDate(t.date || "");
         const tStart = new Date(tDate.getFullYear(), tDate.getMonth(), tDate.getDate());
         
@@ -325,13 +394,18 @@
         const width = chart.width, height = chart.height, ctx = chart.ctx;
         ctx.restore();
         const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+        
+        // เช็คว่าปัจจุบันเป็น Theme มืดหรือสว่าง เพื่อเปลี่ยนสีตัวหนังสือตรงกลางกราฟ
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#f8fafc' : '#0f172a';
+        
         ctx.font = "500 1.2rem Kanit";
         ctx.fillStyle = "#64748b";
         ctx.textBaseline = "middle";
         ctx.textAlign = "center";
         ctx.fillText("Total Filtered", width / 2, height / 2 - 25);
         ctx.font = "bold 4.5rem Kanit"; 
-        ctx.fillStyle = "#0f172a"; 
+        ctx.fillStyle = textColor; 
         ctx.fillText(total, width / 2, height / 2 + 15);
         ctx.save();
       }
@@ -369,6 +443,10 @@
 
       const ctx = document.getElementById('ticketChart').getContext('2d');
       if (ticketChart) ticketChart.destroy();
+      
+      // ดึงสีเส้นขอบกราฟตาม Theme
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const chartBorderColor = isDark ? '#1e293b' : '#ffffff';
 
       ticketChart = new Chart(ctx, {
         type: 'doughnut',
@@ -382,7 +460,7 @@
               statusConfig["Closed"].color
             ],
             borderWidth: 8, 
-            borderColor: '#ffffff', 
+            borderColor: chartBorderColor, 
             hoverOffset: 15
           }]
         },
@@ -425,7 +503,7 @@
       listContainer.innerHTML = ''; 
       
       if(filteredTickets.length === 0) {
-        listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4" style="color: #cbd5e1;"></i><h5 class="fw-bold text-secondary">No Records Found</h5><p class="small">ไม่มีข้อมูลในสถานะนี้ตามเงื่อนไขที่ค้นหา</p></div>';
+        listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4" style="color: var(--border-color);"></i><h5 class="fw-bold" style="color: var(--text-main);">No Records Found</h5><p class="small">ไม่มีข้อมูลในสถานะนี้ตามเงื่อนไขที่ค้นหา</p></div>';
       } else {
         filteredTickets.forEach((ticket, index) => {
           const color = statusConfig[ticket.status].color;
@@ -466,7 +544,7 @@
           }
 
           if(!cleanSummary) {
-             cleanSummary = "<span class='text-muted fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
+             cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
           }
           
           const cardHtml = `
@@ -474,18 +552,18 @@
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
                   <span class="text-primary fw-bold" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</span>
-                  <h5 class="fw-bold text-dark mt-1 mb-0 lh-base" style="font-size: 1.1rem;">${ticket.category || 'General Operations'}</h5>
+                  <h5 class="fw-bold mt-1 mb-0 lh-base" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
                 </div>
-                <span class="badge" style="background-color: ${color}10; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px;">
+                <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px;">
                   <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
                 </span>
               </div>
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
-                <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: #94a3b8;"></i> ${finalLocation}</span>
-                <span class="meta-tag"><i class="far fa-calendar me-1" style="color: #94a3b8;"></i> ${ticket.date || "-"}</span>
+                <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
+                <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
               </div>
               <div class="desc-block">
-                <p class="text-secondary mb-0 text-wrap text-break" style="font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
+                <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
                   ${cleanSummary}
                 </p>
               </div>
@@ -497,18 +575,14 @@
       bsOffcanvas.show();
     }
     
-    // --- ระบบ Export Data เป็นไฟล์ CSV (Excel เปิดได้) ---
     document.getElementById('btnExport').addEventListener('click', () => {
       if (filteredProjectsData.length === 0) {
         alert("ไม่มีข้อมูลสำหรับส่งออก (Export) กรุณาปรับเงื่อนไขการค้นหา");
         return;
       }
-      
-      // กำหนด Header (ใส่ BOM เพื่อให้อ่านภาษาไทยใน Excel ได้)
       let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
       csvContent += "ID,Category,Status,Date,Location,Title,Description\n";
 
-      // ดึงข้อมูลแต่ละแถวมาต่อกัน
       filteredProjectsData.forEach(t => {
         let id = `"${String(t.id).replace(/"/g, '""')}"`;
         let cat = `"${String(t.category).replace(/"/g, '""')}"`;
@@ -516,14 +590,11 @@
         let dt = `"${String(t.date).replace(/"/g, '""')}"`;
         let loc = `"${String(t.location).replace(/"/g, '""')}"`;
         let title = `"${String(t.title).replace(/"/g, '""')}"`;
-        
         let descClean = stripHTML(String(t.ai_summary || t.description || "")).replace(/\n/g, ' ');
         let desc = `"${descClean.replace(/"/g, '""')}"`;
-
         csvContent += `${id},${cat},${stat},${dt},${loc},${title},${desc}\n`;
       });
 
-      // สั่งให้ Browser ดาวน์โหลด
       const encodedUri = encodeURI(csvContent);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
