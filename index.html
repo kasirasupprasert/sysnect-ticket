@@ -417,7 +417,7 @@
     async function fetchDashboardData(isAuto = false) {
       // อัปเดตกลับมาเป็น Webhook ของ n8n
       const n8nWebhookUrl = 'http://localhost:1880/api/tickets'; 
-      //http://localhost:1880/api/tickets//ทดสอบบนเครื่องตัวเอง
+      //http://localhost:1880/api/tickets//ทดสอบบนเครื่อง
       const loadingOverlay = document.getElementById('loadingOverlay');
       const syncIcon = document.getElementById('syncIcon');
       
@@ -629,14 +629,16 @@
         data: {
           labels: order,
           datasets: [{
-            data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
-            backgroundColor: [
-              statusConfig["New"].color, statusConfig["Assigned"].color,
-              statusConfig["Pending"].color, statusConfig["Solved"].color,
-              statusConfig["Closed"].color
-            ],
-            borderWidth: 8, borderColor: chartBorderColor, hoverOffset: 15
-          }]
+  data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
+  backgroundColor: [
+    statusConfig["New"].color, statusConfig["Assigned"].color,
+    statusConfig["Pending"].color, statusConfig["Solved"].color,
+    statusConfig["Closed"].color
+  ],
+  borderWidth: 0,         // ปิดเส้นขอบทึบเพื่อไม่ให้ไปทับกราฟก้อนเล็ก
+  spacing: 5,             // ใช้ spacing สร้างช่องว่างแทน (ก้อนเล็กจะไม่หาย)
+  hoverOffset: 15
+}]
         },
         plugins: [centerTextPlugin],
         options: {
