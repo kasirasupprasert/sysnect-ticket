@@ -53,6 +53,32 @@
     .filter-select option { background-color: var(--bg-nav); color: #ffffff; }
     .filter-select:focus { outline: none; box-shadow: none; }
     
+    .date-picker-custom { 
+      background-color: rgba(255, 255, 255, 0.08); 
+      border: 1px solid rgba(255, 255, 255, 0.15); 
+      color: #ffffff; 
+      font-family: 'Kanit', sans-serif;
+      font-size: 0.85rem; 
+      padding: 5px 12px; 
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.3s;
+      color-scheme: dark; 
+    }
+    .date-picker-custom:focus {
+      border-color: #3b82f6;
+      background-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+    .date-picker-custom::-webkit-calendar-picker-indicator { 
+      cursor: pointer; 
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .date-picker-custom::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+    
     .btn-refresh { background-color: #3b82f6; color: #fff; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     .btn-refresh:hover { background-color: #2563eb; color: #fff; transform: translateY(-1px); }
 
@@ -146,7 +172,8 @@
           <input type="text" id="searchInput" class="form-control search-box ps-5" placeholder="Search ID or Title...">
         </div>
         
-        <div class="d-flex flex-column flex-lg-row gap-2 mt-2 mt-lg-0 align-items-lg-center">
+        <div class="d-flex flex-column flex-lg-row gap-2 mt-2 mt-lg-0 align-items-lg-center flex-wrap">
+          
           <div class="filter-group">
             <i class="far fa-calendar-alt"></i>
             <select id="timeFilter" class="filter-select">
@@ -158,7 +185,14 @@
               <option value="last_month">Last Month</option>
               <option value="this_year">This Year</option>
               <option value="last_year">Last Year</option>
+              <option value="custom">ระบุช่วงเวลา (Custom)</option>
             </select>
+          </div>
+
+          <div id="customDateContainer" class="d-none align-items-center gap-2 mx-1">
+            <input type="date" id="startDate" class="date-picker-custom" title="วันที่เริ่มต้น">
+            <span class="text-white opacity-50">-</span>
+            <input type="date" id="endDate" class="date-picker-custom" title="วันที่สิ้นสุด">
           </div>
 
           <div class="filter-group">
@@ -258,14 +292,32 @@
           <h5 class="modal-title fw-bold"><i class="fas fa-bullhorn text-primary me-2"></i> มีอะไรใหม่ในเวอร์ชันนี้?</h5>
           <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
         </div>
+        
         <div class="modal-body p-4">
-          
+          <!-- แสดง 5 เวอร์ชันล่าสุดเสมอ -->
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.8 - Changelog Archive 📚</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>จัดระเบียบหน้าประวัติการอัปเดต โดยโชว์เฉพาะ 5 รายการล่าสุด และมีปุ่มให้กดกางเพื่อดูประวัติเก่าๆ ทั้งหมด</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.7 - UI Fix for Date Picker 🗓️</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>ปรับปรุงดีไซน์ช่องระบุช่วงเวลา (Custom Date) ให้ตัวหนังสือคมชัดขึ้น ไม่แตกเบลอ เพิ่มความสวยงามและกดง่ายขึ้น</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.6 - Custom Date Range 📅</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มฟีเจอร์ "ระบุช่วงเวลา (Custom Date)" ให้ผู้ใช้สามารถดึงข้อมูลแบบเจาะจงวันที่เริ่มต้นและสิ้นสุดได้เองตามต้องการ</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
               <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
-              <li>เพิ่มตัวเลือก "ปิดแล้ว (Closed)" ลงในเมนูตัวกรอง Priority ขาเข้า</li>
             </ul>
           </div>
           <div class="mb-4">
@@ -274,27 +326,66 @@
               <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
             </ul>
           </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.3 - Refined Updates ✨</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>ปรับปรุงระบบ Time Span ให้คำนวณและแสดงผลเป็น "ปี" ได้หากข้อมูลเกิน 365 วัน</li>
-              <li>เพิ่ม Filter สำหรับค้นหาข้อมูล "ปีนี้" และ "ปีที่แล้ว"</li>
-              <li>แก้ไขการแสดงผลจุดสี (Legend Dot) บนเมนูฝั่งขวาให้สวยงามและจัดเรียงถูกต้อง</li>
-            </ul>
+
+          <!-- ปุ่มกางดูประวัติเก่า -->
+          <div class="text-center mb-2">
+            <button class="btn btn-sm btn-outline-secondary w-100 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#olderChangelogs" aria-expanded="false" aria-controls="olderChangelogs" style="border-radius: 8px;">
+              <i class="fas fa-history me-1"></i> ประวัติเวอร์ชันเก่า (Show / Hide)
+            </button>
           </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.0 - Priority System 🔥</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI และเพิ่ม Badge แจ้งเตือนความด่วนบนการ์ด</li>
-            </ul>
-          </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0 - Initial Release 🚀</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เริ่มการใช้งานระบบ Ticket Management Overview อย่างเป็นทางการ</li>
-            </ul>
-          </div>
-          
+
+          <!-- ส่วนซ่อนเวอร์ชันเก่า (จะกางเมื่อกดปุ่ม) -->
+          <div class="collapse" id="olderChangelogs">
+            <div class="mb-4 mt-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.3 - Refined Updates ✨</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>ปรับปรุงระบบ Time Span ให้คำนวณและแสดงผลเป็น "ปี" ได้หากข้อมูลเกิน 365 วัน</li>
+                <li>เพิ่ม Filter สำหรับค้นหาข้อมูล "ปีนี้" และ "ปีที่แล้ว"</li>
+                <li>แก้ไขการแสดงผลจุดสี (Legend Dot) บนเมนูฝั่งขวาให้สวยงามและจัดเรียงถูกต้อง</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.2 - Time Span Logic 🕒</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
+                <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.1 - Design Upgrade ✨</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>ปรับปรุง Layout หน้าต่าง Sidebar จัดกลุ่มป้ายกำกับ Meta ให้สวยงามขึ้น ป้องกันปัญหาข้อความยาวทะลุกรอบ</li>
+                <li>ปรับดีไซน์ป้าย Priority ให้เป็นแบบ Soft UI สีพาสเทลขอบมน สบายตา</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.0 - Priority System 🔥</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI และเพิ่ม Badge แจ้งเตือนความด่วนบนการ์ด</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0 - UI Enhancements 🎨</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ใน Dropdown เดียว</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0 - Mode Switching 🌙</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
+                <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
+                <li>อัปเกรดระบบ Export เป็นไฟล์ CSV</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0 - Initial Release 🚀</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เริ่มการใช้งานระบบ Ticket Management Overview อย่างเป็นทางการ</li>
+              </ul>
+            </div>
+          </div> <!-- ปิด olderChangelogs -->
+
         </div>
         <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
           <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">รับทราบ</button>
@@ -334,20 +425,15 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
-    // --- ระบบ Smart Pop-up สำหรับ Changelog ---
-    // กำหนดเวอร์ชันปัจจุบัน ถ้าอัปเดตเวอร์ชันใหม่ในอนาคต ให้เปลี่ยนเลขตรงนี้ครับ
-    const CURRENT_APP_VERSION = 'v1.4.5'; 
+    const CURRENT_APP_VERSION = 'v1.4.8'; 
     
     function checkAndShowChangelog() {
       const lastSeenVersion = localStorage.getItem('sysnectLastSeenVersion');
-      
-      // ถ้าผู้ใช้ยังไม่เคยเห็นเวอร์ชันปัจจุบัน ให้แสดง Pop-up
       if (lastSeenVersion !== CURRENT_APP_VERSION) {
         const changelogModalEl = document.getElementById('changelogModal');
         if (changelogModalEl) {
           const myModal = new bootstrap.Modal(changelogModalEl);
           myModal.show();
-          // อัปเดต localStorage เพื่อไม่ให้โชว์ซ้ำอีกในครั้งหน้า
           localStorage.setItem('sysnectLastSeenVersion', CURRENT_APP_VERSION);
         }
       }
@@ -431,7 +517,7 @@
     });
 
     async function fetchDashboardData(isAuto = false) {
-      const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook/index'; 
+      const n8nWebhookUrl = 'http://localhost:1880/api/tickets'; 
       const loadingOverlay = document.getElementById('loadingOverlay');
       const syncIcon = document.getElementById('syncIcon');
       
@@ -548,6 +634,25 @@
             return tDate.getFullYear() === now.getFullYear();
           case 'last_year':
             return tDate.getFullYear() === now.getFullYear() - 1;
+          case 'custom':
+            const startVal = document.getElementById('startDate').value;
+            const endVal = document.getElementById('endDate').value;
+            if (!startVal && !endVal) return true; 
+            
+            let isAfterStart = true;
+            let isBeforeEnd = true;
+            
+            if (startVal) {
+               const sDate = new Date(startVal);
+               sDate.setHours(0,0,0,0);
+               isAfterStart = tStart.getTime() >= sDate.getTime();
+            }
+            if (endVal) {
+               const eDate = new Date(endVal);
+               eDate.setHours(23,59,59,999);
+               isBeforeEnd = tStart.getTime() <= eDate.getTime();
+            }
+            return isAfterStart && isBeforeEnd;
           case 'all':
           default:
             return true;
@@ -867,15 +972,28 @@
     });
 
     document.getElementById('searchInput').addEventListener('input', () => { filterAndRenderData(); });
-    document.getElementById('timeFilter').addEventListener('change', () => { filterAndRenderData(); });
+    
+    document.getElementById('timeFilter').addEventListener('change', (e) => { 
+        const customDateDiv = document.getElementById('customDateContainer');
+        if(e.target.value === 'custom') {
+            customDateDiv.classList.remove('d-none');
+            customDateDiv.classList.add('d-flex');
+        } else {
+            customDateDiv.classList.remove('d-flex');
+            customDateDiv.classList.add('d-none');
+            filterAndRenderData(); 
+        }
+    });
+    
+    document.getElementById('startDate').addEventListener('change', filterAndRenderData);
+    document.getElementById('endDate').addEventListener('change', filterAndRenderData);
+
     document.getElementById('statusFilter').addEventListener('change', () => { filterAndRenderData(); });
     document.getElementById('priorityFilter').addEventListener('change', () => { filterAndRenderData(); }); 
     document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
 
     window.onload = () => { 
-      // เรียกใช้ระบบเช็คและแสดง Pop-up ตอนโหลดหน้าเว็บครั้งแรก
       checkAndShowChangelog();
-      
       fetchDashboardData(false); 
       setInterval(() => { fetchDashboardData(true); }, 60000);
     };
