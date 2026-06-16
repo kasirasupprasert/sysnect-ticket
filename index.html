@@ -85,7 +85,6 @@
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
-    /* แก้ไขระบบจุดสี (Legend Item) ให้แสดงผลถูกต้อง */
     .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
     .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .legend-left { display: flex; align-items: center; gap: 12px; }
@@ -174,6 +173,18 @@
             </select>
           </div>
 
+          <div class="filter-group">
+            <i class="fas fa-fire"></i>
+            <select id="priorityFilter" class="filter-select">
+              <option value="all">All Priority</option>
+              <option value="very_high">ด่วนมาก (Very High)</option>
+              <option value="high">ด่วน (High)</option>
+              <option value="medium">ปานกลาง (Medium)</option>
+              <option value="low">ทั่วไป (Low)</option>
+              <option value="closed">ปิดแล้ว (Closed)</option>
+            </select>
+          </div>
+
           <button class="btn btn-refresh px-3 ms-lg-2" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
           
           <div class="dropdown">
@@ -250,7 +261,20 @@
         <div class="modal-body p-4">
           
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.3 - Refined Updates ✨</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.5 - Status Sync Updates 🔄</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
+              <li>เพิ่มตัวเลือก "ปิดแล้ว (Closed)" ลงในเมนูตัวกรอง Priority ขาเข้า</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.4 - Priority Filtering 🔥</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.3 - Refined Updates ✨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>ปรับปรุงระบบ Time Span ให้คำนวณและแสดงผลเป็น "ปี" ได้หากข้อมูลเกิน 365 วัน</li>
               <li>เพิ่ม Filter สำหรับค้นหาข้อมูล "ปีนี้" และ "ปีที่แล้ว"</li>
@@ -258,10 +282,10 @@
             </ul>
           </div>
           <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.2 -  Time Span Logic 🕒</h6>
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.2 - Time Span Logic 🕒</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
-              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง"</li>
+              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง</li>
             </ul>
           </div>
           <div class="mb-4">
@@ -276,28 +300,6 @@
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI</li>
               <li>เพิ่มป้ายกำกับ (Badge) แจ้งเตือนความด่วนบนการ์ดในหน้า Dashboard</li>
-            </ul>
-          </div>
-
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0 - UI Enhancements 🎨</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ใน Dropdown เดียว</li>
-            </ul>
-          </div>
-
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0 - Mode Switching 🌙</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
-              <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
-              <li>อัปเกรดระบบ Export เป็นไฟล์ CSV</li>
-            </ul>
-          </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0 - Initial Release 🚀</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เริ่มการใช้งานระบบ Ticket Management</li>
             </ul>
           </div>
           
@@ -415,9 +417,7 @@
     });
 
     async function fetchDashboardData(isAuto = false) {
-      // อัปเดตกลับมาเป็น Webhook ของ n8n
       const n8nWebhookUrl = 'http://localhost:1880/api/tickets'; 
-      //http://localhost:1880/api/tickets//ทดสอบบนเครื่อง
       const loadingOverlay = document.getElementById('loadingOverlay');
       const syncIcon = document.getElementById('syncIcon');
       
@@ -477,6 +477,7 @@
     function filterAndRenderData() {
       const filterValue = document.getElementById('timeFilter').value;
       const statusValue = document.getElementById('statusFilter').value; 
+      const priorityValue = document.getElementById('priorityFilter').value;
       const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
       
       const now = new Date();
@@ -490,6 +491,28 @@
         }
         if (!isMatch) return false;
         if (statusValue !== 'all' && t.status !== statusValue) return false;
+
+        // เช็คเงื่อนไข Priority (อัปเดตให้รองรับ Closed)
+        if (priorityValue !== 'all') {
+          let ticketPrioCategory = "medium";
+          
+          if (t.status === "Closed") {
+            ticketPrioCategory = "closed";
+          } else {
+            let p = String(t.priority || "3").toLowerCase();
+            if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') {
+              ticketPrioCategory = "very_high";
+            } else if (p.includes('high') || p === '4') {
+              ticketPrioCategory = "high";
+            } else if (p.includes('medium') || p === '3') {
+              ticketPrioCategory = "medium";
+            } else {
+              ticketPrioCategory = "low";
+            }
+          }
+          
+          if (ticketPrioCategory !== priorityValue) return false;
+        }
 
         const tDate = parseTicketDate(t.date || "");
         const tStart = new Date(tDate.getFullYear(), tDate.getMonth(), tDate.getDate());
@@ -543,7 +566,6 @@
                     const diffMonths = (diffDays / 30).toFixed(1);
                     timeSpanText = `${diffMonths.replace('.0', '')} เดือน`;
                 } else {
-                    // ถ้าข้อมูลเกิน 365 วัน ให้โชว์เป็น ปี
                     const diffYears = (diffDays / 365).toFixed(1);
                     timeSpanText = `${diffYears.replace('.0', '')} ปี`;
                 }
@@ -629,16 +651,16 @@
         data: {
           labels: order,
           datasets: [{
-  data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
-  backgroundColor: [
-    statusConfig["New"].color, statusConfig["Assigned"].color,
-    statusConfig["Pending"].color, statusConfig["Solved"].color,
-    statusConfig["Closed"].color
-  ],
-  borderWidth: 0,         // ปิดเส้นขอบทึบเพื่อไม่ให้ไปทับกราฟก้อนเล็ก
-  spacing: 5,             // ใช้ spacing สร้างช่องว่างแทน (ก้อนเล็กจะไม่หาย)
-  hoverOffset: 15
-}]
+            data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
+            backgroundColor: [
+              statusConfig["New"].color, statusConfig["Assigned"].color,
+              statusConfig["Pending"].color, statusConfig["Solved"].color,
+              statusConfig["Closed"].color
+            ],
+            borderWidth: 0,
+            spacing: 5,
+            hoverOffset: 15
+          }]
         },
         plugins: [centerTextPlugin],
         options: {
@@ -669,7 +691,12 @@
       return doc.body.textContent || doc.body.innerText || "";
     }
 
-    function getPriorityBadge(prioCode) {
+    function getPriorityBadge(prioCode, status) {
+      // ตรวจสอบถ้างานนั้นถูกปิดไปแล้ว (Closed) ให้โชว์ป้ายเป็น Closed
+      if (status === 'Closed') {
+        return `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-archive me-1"></i>ปิดแล้ว</span>`;
+      }
+
       let p = String(prioCode || "3").toLowerCase();
       if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') {
         return `<span class="badge pulse-danger" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-fire me-1"></i>ด่วนมาก</span>`;
@@ -737,7 +764,7 @@
                   <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px; white-space: nowrap;">
                     <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
                   </span>
-                  ${getPriorityBadge(ticket.priority)}
+                  ${getPriorityBadge(ticket.priority, ticket.status)}
                 </div>
               </div>
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
@@ -796,11 +823,16 @@
             cleanSummary = "ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้";
         }
         
+        // เช็คเงื่อนไข Priority สำหรับการส่งออก (เพิ่ม Closed)
         let prioText = "Medium";
-        let p = String(t.priority || "3").toLowerCase();
-        if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') prioText = "Very High";
-        else if (p.includes('high') || p === '4') prioText = "High";
-        else if (p.includes('low') || p === '2' || p === '1') prioText = "Low";
+        if (t.status === "Closed") {
+            prioText = "Closed";
+        } else {
+            let p = String(t.priority || "3").toLowerCase();
+            if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') prioText = "Very High";
+            else if (p.includes('high') || p === '4') prioText = "High";
+            else if (p.includes('low') || p === '2' || p === '1') prioText = "Low";
+        }
 
         let id = `"${realId.replace(/"/g, '""')}"`;
         let prio = `"${prioText}"`;
@@ -828,6 +860,7 @@
     document.getElementById('searchInput').addEventListener('input', () => { filterAndRenderData(); });
     document.getElementById('timeFilter').addEventListener('change', () => { filterAndRenderData(); });
     document.getElementById('statusFilter').addEventListener('change', () => { filterAndRenderData(); });
+    document.getElementById('priorityFilter').addEventListener('change', () => { filterAndRenderData(); }); 
     document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
 
     window.onload = () => { 
