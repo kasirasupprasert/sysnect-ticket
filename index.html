@@ -85,12 +85,12 @@
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
+    /* แก้ไขระบบจุดสี (Legend Item) ให้แสดงผลถูกต้อง */
     .legend-item { display: flex; align-items: center; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: var(--text-main); background: var(--bg-main); padding: 12px 20px; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; border: 1px solid var(--border-color); }
     .legend-item:hover { transform: translateX(5px); background: var(--bg-card); border-color: #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
     .legend-left { display: flex; align-items: center; gap: 12px; }
     .legend-color { width: 12px; height: 12px; border-radius: 3px; display: block; flex-shrink: 0; }
 
-    /* ปรับ margin ให้ Pill ห่อตัวได้เมื่อหน้าจอเล็กลง */
     .kpi-pill { display: inline-flex; align-items: center; background: var(--bg-card); padding: 8px 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid var(--border-color); font-weight: 500; color: var(--text-main); margin: 0 6px 12px 6px; font-size: 0.9rem; transition: all 0.3s ease;}
     .kpi-pill i { color: #3b82f6; margin-right: 8px; }
 
@@ -155,8 +155,10 @@
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="this_week">This Week</option>
-              <option value="last_month">Last Month</option>
               <option value="this_month">This Month</option>
+              <option value="last_month">Last Month</option>
+              <option value="this_year">This Year</option>
+              <option value="last_year">Last Year</option>
             </select>
           </div>
 
@@ -248,13 +250,20 @@
         <div class="modal-body p-4">
           
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.2 - Time Span Logic 🕒</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.3 - Refined Updates ✨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
-              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง</li>
+              <li>ปรับปรุงระบบ Time Span ให้คำนวณและแสดงผลเป็น "ปี" ได้หากข้อมูลเกิน 365 วัน</li>
+              <li>เพิ่ม Filter สำหรับค้นหาข้อมูล "ปีนี้" และ "ปีที่แล้ว"</li>
+              <li>แก้ไขการแสดงผลจุดสี (Legend Dot) บนเมนูฝั่งขวาให้สวยงามและจัดเรียงถูกต้อง</li>
             </ul>
           </div>
-
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.2 -  Time Span Logic 🕒</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
+              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง"</li>
+            </ul>
+          </div>
           <div class="mb-4">
             <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.1 - Design Upgrade ✨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
@@ -262,7 +271,6 @@
               <li>ปรับดีไซน์ป้าย Priority ให้เป็นแบบ Soft UI สีพาสเทลขอบมน สบายตา</li>
             </ul>
           </div>
-
           <div class="mb-4">
             <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.0 - Priority System 🔥</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
@@ -407,6 +415,7 @@
     });
 
     async function fetchDashboardData(isAuto = false) {
+      // อัปเดตกลับมาเป็น Webhook ของ n8n
       const n8nWebhookUrl = 'http://localhost:1880/api/tickets'; 
       const loadingOverlay = document.getElementById('loadingOverlay');
       const syncIcon = document.getElementById('syncIcon');
@@ -495,11 +504,15 @@
             const startOfWeek = new Date(todayStart);
             startOfWeek.setDate(startOfWeek.getDate() - dayOfWeek);
             return tStart >= startOfWeek && tStart <= todayStart;
+          case 'this_month':
+            return tDate.getFullYear() === now.getFullYear() && tDate.getMonth() === now.getMonth();
           case 'last_month': 
             const lastMonthDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
             return tDate.getFullYear() === lastMonthDate.getFullYear() && tDate.getMonth() === lastMonthDate.getMonth();
-          case 'this_month':
-            return tDate.getFullYear() === now.getFullYear() && tDate.getMonth() === now.getMonth();
+          case 'this_year':
+            return tDate.getFullYear() === now.getFullYear();
+          case 'last_year':
+            return tDate.getFullYear() === now.getFullYear() - 1;
           case 'all':
           default:
             return true;
@@ -525,9 +538,13 @@
                     timeSpanText = "1 วัน";
                 } else if (diffDays < 30) {
                     timeSpanText = `${diffDays} วัน`;
-                } else {
+                } else if (diffDays < 365) {
                     const diffMonths = (diffDays / 30).toFixed(1);
                     timeSpanText = `${diffMonths.replace('.0', '')} เดือน`;
+                } else {
+                    // ถ้าข้อมูลเกิน 365 วัน ให้โชว์เป็น ปี
+                    const diffYears = (diffDays / 365).toFixed(1);
+                    timeSpanText = `${diffYears.replace('.0', '')} ปี`;
                 }
             }
         }
