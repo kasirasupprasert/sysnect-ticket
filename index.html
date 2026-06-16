@@ -255,14 +255,15 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
         <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-          <h5 class="modal-title fw-bold"><i class="fas fa-history text-primary me-2"></i> ประวัติการอัปเดต</h5>
+          <h5 class="modal-title fw-bold"><i class="fas fa-bullhorn text-primary me-2"></i> มีอะไรใหม่ในเวอร์ชันนี้?</h5>
           <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
         </div>
         <div class="modal-body p-4">
           
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.5 - Status Sync Updates 🔄</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
               <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
               <li>เพิ่มตัวเลือก "ปิดแล้ว (Closed)" ลงในเมนูตัวกรอง Priority ขาเข้า</li>
             </ul>
@@ -282,27 +283,21 @@
             </ul>
           </div>
           <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.2 - Time Span Logic 🕒</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มป้ายแสดง "ข้อมูลย้อนหลัง" (Time Span) เพื่อคำนวณและแสดงจำนวนเดือน/วันที่ดึงข้อมูลมาอัตโนมัติ</li>
-              <li>แก้ไข CSS จุดสีในรายการ Status ฝั่งขวาให้แสดงผลถูกต้อง</li>
-            </ul>
-          </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.1 - Design Upgrade ✨</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>ปรับปรุง Layout หน้าต่าง Sidebar จัดกลุ่มป้ายกำกับ Meta ให้สวยงามขึ้น ป้องกันปัญหาข้อความยาวทะลุกรอบ</li>
-              <li>ปรับดีไซน์ป้าย Priority ให้เป็นแบบ Soft UI สีพาสเทลขอบมน สบายตา</li>
-            </ul>
-          </div>
-          <div class="mb-4">
             <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.0 - Priority System 🔥</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI</li>
-              <li>เพิ่มป้ายกำกับ (Badge) แจ้งเตือนความด่วนบนการ์ดในหน้า Dashboard</li>
+              <li>เพิ่มระบบดึงข้อมูลระดับความสำคัญ (Priority) จาก GLPI และเพิ่ม Badge แจ้งเตือนความด่วนบนการ์ด</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0 - Initial Release 🚀</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เริ่มการใช้งานระบบ Ticket Management Overview อย่างเป็นทางการ</li>
             </ul>
           </div>
           
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+          <button type="button" class="btn btn-primary w-100" data-bs-dismiss="modal">รับทราบ</button>
         </div>
       </div>
     </div>
@@ -339,6 +334,25 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
+    // --- ระบบ Smart Pop-up สำหรับ Changelog ---
+    // กำหนดเวอร์ชันปัจจุบัน ถ้าอัปเดตเวอร์ชันใหม่ในอนาคต ให้เปลี่ยนเลขตรงนี้ครับ
+    const CURRENT_APP_VERSION = 'v1.4.5'; 
+    
+    function checkAndShowChangelog() {
+      const lastSeenVersion = localStorage.getItem('sysnectLastSeenVersion');
+      
+      // ถ้าผู้ใช้ยังไม่เคยเห็นเวอร์ชันปัจจุบัน ให้แสดง Pop-up
+      if (lastSeenVersion !== CURRENT_APP_VERSION) {
+        const changelogModalEl = document.getElementById('changelogModal');
+        if (changelogModalEl) {
+          const myModal = new bootstrap.Modal(changelogModalEl);
+          myModal.show();
+          // อัปเดต localStorage เพื่อไม่ให้โชว์ซ้ำอีกในครั้งหน้า
+          localStorage.setItem('sysnectLastSeenVersion', CURRENT_APP_VERSION);
+        }
+      }
+    }
+
     const statusConfig = {
       "New": { color: "#3b82f6", icon: "fa-asterisk" },
       "Assigned": { color: "#f59e0b", icon: "fa-tasks" },
@@ -492,10 +506,8 @@
         if (!isMatch) return false;
         if (statusValue !== 'all' && t.status !== statusValue) return false;
 
-        // เช็คเงื่อนไข Priority (อัปเดตให้รองรับ Closed)
         if (priorityValue !== 'all') {
           let ticketPrioCategory = "medium";
-          
           if (t.status === "Closed") {
             ticketPrioCategory = "closed";
           } else {
@@ -510,7 +522,6 @@
               ticketPrioCategory = "low";
             }
           }
-          
           if (ticketPrioCategory !== priorityValue) return false;
         }
 
@@ -692,7 +703,6 @@
     }
 
     function getPriorityBadge(prioCode, status) {
-      // ตรวจสอบถ้างานนั้นถูกปิดไปแล้ว (Closed) ให้โชว์ป้ายเป็น Closed
       if (status === 'Closed') {
         return `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-archive me-1"></i>ปิดแล้ว</span>`;
       }
@@ -823,7 +833,6 @@
             cleanSummary = "ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้";
         }
         
-        // เช็คเงื่อนไข Priority สำหรับการส่งออก (เพิ่ม Closed)
         let prioText = "Medium";
         if (t.status === "Closed") {
             prioText = "Closed";
@@ -864,6 +873,9 @@
     document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
 
     window.onload = () => { 
+      // เรียกใช้ระบบเช็คและแสดง Pop-up ตอนโหลดหน้าเว็บครั้งแรก
+      checkAndShowChangelog();
+      
       fetchDashboardData(false); 
       setInterval(() => { fetchDashboardData(true); }, 60000);
     };
