@@ -272,18 +272,24 @@
           </div>
 
           <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0</h6>
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.3.0 - UI Enhancements 🎨</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>ปรับปรุงหน้า UI (Clean Interface) รวบเมนูต่างๆ ไว้ใน Dropdown เดียว</li>
             </ul>
           </div>
 
           <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0</h6>
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.2.0 - Mode Switching 🌙</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบ Dark Mode / Light Mode พร้อมจำค่าเริ่มต้น</li>
               <li>เพิ่มระบบแจ้งเตือนเชิงรุก (Active Alerts) แบบเสียงและ Desktop Pop-up</li>
               <li>อัปเกรดระบบ Export เป็นไฟล์ CSV</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.0.0 - Initial Release 🚀</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เริ่มการใช้งานระบบ Ticket Management</li>
             </ul>
           </div>
           
@@ -401,7 +407,7 @@
     });
 
     async function fetchDashboardData(isAuto = false) {
-      const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook/index'; 
+      const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook-test/index'; 
       const loadingOverlay = document.getElementById('loadingOverlay');
       const syncIcon = document.getElementById('syncIcon');
       
@@ -470,12 +476,7 @@
         let isMatch = true;
         if (searchValue) {
           const searchIn = String((t.title || "") + " " + (t.id || "")).toLowerCase();
-          if (/^\d+$/.test(searchValue)) {
-            const regex = new RegExp("(^|[^\\d])" + searchValue + "([^\\d]|$)");
-            isMatch = regex.test(searchIn);
-          } else {
-            isMatch = searchIn.includes(searchValue);
-          }
+          isMatch = searchIn.includes(searchValue);
         }
         if (!isMatch) return false;
         if (statusValue !== 'all' && t.status !== statusValue) return false;
@@ -507,8 +508,6 @@
 
       const stats = document.getElementById('stats');
       if (stats) {
-        
-        // --- ระบบคำนวณระยะเวลา (Time Span) อัตโนมัติ ---
         let timeSpanText = "ไม่มีข้อมูล";
         if (filteredProjectsData.length > 0) {
             const dates = filteredProjectsData
