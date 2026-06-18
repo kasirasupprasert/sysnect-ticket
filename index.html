@@ -546,7 +546,8 @@
         if (!isAuto && loadingOverlay) loadingOverlay.classList.remove('hidden');
         else if (isAuto && syncIcon) syncIcon.classList.add('fa-spin');
         
-        const response = await fetch(n8nWebhookUrl);
+        // เพิ่ม { cache: 'no-store' } เพื่อบังคับให้เบราว์เซอร์ดึงข้อมูลใหม่ทุกครั้ง
+        const response = await fetch(`${n8nWebhookUrl}?t=${new Date().getTime()}`, { cache: 'no-store' });
         const data = await response.json();
         
         if(!data || !data.tickets){ throw new Error('Invalid API response'); }
@@ -1100,6 +1101,7 @@
       `;
 
       document.getElementById('exportPreviewContent').innerHTML = previewHtml;
+
       // จัดเตรียมข้อมูลแบบหน้า HTML เต็มๆ สำหรับปริ้นจริงๆ
       currentPdfHtmlContent = `
         <!DOCTYPE html>
