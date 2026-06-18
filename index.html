@@ -586,7 +586,7 @@
       filteredProjectsData = projectsData.filter(t => {
         let isMatch = true;
         if (searchValue) {
-          const searchIn = String((t.title || "") + " " + (t.id || "")).toLowerCase();
+          const searchIn = String((t.title || "") + " " + (t.id || "") + " " + (t.project || "") + " " + (t.project_code || "")).toLowerCase();
           isMatch = searchIn.includes(searchValue);
         }
         if (!isMatch) return false;
@@ -883,6 +883,8 @@
                 </div>
               </div>
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
+                ${ticket.project_code ? `<span class="meta-tag" style="background-color: rgba(99, 102, 241, 0.12); color: #6366f1; border-color: rgba(99, 102, 241, 0.3); font-weight: 700; letter-spacing: 0.3px;"><i class="fas fa-tag me-1"></i>${ticket.project_code}</span>` : ''}
+                <span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.25); font-weight: 600;"><i class="fas fa-folder-open me-1"></i> ${ticket.project || "ไม่ระบุโครงการ"}</span>
                 <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
                 <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
               </div>
@@ -906,7 +908,7 @@
         return;
       }
       
-      let csvContent = "ID,Priority,Category,Status,Date,Location,Title,Description\n";
+      let csvContent = "ID,Priority,Category,Project Code,Project,Status,Date,Location,Title,Description\n";
 
       filteredProjectsData.forEach(t => {
         let realId = String(t.id || "-");
@@ -951,13 +953,15 @@
         let id = `"${realId.replace(/"/g, '""')}"`;
         let prio = `"${prioText}"`;
         let cat = `"${String(t.category || "").replace(/"/g, '""')}"`;
+        let projCode = `"${String(t.project_code || "").replace(/"/g, '""')}"`;
+        let proj = `"${String(t.project || "ไม่ระบุโครงการ").replace(/"/g, '""')}"`;
         let stat = `"${String(t.status || "").replace(/"/g, '""')}"`;
         let dt = `"${String(t.date || "").replace(/"/g, '""')}"`;
         let loc = `"${finalLocation.replace(/"/g, '""')}"`;
         let title = `"${longText.replace(/"/g, '""')}"`;
         let desc = `"${cleanSummary.replace(/"/g, '""').replace(/\n/g, ' ')}"`;
         
-        csvContent += `${id},${prio},${cat},${stat},${dt},${loc},${title},${desc}\n`;
+        csvContent += `${id},${prio},${cat},${projCode},${proj},${stat},${dt},${loc},${title},${desc}\n`;
       });
 
       const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
