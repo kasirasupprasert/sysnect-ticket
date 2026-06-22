@@ -219,6 +219,13 @@
             </select>
           </div>
 
+          <div class="filter-group">
+            <i class="fas fa-folder-open"></i>
+            <select id="projectFilter" class="filter-select" style="max-width: 150px;">
+              <option value="all">All Projects</option>
+            </select>
+          </div>
+
           <button class="btn btn-refresh px-3 ms-lg-2" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
           
           <div class="dropdown">
@@ -297,7 +304,15 @@
         <div class="modal-body p-4">
           <!-- แสดง 5 เวอร์ชันล่าสุดเสมอ -->
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.8 - Changelog Archive 📚</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.9 - Job Duration Tracker ⏱️</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มระบบแสดงอายุงาน (Duration) บนการ์ด Ticket ทุกใบ แสดงเป็น ปี เดือน วัน</li>
+              <li>งานที่ยังเปิดอยู่: นับระยะเวลาจากวันเปิดถึงปัจจุบัน พร้อมสีบ่งบอกความนาน (เขียว/เหลือง/แดง)</li>
+              <li>งานที่ปิดแล้ว (Closed/Solved): แสดงระยะเวลาทั้งหมดตั้งแต่เปิดจนถึงปิด พร้อม Export ลง CSV</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.8 - Changelog Archive 📚</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>จัดระเบียบหน้าประวัติการอัปเดต โดยโชว์เฉพาะ 5 รายการล่าสุด และมีปุ่มให้กดกางเพื่อดูประวัติเก่าๆ ทั้งหมด</li>
             </ul>
@@ -445,7 +460,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
-    const CURRENT_APP_VERSION = 'v1.4.8'; 
+    const CURRENT_APP_VERSION = 'v1.4.9'; 
     
     function checkAndShowChangelog() {
       const lastSeenVersion = localStorage.getItem('sysnectLastSeenVersion');
@@ -574,6 +589,21 @@
         apiUpdatedAt = data.updated_at ?? '-';
         apiTotalCount = data.total ?? projectsData.length;
         
+        // Populate Project Filter
+        const projectSelect = document.getElementById('projectFilter');
+        const currentProjectValue = projectSelect.value;
+        const projectsList = [...new Set(projectsData.map(t => t.project ? t.project : "ไม่ระบุโครงการ"))].sort();
+        projectSelect.innerHTML = '<option value="all">All Projects</option>';
+        projectsList.forEach(proj => {
+            const option = document.createElement('option');
+            option.value = proj;
+            option.textContent = proj;
+            projectSelect.appendChild(option);
+        });
+        if (projectsList.includes(currentProjectValue)) {
+            projectSelect.value = currentProjectValue;
+        }
+
         filterAndRenderData();
         
       } catch (error) {
@@ -600,6 +630,7 @@
       const filterValue = document.getElementById('timeFilter').value;
       const statusValue = document.getElementById('statusFilter').value; 
       const priorityValue = document.getElementById('priorityFilter').value;
+      const projectValue = document.getElementById('projectFilter').value;
       const searchValue = document.getElementById('searchInput').value.toLowerCase().trim();
       
       const now = new Date();
@@ -632,6 +663,9 @@
           }
           if (ticketPrioCategory !== priorityValue) return false;
         }
+
+        const tProject = t.project ? t.project : "ไม่ระบุโครงการ";
+        if (projectValue !== 'all' && tProject !== projectValue) return false;
 
         const tDate = parseTicketDate(t.date || "");
         const tStart = new Date(tDate.getFullYear(), tDate.getMonth(), tDate.getDate());
@@ -710,12 +744,17 @@
             }
         }
 
+        const uniqueProjectsCount = new Set(filteredProjectsData.map(t => t.project ? t.project : "ไม่ระบุโครงการ")).size;
+
         stats.innerHTML = `
           <div class="kpi-pill">
             <i class="fas fa-chart-line"></i> แสดงผล: ${filteredProjectsData.length} / ${apiTotalCount} รายการ
           </div>
           <div class="kpi-pill" title="ระยะเวลาของข้อมูลที่แสดงอยู่">
             <i class="fas fa-calendar-day"></i> ข้อมูลย้อนหลัง: ${timeSpanText}
+          </div>
+          <div class="kpi-pill" title="จำนวนโครงการทั้งหมดที่แสดงผล">
+            <i class="fas fa-folder"></i> โครงการทั้งหมด: ${uniqueProjectsCount}
           </div>
           <div class="kpi-pill">
             <i class="fas fa-sync-alt"></i> อัปเดตล่าสุด: ${apiUpdatedAt}
@@ -829,6 +868,93 @@
       return doc.body.textContent || doc.body.innerText || "";
     }
 
+    // ========== ระบบคำนวณระยะเวลาของงาน ==========
+    function getDurationBadge(ticket) {
+      const dateOpen = ticket.date;
+      const dateClosed = ticket.date_closed || null;
+      const isClosed = (ticket.status === 'Closed' || ticket.status === 'Solved');
+
+      if (!dateOpen || dateOpen === '-') return '';
+
+      function parseDate(str) {
+        const parts = String(str).split('-');
+        if (parts.length === 3) return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+        return null;
+      }
+
+      function formatDuration(startDate, endDate) {
+        let years = endDate.getFullYear() - startDate.getFullYear();
+        let months = endDate.getMonth() - startDate.getMonth();
+        let days = endDate.getDate() - startDate.getDate();
+
+        if (days < 0) {
+          months--;
+          const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+          days += prevMonth.getDate();
+        }
+        if (months < 0) { years--; months += 12; }
+
+        let parts = [];
+        if (years > 0) parts.push(years + ' ปี');
+        if (months > 0) parts.push(months + ' เดือน');
+        if (days > 0 || parts.length === 0) parts.push(days + ' วัน');
+        return parts.join(' ');
+      }
+
+      const start = parseDate(dateOpen);
+      if (!start) return '';
+
+      let badgeColor, icon, label, durationText;
+
+      if (isClosed && dateClosed) {
+        // งานปิดแล้ว: นับตั้งแต่เปิดถึงวันปิด
+        const end = parseDate(dateClosed);
+        if (!end) return '';
+        durationText = formatDuration(start, end);
+        badgeColor = 'rgba(100, 116, 139, 0.12)';
+        borderColor = 'rgba(100, 116, 139, 0.3)';
+        textColor = '#64748b';
+        icon = 'fa-flag-checkered';
+        label = 'ใช้เวลา';
+      } else if (isClosed && !dateClosed) {
+        // ปิดแล้วแต่ไม่มีวันปิด ใช้วันที่เปิดเป็นเกณฑ์
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        durationText = formatDuration(start, today);
+        badgeColor = 'rgba(100, 116, 139, 0.12)';
+        borderColor = 'rgba(100, 116, 139, 0.3)';
+        textColor = '#64748b';
+        icon = 'fa-flag-checkered';
+        label = 'ใช้เวลา';
+      } else {
+        // งานยังเปิดอยู่: นับถึงปัจจุบัน
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const totalDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+        durationText = formatDuration(start, today);
+
+        if (totalDays <= 3) {
+          badgeColor = 'rgba(16, 185, 129, 0.1)';
+          borderColor = 'rgba(16, 185, 129, 0.3)';
+          textColor = '#10b981';
+          icon = 'fa-clock';
+        } else if (totalDays <= 14) {
+          badgeColor = 'rgba(245, 158, 11, 0.1)';
+          borderColor = 'rgba(245, 158, 11, 0.3)';
+          textColor = '#f59e0b';
+          icon = 'fa-hourglass-half';
+        } else {
+          badgeColor = 'rgba(239, 68, 68, 0.1)';
+          borderColor = 'rgba(239, 68, 68, 0.3)';
+          textColor = '#ef4444';
+          icon = 'fa-fire-alt';
+        }
+        label = 'เปิดมาแล้ว';
+      }
+
+      return `<span class="meta-tag" title="${label}: ${durationText}" style="background-color: ${badgeColor}; color: ${textColor}; border-color: ${borderColor}; font-weight: 600;"><i class="fas ${icon} me-1"></i>${label}: ${durationText}</span>`;
+    }
+
     function getPriorityBadge(prioCode, status) {
       if (status === 'Closed') {
         return `<span class="badge" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; font-size: 0.7rem; padding: 5px 10px; border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 6px; white-space: nowrap;"><i class="fas fa-archive me-1"></i>ปิดแล้ว</span>`;
@@ -909,6 +1035,7 @@
                 <span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.25); font-weight: 600;"><i class="fas fa-folder-open me-1"></i> ${ticket.project || "ไม่ระบุโครงการ"}</span>
                 <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
                 <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
+                ${getDurationBadge(ticket)}
               </div>
               <div class="desc-block">
                 <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
@@ -933,7 +1060,7 @@
         return;
       }
       
-      let csvContent = "ID,Priority,Category,Project Code,Project,Status,Date,Location,Title,Description\n";
+      let csvContent = "ID,Priority,Category,Project Code,Project,Status,Date Open,Date Closed,Duration,Location,Title,Description\n";
 
       filteredProjectsData.forEach(t => {
         let realId = String(t.id || "-");
@@ -975,6 +1102,21 @@
             else if (p.includes('low') || p === '2' || p === '1') prioText = "Low";
         }
 
+        // คำนวณ duration สำหรับ CSV
+        function calcDurationText(startStr, endStr) {
+          function pDate(s) { if(!s||s==='-') return null; const p=String(s).split('-'); return p.length===3?new Date(+p[0],+p[1]-1,+p[2]):null; }
+          function fmtDur(s,e) {
+            let yr=e.getFullYear()-s.getFullYear(), mo=e.getMonth()-s.getMonth(), dy=e.getDate()-s.getDate();
+            if(dy<0){mo--;const pm=new Date(e.getFullYear(),e.getMonth(),0);dy+=pm.getDate();}
+            if(mo<0){yr--;mo+=12;}
+            let pts=[]; if(yr>0)pts.push(yr+' ปี'); if(mo>0)pts.push(mo+' เดือน'); if(dy>0||!pts.length)pts.push(dy+' วัน'); return pts.join(' ');
+          }
+          const s=pDate(startStr); if(!s) return '-';
+          const e=endStr&&endStr!=='-'?pDate(endStr):new Date(); if(!e) return '-';
+          return fmtDur(s,e);
+        }
+        const durationCsv = calcDurationText(t.date, t.date_closed || null);
+
         let id = `"${realId.replace(/"/g, '""')}"`;
         let prio = `"${prioText}"`;
         let cat = `"${String(t.category || "").replace(/"/g, '""')}"`;
@@ -982,11 +1124,13 @@
         let proj = `"${String(t.project || "ไม่ระบุโครงการ").replace(/"/g, '""')}"`;
         let stat = `"${String(t.status || "").replace(/"/g, '""')}"`;
         let dt = `"${String(t.date || "").replace(/"/g, '""')}"`;
+        let dtClosed = `"${String(t.date_closed || "-").replace(/"/g, '""')}"`;
+        let dur = `"${durationCsv}"`;
         let loc = `"${finalLocation.replace(/"/g, '""')}"`;
         let title = `"${longText.replace(/"/g, '""')}"`;
         let desc = `"${cleanSummary.replace(/"/g, '""').replace(/\n/g, ' ')}"`;
         
-        csvContent += `${id},${prio},${cat},${projCode},${proj},${stat},${dt},${loc},${title},${desc}\n`;
+        csvContent += `${id},${prio},${cat},${projCode},${proj},${stat},${dt},${dtClosed},${dur},${loc},${title},${desc}\n`;
       });
 
       const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1190,8 +1334,9 @@
 
     document.getElementById('statusFilter').addEventListener('change', () => { filterAndRenderData(); });
     document.getElementById('priorityFilter').addEventListener('change', () => { filterAndRenderData(); }); 
+    document.getElementById('projectFilter').addEventListener('change', () => { filterAndRenderData(); }); 
     document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
-
+    
     window.onload = () => { 
       checkAndShowChangelog();
       fetchDashboardData(false); 
