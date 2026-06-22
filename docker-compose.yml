@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  sysnect-web:
+    image: nginx:alpine
+    container_name: sysnect-dashboard
+    ports:
+      - "8080:80"  # เปลี่ยนเลขหน้า : ได้ตามต้องการ
+    volumes:
+      - ./html/index.html:/usr/share/nginx/html/index.html:ro  # ไฟล์หน้าเว็บ
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro          # nginx config พร้อม CORS
+    restart: unless-stopped
