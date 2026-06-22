@@ -1336,8 +1336,78 @@
     document.getElementById('priorityFilter').addEventListener('change', () => { filterAndRenderData(); }); 
     document.getElementById('projectFilter').addEventListener('change', () => { filterAndRenderData(); }); 
     document.getElementById('btnRefresh').addEventListener('click', () => { fetchDashboardData(false); });
+    // ==========================================
+    // SSO AUTHENTICATION LOGIC
+    // ==========================================
+    const AUTH_SERVER_URL = "https://auth.sysnect.co.th";
     
-    window.onload = () => { 
+    // ตั้งค่า Redirect URI ให้กลับมาที่หน้า Dashboard นี้ (ดึงจาก URL ปัจจุบันอัตโนมัติ)
+    // หมายเหตุ: หากใช้งานจริง ให้ตั้งค่าที่ระบบ Auth Server ให้รองรับ URL นี้ด้วย
+    const REDIRECT_URI = encodeURIComponent(window.location.origin + window.location.pathname);
+    const LOGIN_URL = `${AUTH_SERVER_URL}/?redirect_uri=${REDIRECT_URI}`;
+
+    async function authenticateUser() {
+      // 1. เช็คว่ามี Token แนบมากับ URL จากการ Redirect กลับมาหรือไม่
+      const urlParams = new URLSearchParams(window.location.search);
+      // เปลี่ยนชื่อ Parameter 'token' ตามที่ระบบ Auth ของคุณส่งกลับมาจริงๆ (เช่น access_token)
+      const tokenFromUrl = urlParams.get('token') || urlParams.get('access_token'); 
+
+      if (tokenFromUrl) {
+        localStorage.setItem('sysnect_sso_token', tokenFromUrl);
+        // ลบ Token ออกจาก URL เพื่อความปลอดภัยและความสะอาดของ URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // 2. ดึง Token จาก LocalStorage
+      const token = localStorage.getItem('sysnect_sso_token');
+
+      // 3. ถ้าไม่มี Token เลย ให้เด้งไปหน้า Login ทันที
+      if (!token) {
+        window.location.href = LOGIN_URL;
+        return false;
+      }
+
+      // 4. ถ้ามี Token ให้ทำการยิง API ไปเช็คกับ /api/auth/me เพื่อยืนยันว่า Token ยังไม่หมดอายุ
+      try {
+        const response = await fetch(`${AUTH_SERVER_URL}/api/auth/me`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const userData = await response.json();
+          console.log("SSO Login Success. User Data:", userData);
+          
+          // (Option) คุณสามารถนำ userData.name หรือ email ไปแสดงบน Navbar ได้ที่นี่
+          
+          return true; // ยืนยันตัวตนผ่าน
+        } else {
+          // Token ไม่ถูกต้อง หรือหมดอายุ
+          console.warn("SSO Token invalid or expired. Redirecting to login...");
+          localStorage.removeItem('sysnect_sso_token');
+          window.location.href = LOGIN_URL;
+          return false;
+        }
+      } catch (error) {
+        console.error("SSO Auth Error:", error);
+        // กรณี API Auth ล่มชั่วคราว หรือเน็ตมีปัญหา
+        alert("ไม่สามารถเชื่อมต่อกับระบบยืนยันตัวตนได้ กรุณาลองใหม่อีกครั้ง");
+        return false;
+      }
+    }
+    window.onload = async () => { 
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) loadingOverlay.classList.remove('hidden');
+
+      // 1. รอให้กระบวนการเช็ค Auth เสร็จสิ้น
+      const isAuthenticated = await authenticateUser();
+      
+      // 2. ถ้าไม่ผ่านตัวแปรจะเป็น false (ระบบจะ Redirect ไปหน้า Login แล้ว) ให้หยุดการทำงานทันที
+      if (!isAuthenticated) return;
+
+      // 3. ถ้าผ่านแล้ว จึงเริ่มโหลดข้อมูล Dashboard ตามปกติ
       checkAndShowChangelog();
       fetchDashboardData(false); 
       setInterval(() => { fetchDashboardData(true); }, 60000);
