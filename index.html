@@ -144,6 +144,15 @@
     .loading-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: var(--bg-card); opacity: 0.95; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.4s ease, visibility 0.4s ease; }
     .loading-overlay.hidden { opacity: 0; visibility: hidden; }
     .loading-spinner { font-size: 3rem; color: #3b82f6; margin-bottom: 15px; animation: spin 1.5s linear infinite; }
+
+    /* ── Project Bar Chart Panel ── */
+    .project-bar-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.03); padding: 28px 32px 32px; margin: 0 auto 40px auto; max-width: 900px; transition: all 0.3s ease; }
+    .project-bar-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+    .project-bar-chart-wrap { position: relative; width: 100%; }
+    .project-bar-sort-group { display: flex; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
+    .project-sort-btn { background: transparent; border: none; color: var(--text-muted); font-family: 'Kanit', sans-serif; font-size: 0.78rem; font-weight: 500; padding: 5px 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .project-sort-btn.active { background-color: #3b82f6; color: #ffffff; }
+    .project-sort-btn:hover:not(.active) { background-color: var(--border-color); color: var(--text-main); }
   </style>
 </head>
 <body>
@@ -308,7 +317,14 @@
         <div class="modal-body p-4">
           <!-- แสดง 5 เวอร์ชันล่าสุดเสมอ -->
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.4.9 - Job Duration Tracker ⏱️</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.5.0 - Job Duration Tracker 📊</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มห้าแสดงผลชื่อโครงการเป็นกราฟแท่ง</li>
+              <li>หน้าแสดงผลของโครงการสามารถกดเข้าไปดูรายละเอียดได้</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.9 - Job Duration Tracker ⏱️</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบแสดงอายุงาน (Duration) บนการ์ด Ticket ทุกใบ แสดงเป็น ปี เดือน วัน</li>
               <li>งานที่ยังเปิดอยู่: นับระยะเวลาจากวันเปิดถึงปัจจุบัน พร้อมสีบ่งบอกความนาน (เขียว/เหลือง/แดง)</li>
@@ -333,19 +349,6 @@
               <li>เพิ่มฟีเจอร์ "ระบุช่วงเวลา (Custom Date)" ให้ผู้ใช้สามารถดึงข้อมูลแบบเจาะจงวันที่เริ่มต้นและสิ้นสุดได้เองตามต้องการ</li>
             </ul>
           </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
-              <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
-            </ul>
-          </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.4 - Priority Filtering 🔥</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
-            </ul>
-          </div>
 
           <!-- ปุ่มกางดูประวัติเก่า -->
           <div class="text-center mb-2">
@@ -356,6 +359,19 @@
 
           <!-- ส่วนซ่อนเวอร์ชันเก่า (จะกางเมื่อกดปุ่ม) -->
           <div class="collapse" id="olderChangelogs">
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
+                <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.4 - Priority Filtering 🔥</h6>
+              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+                <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
+              </ul>
+            </div>
             <div class="mb-4 mt-4">
               <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.3 - Refined Updates ✨</h6>
               <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
@@ -447,6 +463,26 @@
         <canvas id="ticketChart"></canvas>
       </div>
       <div class="legend-section" id="customLegend">
+      </div>
+    </div>
+
+    <!-- Project Bar Chart Panel -->
+    <div class="project-bar-panel" id="projectBarPanel">
+      <div class="project-bar-header">
+        <div class="d-flex align-items-center gap-2">
+          <i class="fas fa-chart-bar text-primary"></i>
+          <span class="fw-bold" style="color: var(--text-main); font-size: 1rem;">จำนวน Ticket ต่อโครงการ</span>
+          <span id="projectBarCount" class="badge rounded-pill" style="background-color: rgba(59,130,246,0.12); color: #3b82f6; font-size: 0.75rem; font-weight: 600; border: 1px solid rgba(59,130,246,0.25);"></span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <div class="project-bar-sort-group">
+            <button class="project-sort-btn active" id="sortByCount" title="เรียงตามจำนวน"><i class="fas fa-sort-amount-down me-1"></i>จำนวน</button>
+            <button class="project-sort-btn" id="sortByName" title="เรียงตามชื่อ"><i class="fas fa-sort-alpha-down me-1"></i>ชื่อ</button>
+          </div>
+        </div>
+      </div>
+      <div class="project-bar-chart-wrap">
+        <canvas id="projectBarChart"></canvas>
       </div>
     </div>
   </div>
@@ -554,6 +590,7 @@
         localStorage.setItem('sysnectTheme', newTheme);
         updateThemeIcon();
         if (ticketChart) initChart(filteredProjectsData);
+        if (projectBarChart) renderProjectBarChart(filteredProjectsData);
     });
 
     // ==========================================
@@ -772,6 +809,7 @@
       }
 
       initChart(filteredProjectsData);
+      renderProjectBarChart(filteredProjectsData);
     }
 
     const centerTextPlugin = {
@@ -864,6 +902,189 @@
           }
         }
       });
+    }
+
+    // ==========================================
+    // PROJECT BAR CHART
+    // ==========================================
+    let projectBarChart = null;
+    let projectSortMode = 'count'; // 'count' | 'name'
+
+    document.getElementById('sortByCount').addEventListener('click', () => {
+      projectSortMode = 'count';
+      document.getElementById('sortByCount').classList.add('active');
+      document.getElementById('sortByName').classList.remove('active');
+      renderProjectBarChart(filteredProjectsData);
+    });
+    document.getElementById('sortByName').addEventListener('click', () => {
+      projectSortMode = 'name';
+      document.getElementById('sortByName').classList.add('active');
+      document.getElementById('sortByCount').classList.remove('active');
+      renderProjectBarChart(filteredProjectsData);
+    });
+
+    function renderProjectBarChart(data) {
+      // นับจำนวน ticket ต่อโครงการ
+      const projectCounts = {};
+      data.forEach(t => {
+        const proj = (t.project && t.project.trim()) ? t.project.trim() : 'ไม่ระบุโครงการ';
+        projectCounts[proj] = (projectCounts[proj] || 0) + 1;
+      });
+
+      let entries = Object.entries(projectCounts); // [[name, count], ...]
+
+      if (projectSortMode === 'count') {
+        entries.sort((a, b) => b[1] - a[1]);
+      } else {
+        entries.sort((a, b) => a[0].localeCompare(b[0], 'th'));
+      }
+
+      const labels = entries.map(e => e[0]);
+      const counts = entries.map(e => e[1]);
+      const maxCount = Math.max(...counts, 1);
+
+      // อัปเดต badge จำนวนโครงการ
+      const badge = document.getElementById('projectBarCount');
+      if (badge) badge.textContent = `${labels.length} โครงการ`;
+
+      // สีแท่ง: ไล่เฉดจาก primary → lighter
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const barColors = counts.map(c => {
+        const ratio = c / maxCount;
+        // สีเข้มขึ้นตามจำนวน: จาก rgba(59,130,246,0.35) → rgba(59,130,246,1)
+        const alpha = 0.35 + ratio * 0.65;
+        return `rgba(59, 130, 246, ${alpha.toFixed(2)})`;
+      });
+      const hoverColors = counts.map(() => 'rgba(37, 99, 235, 0.9)');
+
+      // ความสูง canvas — อย่างน้อย 300px, เพิ่มตามจำนวนโครงการ
+      const barHeight = 36;
+      const minHeight = 280;
+      const canvasHeight = Math.max(minHeight, labels.length * barHeight + 60);
+      const wrap = document.getElementById('projectBarChart').parentElement;
+      wrap.style.height = canvasHeight + 'px';
+
+      const textColor = isDark ? '#94a3b8' : '#64748b';
+      const gridColor = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+      const tickColor = isDark ? '#cbd5e1' : '#334155';
+
+      const ctx2 = document.getElementById('projectBarChart').getContext('2d');
+      if (projectBarChart) projectBarChart.destroy();
+
+      projectBarChart = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: 'จำนวน Ticket',
+            data: counts,
+            backgroundColor: barColors,
+            hoverBackgroundColor: hoverColors,
+            borderRadius: 6,
+            borderSkipped: false,
+            barThickness: 22,
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 700, easing: 'easeOutQuart' },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(15,23,42,0.95)',
+              padding: 12,
+              titleFont: { family: 'Kanit', size: 13 },
+              bodyFont: { family: 'Kanit', size: 13 },
+              cornerRadius: 8,
+              callbacks: {
+                title: (items) => items[0].label,
+                label: (item) => ` ${item.raw} ticket`
+              }
+            }
+          },
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: {
+                color: textColor,
+                font: { family: 'Kanit', size: 11 },
+                stepSize: 1,
+                precision: 0
+              },
+              grid: { color: gridColor },
+              border: { color: gridColor }
+            },
+            y: {
+              ticks: {
+                color: tickColor,
+                font: { family: 'Kanit', size: 12 },
+                padding: 6,
+                // ตัดชื่อโครงการที่ยาวเกิน
+                callback: function(val, idx) {
+                  const label = this.getLabelForValue(val);
+                  return label.length > 30 ? label.substring(0, 28) + '…' : label;
+                }
+              },
+              grid: { display: false }
+            }
+          },
+          onClick: (event, elements) => {
+            if (elements.length > 0) {
+              const idx = elements[0].index;
+              openSidebarByProject(labels[idx]);
+            }
+          },
+          onHover: (event, elements) => {
+            event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+          }
+        }
+      });
+    }
+
+    // ==========================================
+    // OPEN SIDEBAR: กรองตามโครงการ
+    // ==========================================
+    function openSidebarByProject(projectName) {
+      const tickets = filteredProjectsData.filter(t => {
+        const proj = (t.project && t.project.trim()) ? t.project.trim() : 'ไม่ระบุโครงการ';
+        return proj === projectName;
+      });
+
+      const statusOrder = ["New", "Assigned", "Pending", "Solved", "Closed"];
+      const sortedTickets = [...tickets].sort((a, b) => {
+        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+      });
+
+      sidebarTitle.innerHTML = `
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <i class="fas fa-folder-open me-1" style="color:#6366f1"></i>
+          <span style="color:var(--text-main)">${projectName}</span>
+          <span class="badge rounded-pill" style="background:rgba(99,102,241,0.12);color:#6366f1;font-size:0.78rem;border:1px solid rgba(99,102,241,0.3);">${tickets.length} ticket</span>
+        </div>`;
+
+      listContainer.innerHTML = '';
+
+      if (sortedTickets.length === 0) {
+        listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4" style="color:var(--border-color);"></i><h5 class="fw-bold" style="color:var(--text-main);">No Records Found</h5><p class="small">ไม่มี Ticket ในโครงการนี้</p></div>';
+      } else {
+        // สรุปแถบ status summary ด้านบน
+        const counts = {};
+        statusOrder.forEach(s => counts[s] = 0);
+        tickets.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+        const summaryHtml = statusOrder
+          .filter(s => counts[s] > 0)
+          .map(s => `<span class="badge me-1 mb-1" style="background-color:${statusConfig[s].color}18;color:${statusConfig[s].color};font-size:0.75rem;padding:5px 10px;border:1px solid ${statusConfig[s].color}35;border-radius:6px;">
+              <i class="fas ${statusConfig[s].icon} me-1"></i>${s} (${counts[s]})</span>`)
+          .join('');
+        listContainer.insertAdjacentHTML('beforeend', `<div class="mb-4 pb-3" style="border-bottom:1px solid var(--border-color);">${summaryHtml}</div>`);
+
+        sortedTickets.forEach((ticket, index) => {
+          listContainer.insertAdjacentHTML('beforeend', buildTicketCardHtml(ticket, index));
+        });
+      }
+      bsOffcanvas.show();
     }
 
     const sidebarElement = document.getElementById('ticketSidebar');
@@ -984,94 +1205,97 @@
       }
     }
 
+    // ==========================================
+    // SHARED: สร้าง HTML ของ ticket card
+    // ==========================================
+    function buildTicketCardHtml(ticket, index) {
+      const color = statusConfig[ticket.status].color;
+
+      let realId = String(ticket.id || "-");
+      let longText = String(ticket.title || "");
+
+      if (/^\d+$/.test(longText)) {
+        realId = longText;
+        longText = String(ticket.id || "-");
+      } else if (!/^\d+$/.test(realId)) {
+        const matchId = realId.match(/\b\d{6,}\b/);
+        if (matchId) realId = matchId[0];
+      }
+
+      let finalLocation = String(ticket.location || "");
+      if (finalLocation.trim() === "") {
+        if (longText.includes('|')) {
+          const parts = longText.split('|');
+          if (parts.length > 1) finalLocation = parts[1].trim().split(' ')[0];
+        }
+        if (finalLocation.trim() === "") finalLocation = "ไม่ระบุ";
+      }
+
+      const rawSummary = String(ticket.ai_summary || ticket.description || "");
+      let cleanSummary = stripHTML(rawSummary).trim();
+      if (longText && longText !== realId) {
+        cleanSummary = cleanSummary
+          ? `<strong>รายละเอียด:</strong><br>${longText}<br><br>${cleanSummary}`
+          : longText;
+      }
+      if (!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
+
+      const glpiUrl = /^\d+$/.test(realId)
+        ? `${GLPI_BASE_URL}/front/ticket.form.php?id=${realId}`
+        : `${GLPI_BASE_URL}/front/ticket.php`;
+
+      return `
+        <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
+          <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+            <div style="min-width: 0;">
+              <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                <div class="text-primary fw-bold text-break" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
+                <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิดใน GLPI" onclick="event.stopPropagation()">
+                  <i class="fas fa-external-link-alt"></i> เปิดใน GLPI
+                </a>
+              </div>
+              <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
+            </div>
+            <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
+              <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px; white-space: nowrap;">
+                <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
+              </span>
+              ${getPriorityBadge(ticket.priority, ticket.status)}
+            </div>
+          </div>
+          <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
+            ${ticket.project_code ? `<span class="meta-tag" style="background-color: rgba(99, 102, 241, 0.12); color: #6366f1; border-color: rgba(99, 102, 241, 0.3); font-weight: 700; letter-spacing: 0.3px;"><i class="fas fa-tag me-1"></i>${ticket.project_code}</span>` : ''}
+            <span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.25); font-weight: 600;"><i class="fas fa-folder-open me-1"></i> ${ticket.project || "ไม่ระบุโครงการ"}</span>
+            <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
+            <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
+            ${(ticket.status === 'Closed' || ticket.status === 'Solved')
+              ? `<span class="meta-tag" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border-color: rgba(100, 116, 139, 0.3);">ปิด: ${ticket.date_closed || "-"}</span>`
+              : `<span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.06); color: var(--text-muted); border-color: var(--border-color);">ปิด: -</span>`
+            }
+            ${getDurationBadge(ticket)}
+          </div>
+          <div class="desc-block">
+            <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
+              ${cleanSummary}
+            </p>
+          </div>
+          <div class="mt-3 text-end">
+            <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิด Ticket #${realId} ใน GLPI" onclick="event.stopPropagation()">
+              <i class="fas fa-arrow-up-right-from-square"></i> ดู Ticket #${realId} ใน GLPI
+            </a>
+          </div>
+        </div>`;
+    }
+
     function openSidebar(status) {
       sidebarTitle.innerHTML = `<i class="fas ${statusConfig[status].icon} me-2" style="color:${statusConfig[status].color}"></i> STATUS: <span style="color:${statusConfig[status].color}">${status.toUpperCase()}</span>`;
-      
       const filteredTickets = filteredProjectsData.filter(t => t.status === status);
-      listContainer.innerHTML = ''; 
-      
-      if(filteredTickets.length === 0) {
+      listContainer.innerHTML = '';
+      if (filteredTickets.length === 0) {
         listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4" style="color: var(--border-color);"></i><h5 class="fw-bold" style="color: var(--text-main);">No Records Found</h5><p class="small">ไม่มีข้อมูลในสถานะนี้ตามเงื่อนไขที่ค้นหา</p></div>';
       } else {
         filteredTickets.forEach((ticket, index) => {
-          const color = statusConfig[ticket.status].color;
-          
-          let realId = String(ticket.id || "-");
-          let longText = String(ticket.title || "");
-          
-          if (/^\d+$/.test(longText)) { 
-             realId = longText; 
-             longText = String(ticket.id || "-");  
-          } else if (!/^\d+$/.test(realId)) {
-             const matchId = realId.match(/\b\d{6,}\b/);
-             if(matchId) realId = matchId[0];
-          }
-
-          let finalLocation = String(ticket.location || "");
-          if (finalLocation.trim() === "") {
-              if (longText.includes('|')) {
-                  const parts = longText.split('|');
-                  if (parts.length > 1) { finalLocation = parts[1].trim().split(' ')[0]; }
-              }
-              if (finalLocation.trim() === "") finalLocation = "ไม่ระบุ";
-          }
-
-          const rawSummary = String(ticket.ai_summary || ticket.description || "");
-          let cleanSummary = stripHTML(rawSummary).trim();
-          
-          if (longText && longText !== realId) {
-             cleanSummary = cleanSummary ? `<strong>รายละเอียด:</strong><br>${longText}<br><br>${cleanSummary}` : longText;
-          }
-
-          if(!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
-          
-          const glpiUrl = /^\d+$/.test(realId)
-            ? `${GLPI_BASE_URL}/front/ticket.form.php?id=${realId}`
-            : `${GLPI_BASE_URL}/front/ticket.php`;
-
-          const cardHtml = `
-            <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
-              <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
-                <div style="min-width: 0;">
-                  <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
-                    <div class="text-primary fw-bold text-break" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
-                    <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิดใน GLPI" onclick="event.stopPropagation()">
-                      <i class="fas fa-external-link-alt"></i> เปิดใน GLPI
-                    </a>
-                  </div>
-                  <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
-                </div>
-                <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
-                  <span class="badge" style="background-color: ${color}15; color: ${color}; font-size: 0.75rem; padding: 6px 12px; border: 1px solid ${color}30; border-radius: 6px; white-space: nowrap;">
-                    <i class="fas ${statusConfig[ticket.status].icon} me-1"></i>${ticket.status.toUpperCase()}
-                  </span>
-                  ${getPriorityBadge(ticket.priority, ticket.status)}
-                </div>
-              </div>
-              <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
-                ${ticket.project_code ? `<span class="meta-tag" style="background-color: rgba(99, 102, 241, 0.12); color: #6366f1; border-color: rgba(99, 102, 241, 0.3); font-weight: 700; letter-spacing: 0.3px;"><i class="fas fa-tag me-1"></i>${ticket.project_code}</span>` : ''}
-                <span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.25); font-weight: 600;"><i class="fas fa-folder-open me-1"></i> ${ticket.project || "ไม่ระบุโครงการ"}</span>
-                <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
-                <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
-                ${(ticket.status === 'Closed' || ticket.status === 'Solved')
-                  ? `<span class="meta-tag" style="background-color: rgba(100, 116, 139, 0.1); color: #64748b; border-color: rgba(100, 116, 139, 0.3);">ปิด: ${ticket.date_closed || "-"}</span>`
-                  : `<span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.06); color: var(--text-muted); border-color: var(--border-color);">ปิด: -</span>`
-                }
-                ${getDurationBadge(ticket)}
-              </div>
-              <div class="desc-block">
-                <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
-                  ${cleanSummary}
-                </p>
-              </div>
-              <div class="mt-3 text-end">
-                <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิด Ticket #${realId} ใน GLPI" onclick="event.stopPropagation()">
-                  <i class="fas fa-arrow-up-right-from-square"></i> ดู Ticket #${realId} ใน GLPI
-                </a>
-              </div>
-            </div>
-          `;
-          listContainer.insertAdjacentHTML('beforeend', cardHtml);
+          listContainer.insertAdjacentHTML('beforeend', buildTicketCardHtml(ticket, index));
         });
       }
       bsOffcanvas.show();
