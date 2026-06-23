@@ -127,6 +127,10 @@
 
     .ticket-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; opacity: 0; animation: slideInUp 0.4s ease-out forwards; }
     .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #3b82f6; }
+
+    .glpi-link-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #3b82f6; background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 6px; padding: 5px 12px; text-decoration: none; transition: all 0.2s ease; white-space: nowrap; }
+    .glpi-link-btn:hover { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); text-decoration: none; }
+    .glpi-link-btn i { font-size: 0.75rem; }
     
     .meta-tag { display: inline-flex; align-items: center; font-size: 0.8rem; color: var(--text-muted); background-color: var(--meta-bg); padding: 4px 10px; border-radius: 6px; font-weight: 500; border: 1px solid var(--border-color); transition: all 0.3s ease;}
     .desc-block { background-color: var(--desc-bg); border-left: 3px solid #cbd5e1; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; transition: all 0.3s ease;}
@@ -551,6 +555,11 @@
         updateThemeIcon();
         if (ticketChart) initChart(filteredProjectsData);
     });
+
+    // ==========================================
+    // GLPI BASE URL — เปลี่ยนหากต้องการ
+    // ==========================================
+    const GLPI_BASE_URL = 'https://itservicedesk.sysnect.co.th';
 
     async function fetchDashboardData(isAuto = false) {
       const n8nWebhookUrl = 'https://n8n.sysnect.co.th/webhook/api/tickets'; 
@@ -1016,11 +1025,20 @@
 
           if(!cleanSummary) cleanSummary = "<span class='fst-italic'>ไม่มีคำอธิบายเพิ่มเติมสำหรับรายการนี้</span>";
           
+          const glpiUrl = /^\d+$/.test(realId)
+            ? `${GLPI_BASE_URL}/front/ticket.form.php?id=${realId}`
+            : `${GLPI_BASE_URL}/front/ticket.php`;
+
           const cardHtml = `
             <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
               <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
                 <div style="min-width: 0;">
-                  <div class="text-primary fw-bold text-break mb-1" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
+                  <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+                    <div class="text-primary fw-bold text-break" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
+                    <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิดใน GLPI" onclick="event.stopPropagation()">
+                      <i class="fas fa-external-link-alt"></i> เปิดใน GLPI
+                    </a>
+                  </div>
                   <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
                 </div>
                 <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
@@ -1045,6 +1063,11 @@
                 <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">
                   ${cleanSummary}
                 </p>
+              </div>
+              <div class="mt-3 text-end">
+                <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิด Ticket #${realId} ใน GLPI" onclick="event.stopPropagation()">
+                  <i class="fas fa-arrow-up-right-from-square"></i> ดู Ticket #${realId} ใน GLPI
+                </a>
               </div>
             </div>
           `;
