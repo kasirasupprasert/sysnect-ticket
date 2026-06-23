@@ -127,10 +127,9 @@
 
     .ticket-card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-top-width: 4px; border-radius: 10px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease, border-color 0.3s ease; opacity: 0; animation: slideInUp 0.4s ease-out forwards; }
     .ticket-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); border-color: #3b82f6; }
-
-    .glpi-link-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; color: #3b82f6; background-color: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: 6px; padding: 5px 12px; text-decoration: none; transition: all 0.2s ease; white-space: nowrap; }
-    .glpi-link-btn:hover { background-color: #3b82f6; color: #ffffff; border-color: #3b82f6; transform: translateY(-1px); box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); text-decoration: none; }
-    .glpi-link-btn i { font-size: 0.75rem; }
+    .ticket-card-link { display: block; text-decoration: none; color: inherit; cursor: pointer; }
+    .ticket-card-link:hover { text-decoration: none; color: inherit; }
+    .ticket-card-link:hover .text-primary { color: #2563eb !important; }
     
     .meta-tag { display: inline-flex; align-items: center; font-size: 0.8rem; color: var(--text-muted); background-color: var(--meta-bg); padding: 4px 10px; border-radius: 6px; font-weight: 500; border: 1px solid var(--border-color); transition: all 0.3s ease;}
     .desc-block { background-color: var(--desc-bg); border-left: 3px solid #cbd5e1; padding: 16px; border-radius: 0 8px 8px 0; margin-top: 16px; transition: all 0.3s ease;}
@@ -317,14 +316,7 @@
         <div class="modal-body p-4">
           <!-- แสดง 5 เวอร์ชันล่าสุดเสมอ -->
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.5.0 - Job Duration Tracker 📊</h6>
-            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-              <li>เพิ่มห้าแสดงผลชื่อโครงการเป็นกราฟแท่ง</li>
-              <li>หน้าแสดงผลของโครงการสามารถกดเข้าไปดูรายละเอียดได้</li>
-            </ul>
-          </div>
-          <div class="mb-4">
-            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.9 - Job Duration Tracker ⏱️</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.4.9 - Job Duration Tracker ⏱️</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>เพิ่มระบบแสดงอายุงาน (Duration) บนการ์ด Ticket ทุกใบ แสดงเป็น ปี เดือน วัน</li>
               <li>งานที่ยังเปิดอยู่: นับระยะเวลาจากวันเปิดถึงปัจจุบัน พร้อมสีบ่งบอกความนาน (เขียว/เหลือง/แดง)</li>
@@ -349,6 +341,19 @@
               <li>เพิ่มฟีเจอร์ "ระบุช่วงเวลา (Custom Date)" ให้ผู้ใช้สามารถดึงข้อมูลแบบเจาะจงวันที่เริ่มต้นและสิ้นสุดได้เองตามต้องการ</li>
             </ul>
           </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
+              <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.4 - Priority Filtering 🔥</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
+            </ul>
+          </div>
 
           <!-- ปุ่มกางดูประวัติเก่า -->
           <div class="text-center mb-2">
@@ -359,19 +364,6 @@
 
           <!-- ส่วนซ่อนเวอร์ชันเก่า (จะกางเมื่อกดปุ่ม) -->
           <div class="collapse" id="olderChangelogs">
-            <div class="mb-4">
-              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.5 - Status Sync Updates & Pop-up 🔄</h6>
-              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-                <li>เพิ่มระบบ Smart Pop-up เด้งแจ้งเตือนการอัปเดตใหม่ๆ (แสดงผลแค่ครั้งเดียว)</li>
-                <li>ปรับปรุงระบบ Priority: หากสถานะงานเป็น Closed จะถูกจัดความเร่งด่วนเป็น "ปิดแล้ว (Closed)" ให้อัตโนมัติ</li>
-              </ul>
-            </div>
-            <div class="mb-4">
-              <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.4 - Priority Filtering 🔥</h6>
-              <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
-                <li>เพิ่มเมนูตัวกรอง (Dropdown Filter) เพื่อดูงานตามระดับความเร่งด่วน (Priority)</li>
-              </ul>
-            </div>
             <div class="mb-4 mt-4">
               <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.4.3 - Refined Updates ✨</h6>
               <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
@@ -1245,14 +1237,12 @@
         : `${GLPI_BASE_URL}/front/ticket.php`;
 
       return `
-        <div class="ticket-card" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s">
+        <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="ticket-card ticket-card-link" style="border-top-color: ${color}; animation-delay: ${index * 0.05}s" title="เปิด Ticket #${realId} ใน GLPI">
           <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
             <div style="min-width: 0;">
-              <div class="d-flex align-items-center flex-wrap gap-2 mb-1">
+              <div class="d-flex align-items-center gap-2 mb-1">
                 <div class="text-primary fw-bold text-break" style="font-size: 0.85rem; letter-spacing: 0.5px;">TICKET #${realId}</div>
-                <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิดใน GLPI" onclick="event.stopPropagation()">
-                  <i class="fas fa-external-link-alt"></i> เปิดใน GLPI
-                </a>
+                <i class="fas fa-arrow-up-right-from-square" style="font-size:0.7rem; color:#94a3b8;" title="เปิดใน GLPI"></i>
               </div>
               <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color: var(--text-main);">${ticket.category || 'General Operations'}</h5>
             </div>
@@ -1279,12 +1269,7 @@
               ${cleanSummary}
             </p>
           </div>
-          <div class="mt-3 text-end">
-            <a href="${glpiUrl}" target="_blank" rel="noopener noreferrer" class="glpi-link-btn" title="เปิด Ticket #${realId} ใน GLPI" onclick="event.stopPropagation()">
-              <i class="fas fa-arrow-up-right-from-square"></i> ดู Ticket #${realId} ใน GLPI
-            </a>
-          </div>
-        </div>`;
+        </a>`;
     }
 
     function openSidebar(status) {
