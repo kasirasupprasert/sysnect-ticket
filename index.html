@@ -1494,36 +1494,48 @@
           if (m) realId = m[0];
         }
 
-        const rawSummary = String(t.ai_summary || t.description || "");
-        let cleanSummary = stripHTML(rawSummary).trim();
-        if (longText && longText !== realId) {
-          cleanSummary = cleanSummary ? `${longText} — ${cleanSummary}` : longText;
+        // PDF: แสดงเฉพาะ "ชื่อ Ticket" เพื่อป้องกันแถวยาวเกินและหลุดหน้า
+        // ใช้ longText (= ชื่อ Ticket) เป็นหลัก, ถ้าว่างใช้ description แบบสั้น
+        let ticketLabel = longText && longText !== realId ? longText : '';
+        if (!ticketLabel) {
+          const rawSummary = String(t.ai_summary || t.description || "");
+          ticketLabel = stripHTML(rawSummary).trim();
         }
-        if (!cleanSummary) cleanSummary = "ไม่มีคำอธิบายเพิ่มเติม";
+        // แยกบรรทัดแรกออกมาเท่านั้น (กันกรณี description หลายบรรทัด)
+        ticketLabel = ticketLabel.split('\n')[0].trim();
+        if (ticketLabel.length > 120) ticketLabel = ticketLabel.substring(0, 120) + '…';
+        const cleanSummary = ticketLabel || '—';
 
         const prioInfo = getPrioText(t);
         const statStyle = getStatusStyle(t.status);
         const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
 
-        tbodyHtml += `
-          <tr style="background:${rowBg}; vertical-align: top;">
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-weight:700; color:#6366f1; font-size:11px; white-space:nowrap;">#${realId}</td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-size:11px; white-space:nowrap;">${t.date || '-'}</td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-size:11px; white-space:nowrap;">${(t.status==='Closed'||t.status==='Solved') ? (t.date_closed||'-') : '-'}</td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-size:10.5px; word-break:break-word; overflow-wrap:break-word;">${cleanSummary}</td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-size:11px; text-align:center; white-space:nowrap;"><span style="font-size:11px;font-weight:600;color:${String(t.project_code||'').trim()||'—'==='—'?'#94a3b8':'#6366f1'}">${t.project_code||'—'}</span></td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; font-size:10.5px;">${t.project||'ไม่ระบุ'}</td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center;">
-              <span style="display:inline-block; padding:3px 8px; border-radius:4px; font-size:10px; font-weight:600; color:${prioInfo.color}; background:${prioInfo.bg}; border:1px solid ${prioInfo.color}40; white-space:nowrap;">
-                ${prioInfo.icon} ${prioInfo.label}
-              </span>
-            </td>
-            <td style="padding:8px 10px; border:1px solid #e2e8f0; text-align:center;">
-              <span style="display:inline-block; padding:3px 10px; border-radius:4px; font-size:10px; font-weight:700; color:${statStyle.color}; background:${statStyle.bg}; border:1px solid ${statStyle.color}40; white-space:nowrap;">
-                ${t.status.toUpperCase()}
-              </span>
-            </td>
-          </tr>`;
+        // helper — คืน '-' ถ้าค่าว่าง
+        const dash = (v) => (v !== null && v !== undefined && String(v).trim() !== '') ? String(v).trim() : '-';
+        const dateOpen  = dash(t.date);
+        const dateClose = (t.status==='Closed'||t.status==='Solved') ? dash(t.date_closed) : '-';
+        const projCode  = dash(t.project_code);
+        const projName  = dash(t.project);
+        const prioCell  = (prioInfo && prioInfo.label)
+          ? '<span style="display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;color:' + prioInfo.color + ';background:' + prioInfo.bg + ';border:1px solid ' + prioInfo.color + '40;white-space:nowrap;">' + prioInfo.icon + ' ' + prioInfo.label + '</span>'
+          : '-';
+        const statCell  = t.status
+          ? '<span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;color:' + statStyle.color + ';background:' + statStyle.bg + ';border:1px solid ' + statStyle.color + '40;white-space:nowrap;">' + t.status.toUpperCase() + '</span>'
+          : '-';
+        const projCodeCell = projCode !== '-'
+          ? '<span style="font-size:11px;font-weight:600;color:#6366f1;">' + projCode + '</span>'
+          : '-';
+
+        tbodyHtml += '<tr style="background:' + rowBg + '; vertical-align:middle;">' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-weight:700;color:#6366f1;font-size:10px;white-space:nowrap;">#' + realId + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;white-space:nowrap;">' + dateOpen + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;white-space:nowrap;">' + dateClose + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;word-break:break-word;overflow-wrap:break-word;overflow:hidden;">' + cleanSummary + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;text-align:center;word-break:break-word;">' + projCodeCell + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;word-break:break-word;overflow-wrap:break-word;">' + projName + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:center;">' + prioCell + '</td>' +
+          '<td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:center;">' + statCell + '</td>' +
+          '</tr>';
       });
 
       // preview ใน modal (ย่อ)
@@ -1534,18 +1546,19 @@
             <i class="fas fa-list-ol me-1"></i>${filteredProjectsData.length} รายการ
           </div>
           <div class="table-responsive">
-            <table style="width:100%; border-collapse:collapse;">
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+              <colgroup><col style="width:10%"><col style="width:8%"><col style="width:8%"><col style="width:28%"><col style="width:8%"><col style="width:20%"><col style="width:10%"><col style="width:8%"></colgroup>
               <thead>
                 <tr style="background:#0f172a;">
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; white-space:nowrap;">ID</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; white-space:nowrap;">วันที่เปิด</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; white-space:nowrap;">วันที่ปิด</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b;">ชื่อ Ticket</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; text-align:center; white-space:nowrap;">รหัสโครงการ</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b;">โครงการ</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; text-align:center; white-space:nowrap;">ความสำคัญ</th>
-                  <th style="padding:9px 10px; color:#fff; font-size:11px; border:1px solid #1e293b; text-align:center; white-space:nowrap;">สถานะ</th>
-                </tr>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;white-space:nowrap;overflow:hidden;width:10%;">ID</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;white-space:nowrap;overflow:hidden;width:9%;">วันที่เปิด</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;white-space:nowrap;overflow:hidden;width:9%;">วันที่ปิด</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;overflow:hidden;width:30%;">ชื่อ Ticket</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;text-align:center;white-space:nowrap;overflow:hidden;width:9%;">รหัสโครงการ</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;overflow:hidden;width:15%;">โครงการ</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;text-align:center;white-space:nowrap;overflow:hidden;width:10%;">ความสำคัญ</th>
+                  <th style="padding:9px 10px;color:#fff;font-size:11px;border:1px solid #1e293b;text-align:center;white-space:nowrap;overflow:hidden;width:8%;">สถานะ</th>
+</tr>
               </thead>
               <tbody>${tbodyHtml}</tbody>
             </table>
@@ -1587,9 +1600,10 @@
   /* ── TABLE ── */
   table { width: 100%; border-collapse: collapse; table-layout: fixed; }
   thead tr { background: #0f172a; }
-  thead th { padding: 8px 9px; color: #fff; font-size: 10.5px; font-weight: 600; border: 1px solid #1e293b; white-space: nowrap; overflow: hidden; }
+  thead th { padding: 7px 8px; color: #fff; font-size: 10px; font-weight: 600; border: 1px solid #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   tbody tr:nth-child(even) { background: #f8fafc; }
-  tbody td { padding: 7px 9px; border: 1px solid #e2e8f0; font-size: 10.5px; vertical-align: top; word-break: break-word; overflow-wrap: break-word; }
+  tbody tr { page-break-inside: avoid; break-inside: avoid; }
+  tbody td { padding: 6px 8px; border: 1px solid #e2e8f0; font-size: 10px; vertical-align: middle; word-break: break-word; overflow-wrap: break-word; overflow: hidden; max-height: 60px; line-height: 1.4; }
 
   /* ── BADGES IN TABLE ── */
   .badge-prio, .badge-stat { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 9.5px; font-weight: 700; border: 1px solid; white-space: nowrap; }
@@ -1598,11 +1612,12 @@
   .report-footer { margin-top: 18px; border-top: 1px solid #e2e8f0; padding-top: 8px; display: flex; justify-content: space-between; font-size: 9px; color: #94a3b8; }
 
   @media print {
-    @page { size: A4 landscape; margin: 0; }
+    @page { size: A4 landscape; margin: 10mm 12mm; }
     body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    .page-wrap { padding: 10mm 12mm; }
+    .page-wrap { padding: 0; }
     thead { display: table-header-group; }
-    tr { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; break-inside: avoid; }
+    table { page-break-inside: auto; break-inside: auto; }
   }
 </style>
 </head>
@@ -1638,16 +1653,17 @@
 
   <!-- TABLE -->
   <table>
+    <colgroup><col style="width:9%"><col style="width:8%"><col style="width:8%"><col style="width:29%"><col style="width:8%"><col style="width:20%"><col style="width:10%"><col style="width:8%"></colgroup>
     <thead>
       <tr>
-        <th style="width:10%;">ID</th>
-        <th style="width:9%; white-space:nowrap;">วันที่เปิด</th>
-        <th style="width:9%; white-space:nowrap;">วันที่ปิด</th>
-        <th style="width:30%;">ชื่อ Ticket</th>
-        <th style="width:9%; text-align:center; white-space:nowrap;">รหัสโครงการ</th>
-        <th style="width:14%;">โครงการ</th>
+        <th style="width:9%;">ID</th>
+        <th style="width:8%; white-space:nowrap;">วันที่เปิด</th>
+        <th style="width:8%; white-space:nowrap;">วันที่ปิด</th>
+        <th style="width:29%;">ชื่อ Ticket</th>
+        <th style="width:8%; text-align:center; white-space:nowrap;">รหัสโครงการ</th>
+        <th style="width:20%;">โครงการ</th>
         <th style="width:10%; text-align:center; white-space:nowrap;">ความสำคัญ</th>
-        <th style="width:9%; text-align:center; white-space:nowrap;">สถานะ</th>
+        <th style="width:8%; text-align:center; white-space:nowrap;">สถานะ</th>
       </tr>
     </thead>
     <tbody>
