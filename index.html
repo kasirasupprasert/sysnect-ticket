@@ -273,6 +273,29 @@
       flex-shrink: 0; transition: color 0.2s; font-size: 0.82rem;
     }
     .toast-close-btn:hover { color: #94a3b8; }
+
+    /* 📊 Bar Chart Toggle Buttons */
+    .btn-bar-mode {
+      background-color: var(--bg-main);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      font-family: 'Kanit', sans-serif;
+      font-size: 0.82rem;
+      padding: 6px 14px;
+      transition: all 0.2s;
+    }
+    .btn-bar-mode:first-child { border-radius: 8px 0 0 8px; }
+    .btn-bar-mode:last-child  { border-radius: 0 8px 8px 0; }
+    .btn-bar-mode.active {
+      background-color: #3b82f6;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+    .btn-bar-mode:hover:not(.active) {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      border-color: #3b82f6;
+    }
   </style>
 </head>
 <body>
@@ -610,8 +633,24 @@
     </div>
     
     <div class="main-panel" style="margin-top: 20px; flex-direction: column; align-items: stretch;">
-      <h5 class="fw-bold mb-4" style="color: var(--text-main);"><i class="fas fa-chart-bar text-primary me-2"></i> สถิติงานแยกตามโครงการ (Projects)</h5>
-      <div style="position: relative; height: 350px; width: 100%;">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <h5 class="fw-bold mb-0" style="color: var(--text-main);">
+          <i class="fas fa-chart-bar text-primary me-2"></i>
+          <span id="barChartTitle">สถิติงานแยกตามโครงการ</span>
+        </h5>
+        <div class="d-flex align-items-center gap-2">
+          <span style="font-size:0.8rem; color:var(--text-muted);">แสดงตาม:</span>
+          <div class="btn-group" role="group" id="barChartToggle">
+            <button type="button" class="btn btn-sm btn-bar-mode active" id="btnModeProject" onclick="setBarMode('project')">
+              <i class="fas fa-folder me-1"></i>โครงการ
+            </button>
+            <button type="button" class="btn btn-sm btn-bar-mode" id="btnModeTechnician" onclick="setBarMode('technician')">
+              <i class="fas fa-user-tie me-1"></i>ผู้รับผิดชอบ
+            </button>
+          </div>
+        </div>
+      </div>
+      <div style="position: relative; width: 100%;" id="barChartWrapper">
         <canvas id="projectBarChart"></canvas>
       </div>
     </div>
@@ -653,11 +692,24 @@
     };
 
     let ticketChart;
-    let projectBarChart; // 🟢 เพิ่มตัวแปรนี้
+    let projectBarChart;
     let projectsData = [];         
     let filteredProjectsData = []; 
     let apiUpdatedAt = '-';
     let apiTotalCount = 0;
+    let barChartMode = 'project'; // 'project' | 'technician'
+    
+    function setBarMode(mode) {
+      barChartMode = mode;
+      // อัปเดตปุ่ม active
+      document.getElementById('btnModeProject').classList.toggle('active', mode === 'project');
+      document.getElementById('btnModeTechnician').classList.toggle('active', mode === 'technician');
+      // อัปเดต title
+      document.getElementById('barChartTitle').textContent = 
+        mode === 'project' ? 'สถิติงานแยกตามโครงการ' : 'สถิติงานแยกตามผู้รับผิดชอบ';
+      // วาดกราฟใหม่
+      initChart(filteredProjectsData);
+    }
     
     let knownTicketIds = new Set();
     let isFirstLoad = true;
@@ -1099,7 +1151,8 @@
     // 🟢 รวมฟังก์ชันวาดกราฟโดนัท และกราฟแท่ง
     function initChart(data) {
       const counts = { "New": 0, "Assigned": 0, "Pending": 0, "Solved": 0, "Closed": 0 };
-      const projectCounts = {}; // เก็บจำนวนตามโครงการ
+      const projectCounts = {};    // นับตามโครงการ
+      const technicianCounts = {}; // นับตามผู้รับผิดชอบ
 
       data.forEach(ticket => {
         // นับ Status
@@ -1112,6 +1165,10 @@
         // นับ Project
         const p = ticket.project || "ไม่ระบุโครงการ";
         projectCounts[p] = (projectCounts[p] || 0) + 1;
+
+        // นับ Technician
+        const tech = ticket.technician || "ไม่ระบุผู้รับผิดชอบ";
+        technicianCounts[tech] = (technicianCounts[tech] || 0) + 1;
       });
 
       const legendContainer = document.getElementById('customLegend');
@@ -1174,52 +1231,80 @@
         }
       });
 
-      // 2. วาดกราฟแท่ง (Projects)
-      const sortedProjects = Object.keys(projectCounts).sort((a, b) => projectCounts[b] - projectCounts[a]);
-      const projLabels = sortedProjects;
-      const projData = sortedProjects.map(p => projectCounts[p]);
+      // 2. วาดกราฟแท่งแนวนอน (Horizontal Bar)
+      // เลือก dataset ตาม barChartMode
+      const sourceCounts = barChartMode === 'project' ? projectCounts : technicianCounts;
+      const sidebarType  = barChartMode === 'project' ? 'project' : 'technician';
+
+      // เรียงจากมากไปน้อย แล้วตัดแค่ Top 15 ไม่ให้กราฟยาวเกิน
+      const sortedKeys = Object.keys(sourceCounts)
+        .sort((a, b) => sourceCounts[b] - sourceCounts[a])
+        .slice(0, 15);
+      const barLabels = sortedKeys;
+      const barData   = sortedKeys.map(k => sourceCounts[k]);
+
+      // คำนวณความสูง: อย่างน้อย 300px หรือ 48px ต่อ 1 แท่ง
+      const barHeight = Math.max(300, barLabels.length * 48);
+      const wrapper = document.getElementById('barChartWrapper');
+      wrapper.style.height = barHeight + 'px';
 
       const ctxBar = document.getElementById('projectBarChart').getContext('2d');
       if (projectBarChart) projectBarChart.destroy();
       
-      const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+      const gridColor    = isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
       const textColorBar = isDark ? '#94a3b8' : '#64748b';
+
+      // สีตาม mode
+      const barColor      = barChartMode === 'project' ? '#3b82f6' : '#8b5cf6';
+      const barHoverColor = barChartMode === 'project' ? '#2563eb' : '#7c3aed';
 
       projectBarChart = new Chart(ctxBar, {
           type: 'bar',
           data: {
-              labels: projLabels,
+              labels: barLabels,
               datasets: [{
                   label: 'จำนวนรายการ (Tickets)',
-                  data: projData,
-                  backgroundColor: '#3b82f6',
+                  data: barData,
+                  backgroundColor: barColor + 'cc',
+                  borderColor: barColor,
+                  borderWidth: 1,
                   borderRadius: 6,
-                  hoverBackgroundColor: '#2563eb'
+                  hoverBackgroundColor: barHoverColor
               }]
           },
           options: {
+              indexAxis: 'y',   // ← แนวนอน
               responsive: true,
               maintainAspectRatio: false,
               plugins: {
                   legend: { display: false },
                   tooltip: { 
                       backgroundColor: 'rgba(15, 23, 42, 0.95)', 
-                      titleFont: { family: 'Kanit', size: 14 }, 
-                      bodyFont: { family: 'Kanit', size: 14 }
+                      titleFont: { family: 'Kanit', size: 13 }, 
+                      bodyFont:  { family: 'Kanit', size: 13 },
+                      cornerRadius: 8,
+                      padding: 10,
+                      callbacks: {
+                        title: (items) => items[0].label,
+                        label: (item) => ` ${item.raw} รายการ`
+                      }
                   }
               },
               scales: {
-                  y: {
+                  x: {
                       beginAtZero: true,
-                      ticks: { stepSize: 1, color: textColorBar, font: { family: 'Kanit' } },
+                      ticks: { stepSize: 1, color: textColorBar, font: { family: 'Kanit', size: 12 } },
                       grid: { color: gridColor }
                   },
-                  x: {
+                  y: {
                       ticks: { 
                           color: textColorBar, 
-                          font: { family: 'Kanit' },
-                          maxRotation: 45,
-                          minRotation: 45
+                          font: { family: 'Kanit', size: 12 },
+                          // ตัดชื่อยาวให้พอดี
+                          callback: function(value, index) {
+                            const lbl = this.getLabelForValue(value);
+                            return lbl.length > 32 ? lbl.substring(0, 32) + '…' : lbl;
+                          }
                       },
                       grid: { display: false }
                   }
@@ -1227,7 +1312,7 @@
               onClick: (event, elements) => {
                   if (elements.length > 0) {
                       const clickedIndex = elements[0].index;
-                      openSidebar('project', projLabels[clickedIndex]); // เรียก Sidebar แบบ โครงการ
+                      openSidebar(sidebarType, barLabels[clickedIndex]);
                   }
               }
           }
@@ -1368,6 +1453,9 @@
       } else if (type === 'project') {
           sidebarTitle.innerHTML = `<i class="fas fa-folder-open me-2" style="color:#3b82f6"></i> PROJECT: <span style="color:#3b82f6">${value}</span>`;
           filteredTickets = filteredProjectsData.filter(t => (t.project || "ไม่ระบุโครงการ") === value);
+      } else if (type === 'technician') {
+          sidebarTitle.innerHTML = `<i class="fas fa-user-tie me-2" style="color:#8b5cf6"></i> ผู้รับผิดชอบ: <span style="color:#8b5cf6">${value}</span>`;
+          filteredTickets = filteredProjectsData.filter(t => (t.technician || "ไม่ระบุผู้รับผิดชอบ") === value);
       }
       
       listContainer.innerHTML = ''; 
