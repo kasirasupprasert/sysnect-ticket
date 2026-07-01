@@ -1169,6 +1169,7 @@
       const counts = { "New": 0, "Assigned": 0, "Pending": 0, "Solved": 0, "Closed": 0 };
       const projectCounts = {};    // นับตามโครงการ
       const technicianCounts = {}; // นับตามผู้รับผิดชอบ
+      const projectTechnicians = {}; // 🟢 รายชื่อผู้รับผิดชอบ (technician) แยกตามโครงการ สำหรับแสดงใน tooltip ของกราฟแท่ง
 
       data.forEach(ticket => {
         // นับ Status
@@ -1185,6 +1186,10 @@
         // นับ Technician
         const tech = ticket.technician || "ไม่ระบุผู้รับผิดชอบ";
         technicianCounts[tech] = (technicianCounts[tech] || 0) + 1;
+
+        // 🟢 เก็บชื่อผู้รับผิดชอบของแต่ละโครงการไว้ (ไม่เอาซ้ำ)
+        if (!projectTechnicians[p]) projectTechnicians[p] = new Set();
+        if (tech) projectTechnicians[p].add(tech);
       });
 
       const legendContainer = document.getElementById('customLegend');
@@ -1302,7 +1307,17 @@
                       padding: 10,
                       callbacks: {
                         title: (items) => items[0].label,
-                        label: (item) => ` ${item.raw} รายการ`
+                        label: (item) => ` ${item.raw} รายการ`,
+                        // 🟢 โหมด "โครงการ" แสดงชื่อผู้รับผิดชอบของโครงการนั้นๆ เพิ่มเติมใน tooltip
+                        afterLabel: (item) => {
+                          if (barChartMode !== 'project') return null;
+                          const projName = barLabels[item.dataIndex];
+                          const techSet = projectTechnicians[projName];
+                          if (!techSet || techSet.size === 0) return null;
+                          const names = Array.from(techSet);
+                          const prefix = names.length > 1 ? 'ผู้รับผิดชอบ: ' : 'ผู้รับผิดชอบ: ';
+                          return prefix + names.join(', ');
+                        }
                       }
                   }
               },
@@ -1540,6 +1555,7 @@
               <div class="d-flex align-items-center flex-wrap gap-2 pb-3 mb-1" style="border-bottom: 1px solid var(--border-color);">
                 ${ticket.project_code ? `<span class="meta-tag" style="background-color: rgba(99, 102, 241, 0.12); color: #6366f1; border-color: rgba(99, 102, 241, 0.3); font-weight: 700; letter-spacing: 0.3px;"><i class="fas fa-tag me-1"></i>${ticket.project_code}</span>` : ''}
                 <span class="meta-tag" style="background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: rgba(59, 130, 246, 0.25); font-weight: 600;"><i class="fas fa-folder-open me-1"></i> ${ticket.project || "ไม่ระบุโครงการ"}</span>
+                <span class="meta-tag" style="background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6; border-color: rgba(139, 92, 246, 0.25); font-weight: 600;"><i class="fas fa-user-tie me-1"></i> ${ticket.technician || "ไม่ระบุผู้รับผิดชอบ"}</span>
                 <span class="meta-tag"><i class="fas fa-map-marker-alt me-1" style="color: var(--text-muted);"></i> ${finalLocation}</span>
                 <span class="meta-tag"><i class="far fa-calendar me-1" style="color: var(--text-muted);"></i> ${ticket.date || "-"}</span>
                 ${(ticket.status === 'Closed' || ticket.status === 'Solved')
