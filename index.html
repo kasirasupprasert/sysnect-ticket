@@ -359,6 +359,19 @@
         
         <div class="d-flex flex-column flex-lg-row gap-2 mt-2 mt-lg-0 align-items-lg-center flex-wrap">
           
+          <div class="filter-group" title="ช่วงเวลาของข้อมูลที่จะดึงจากระบบ (จำนวนวันย้อนหลัง)">
+            <i class="fas fa-database"></i>
+            <select id="dataRangeFilter" class="filter-select">
+              <option value="7">7 วัน</option>
+              <option value="30">30 วัน</option>
+              <option value="60">60 วัน</option>
+              <option value="90">90 วัน</option>
+              <option value="120">120 วัน</option>
+              <option value="180">180 วัน</option>
+              <option value="365">1 ปี</option>
+            </select>
+          </div>
+
           <div class="filter-group">
             <i class="far fa-calendar-alt"></i>
             <select id="timeFilter" class="filter-select">
@@ -697,6 +710,7 @@
     let filteredProjectsData = []; 
     let apiUpdatedAt = '-';
     let apiTotalCount = 0;
+    let currentDataRangeDays = 120; // 🟢 จำนวนวันย้อนหลังของข้อมูลที่จะดึงจากเซิร์ฟเวอร์ (default 120 วัน)
     let barChartMode = 'project'; // 'project' | 'technician'
     
     function setBarMode(mode) {
@@ -845,7 +859,8 @@
         else if (isAuto && syncIcon) syncIcon.classList.add('fa-spin');
         
         // เพิ่ม { cache: 'no-store' } เพื่อบังคับให้เบราว์เซอร์ดึงข้อมูลใหม่ทุกครั้ง
-        const response = await fetch(`${n8nWebhookUrl}?t=${new Date().getTime()}`, { cache: 'no-store' });
+        // 🟢 ส่งพารามิเตอร์ days บอก backend (n8n) ว่าต้องการข้อมูลย้อนหลังกี่วัน
+        const response = await fetch(`${n8nWebhookUrl}?days=${currentDataRangeDays}&t=${new Date().getTime()}`, { cache: 'no-store' });
         const data = await response.json();
         
         if(!data || !data.tickets){ throw new Error('Invalid API response'); }
@@ -955,7 +970,8 @@
       if (newTicketBanner.classList.contains('show')) return;
 
       try {
-        const response = await fetch(`${n8nWebhookUrl}?t=${new Date().getTime()}`, { cache: 'no-store' });
+        // 🟢 ใช้ช่วงเวลาเดียวกับที่ผู้ใช้เลือกไว้ เพื่อเทียบจำนวน ticket ได้ตรงกับที่แสดงอยู่
+        const response = await fetch(`${n8nWebhookUrl}?days=${currentDataRangeDays}&t=${new Date().getTime()}`, { cache: 'no-store' });
         const data = await response.json();
         if (!data || !data.tickets) return;
 
@@ -1916,6 +1932,13 @@
         }
     });
     
+    // 🟢 เปลี่ยนช่วงเวลาข้อมูลที่จะดึง (Fetch Range) -> โหลดข้อมูลใหม่จากเซิร์ฟเวอร์ทันที
+    document.getElementById('dataRangeFilter').addEventListener('change', (e) => {
+        currentDataRangeDays = Number(e.target.value) || 120;
+        localStorage.setItem('sysnectDataRangeDays', e.target.value);
+        fetchDashboardData(false);
+    });
+
     document.getElementById('startDate').addEventListener('change', filterAndRenderData);
     document.getElementById('endDate').addEventListener('change', filterAndRenderData);
 
@@ -2063,6 +2086,13 @@
       if (loadingOverlay) loadingOverlay.classList.remove('hidden');
 
       document.getElementById('timeFilter').value = 'today'; // ตั้งค่า Default ให้เลือก "วันนี้"
+
+      // 🟢 ตั้งค่าช่วงเวลาข้อมูลที่จะดึง (Fetch Range) -- จำค่าที่เคยเลือกไว้ ถ้าไม่มีให้ใช้ default 120 วัน
+      const dataRangeSelect = document.getElementById('dataRangeFilter');
+      const savedRange = localStorage.getItem('sysnectDataRangeDays');
+      const isValidSavedRange = savedRange && [...dataRangeSelect.options].some(opt => opt.value === savedRange);
+      dataRangeSelect.value = isValidSavedRange ? savedRange : '120';
+      currentDataRangeDays = Number(dataRangeSelect.value) || 120;
 
       // รอให้ SSO เสร็จก่อน
       const isAuthenticated = await authenticateUser();
