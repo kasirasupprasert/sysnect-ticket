@@ -47,10 +47,17 @@
     .search-box::placeholder { color: #94a3b8; }
     .search-box:focus { background-color: rgba(255, 255, 255, 0.15); color: white; outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
     
-    .filter-group { display: flex; align-items: center; background-color: rgba(255, 255, 255, 0.05); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
-    .filter-group i { color: #94a3b8; margin-right: 8px; font-size: 0.9rem; }
-    .filter-select { background-color: transparent; border: none; color: #ffffff; font-size: 0.9rem; cursor: pointer; outline: none; padding-right: 15px;}
-    .filter-select option { background-color: var(--bg-nav); color: #ffffff; }
+    /* 🧰 Filter Toolbar (แถวที่ 2 ใต้ Navbar หลัก แยกฟิลเตอร์ออกมาให้โปร่งขึ้น) */
+    .filter-toolbar { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 10px 24px; position: relative; z-index: 1035; transition: background-color 0.3s ease, border-color 0.3s ease; }
+    .filter-toolbar-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .filter-toolbar-label { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; margin-right: 2px; display: flex; align-items: center; gap: 6px; }
+
+    .filter-group { display: flex; align-items: center; background-color: var(--bg-main); padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border-color); transition: all 0.2s; }
+    .filter-group:hover { border-color: #3b82f6; }
+    .filter-group i { color: #3b82f6; margin-right: 8px; font-size: 0.9rem; }
+    .filter-group .filter-label-text { color: var(--text-main); font-size: 0.9rem; }
+    .filter-select { background-color: transparent; border: none; color: var(--text-main); font-family: 'Kanit', sans-serif; font-size: 0.9rem; cursor: pointer; outline: none; padding-right: 6px;}
+    .filter-select option { background-color: var(--bg-card); color: var(--text-main); }
     .filter-select:focus { outline: none; box-shadow: none; }
     
     .date-picker-custom { 
@@ -82,8 +89,14 @@
     .btn-refresh { background-color: #3b82f6; color: #fff; border: none; font-weight: 600; border-radius: 8px; transition: all 0.2s; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
     .btn-refresh:hover { background-color: #2563eb; color: #fff; transform: translateY(-1px); }
 
-    .btn-theme-toggle { background-color: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 5px; }
+    .btn-theme-toggle { background-color: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; margin-left: 5px; position: relative; flex-shrink: 0; }
     .btn-theme-toggle:hover { background-color: rgba(255, 255, 255, 0.2); color: #fff; }
+
+    /* 🔔 Notification Bell Button (แทนที่สวิตช์เดิมในหน้าคุณสมบัติ) */
+    #alertBellBtn.active-alert { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.5); }
+    #alertBellBtn.active-alert:hover { background-color: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+    #alertBellBtn .bell-dot { position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; border-radius: 50%; background: #10b981; border: 2px solid var(--bg-nav); display: none; }
+    #alertBellBtn.active-alert .bell-dot { display: block; animation: pulse 1.5s infinite; }
 
     .dropdown-menu-custom { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 8px 0; }
     .dropdown-menu-custom .dropdown-item { color: var(--text-main); font-size: 0.95rem; padding: 10px 20px; transition: all 0.2s; display: flex; align-items: center;}
@@ -107,7 +120,8 @@
     @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
     @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
-    .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; margin: 0 auto 40px auto; max-width: 900px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; transition: all 0.3s ease; }
+    .main-panel-wrapper { max-width: 900px; margin: 0 auto 40px auto; }
+    .main-panel { background-color: var(--bg-card); border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03); padding: 40px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; flex-wrap: wrap; gap: 40px; transition: all 0.3s ease; }
     .chart-section { position: relative; width: 100%; max-width: 360px; height: 360px; }
     .legend-section { display: flex; flex-direction: column; gap: 12px; min-width: 220px; }
 
@@ -404,51 +418,25 @@
       </button>
       
       <div class="collapse navbar-collapse" id="navbarContent">
-        <div class="position-relative my-3 my-lg-0 me-auto ms-lg-4 w-100" style="max-width: 250px;">
+        <div class="position-relative my-3 my-lg-0 mx-lg-4 w-100" style="max-width: 280px;">
           <i class="fas fa-search position-absolute opacity-50" style="left: 18px; top: 11px; color: #fff;"></i>
           <input type="text" id="searchInput" class="form-control search-box ps-5" placeholder="Search ID or Title...">
         </div>
         
-        <div class="d-flex flex-column flex-lg-row gap-2 mt-2 mt-lg-0 align-items-lg-center flex-wrap">
-          
-          <!-- ปุ่มเปิด Modal ตั้งค่าเวลา -->
-          <div class="filter-group" id="btnOpenTimeModal" data-bs-toggle="modal" data-bs-target="#timeSettingsModal" style="cursor: pointer; transition: all 0.2s;">
-            <i class="far fa-calendar-alt text-primary"></i>
-            <span id="currentTimeLabel" class="text-white" style="font-size: 0.9rem; margin-left: 5px;">ตั้งค่าเวลา / โหลด 120 วัน</span>
-          </div>
+        <div class="d-flex gap-2 mt-2 mt-lg-0 ms-lg-auto align-items-center">
 
-          <div class="filter-group">
-            <i class="fas fa-filter"></i>
-            <select id="statusFilter" class="filter-select">
-              <option value="all">All Status</option>
-              <option value="New">New</option>
-              <option value="Assigned">Assigned</option>
-              <option value="Pending">Pending</option>
-              <option value="Solved">Solved</option>
-              <option value="Closed">Closed</option>
-            </select>
-          </div>
+          <!-- 🔔 ปุ่มแจ้งเตือน (ย้ายออกมาจากหน้าคุณสมบัติระบบ) -->
+          <button class="btn-theme-toggle" type="button" id="alertBellBtn" title="เปิด/ปิด การแจ้งเตือน (Alerts)">
+            <i class="fas fa-bell" id="alertBellIcon"></i>
+            <span class="bell-dot"></span>
+          </button>
 
-          <div class="filter-group">
-            <i class="fas fa-fire"></i>
-            <select id="priorityFilter" class="filter-select">
-              <option value="all">All Priority</option>
-              <option value="very_high">ด่วนมาก (Very High)</option>
-              <option value="high">ด่วน (High)</option>
-              <option value="medium">ปานกลาง (Medium)</option>
-              <option value="low">ทั่วไป (Low)</option>
-              <option value="closed">ปิดแล้ว (Closed)</option>
-            </select>
-          </div>
+          <!-- 🌙 ปุ่มสลับธีม (ย้ายออกมาจากเมนู ...) -->
+          <button class="btn-theme-toggle" type="button" id="themeToggleBtn" title="สลับโหมดหน้าจอ (Theme)">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
 
-          <div class="filter-group">
-            <i class="fas fa-folder-open"></i>
-            <select id="projectFilter" class="filter-select" style="max-width: 150px;">
-              <option value="all">All Projects</option>
-            </select>
-          </div>
-
-          <button class="btn btn-refresh px-3 ms-lg-2" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
+          <button class="btn btn-refresh px-3" id="btnRefresh" title="โหลดข้อมูลล่าสุด"><i class="fas fa-sync-alt me-2" id="syncIcon"></i>Sync</button>
           
           <div class="dropdown">
             <button class="btn-theme-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="เครื่องมือเพิ่มเติม (Tools)">
@@ -457,7 +445,6 @@
             <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
               <li><a class="dropdown-item" href="#" id="btnExportCSV"><i class="fas fa-file-csv text-success me-3" style="width: 16px;"></i>ส่งออกข้อมูล (Export CSV)</a></li>
               <li><a class="dropdown-item" href="#" id="btnExportPDF"><i class="fas fa-file-pdf text-danger me-3" style="width: 16px;"></i>ส่งออกข้อมูล (Export PDF)</a></li>
-              <li><a class="dropdown-item" href="#" id="themeToggleBtn"><i class="fas fa-moon text-warning me-3" id="themeIcon" style="width: 16px;"></i>สลับโหมดหน้าจอ (Theme)</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel"><i class="fas fa-info-circle text-info me-3" style="width: 16px;"></i>คุณสมบัติระบบ (Features Info)</a></li>
               <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#changelogModal"><i class="fas fa-history text-primary me-3" style="width: 16px;"></i>ประวัติการอัปเดต (Changelog)</a></li>
@@ -469,16 +456,55 @@
     </div>
   </nav>
 
+  <!-- 🧰 Filter Toolbar: แยกฟิลเตอร์ทั้งหมดออกจาก Navbar หลัก ลดความแออัด -->
+  <div class="filter-toolbar">
+    <div class="container-fluid">
+      <div class="filter-toolbar-inner">
+        <span class="filter-toolbar-label"><i class="fas fa-sliders-h"></i>ตัวกรอง:</span>
+
+        <div class="filter-group" id="btnOpenTimeModal" data-bs-toggle="modal" data-bs-target="#timeSettingsModal" style="cursor: pointer;">
+          <i class="far fa-calendar-alt"></i>
+          <span id="currentTimeLabel" class="filter-label-text">ตั้งค่าเวลา / โหลด 120 วัน</span>
+        </div>
+
+        <div class="filter-group">
+          <i class="fas fa-filter"></i>
+          <select id="statusFilter" class="filter-select">
+            <option value="all">All Status</option>
+            <option value="New">New</option>
+            <option value="Assigned">Assigned</option>
+            <option value="Pending">Pending</option>
+            <option value="Solved">Solved</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <i class="fas fa-fire"></i>
+          <select id="priorityFilter" class="filter-select">
+            <option value="all">All Priority</option>
+            <option value="very_high">ด่วนมาก (Very High)</option>
+            <option value="high">ด่วน (High)</option>
+            <option value="medium">ปานกลาง (Medium)</option>
+            <option value="low">ทั่วไป (Low)</option>
+            <option value="closed">ปิดแล้ว (Closed)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <i class="fas fa-folder-open"></i>
+          <select id="projectFilter" class="filter-select" style="max-width: 150px;">
+            <option value="all">All Projects</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="collapse info-panel" id="sysInfoPanel">
     <div class="container py-4">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="d-flex align-items-center">
-          <h5 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
-          <div class="form-check form-switch fs-5 ms-4">
-            <input class="form-check-input" type="checkbox" id="alertSwitch" style="cursor: pointer;">
-            <label class="form-check-label fs-6 ms-2" for="alertSwitch" style="cursor: pointer; color: var(--text-main);">เปิดระบบแจ้งเตือน (Active Alerts)</label>
-          </div>
-        </div>
+        <h5 class="fw-bold mb-0" style="color: var(--text-main);"><i class="fas fa-server text-primary me-2"></i>SYSNECT Command Center Features</h5>
         <button type="button" class="btn-close shadow-none" data-bs-toggle="collapse" data-bs-target="#sysInfoPanel" aria-label="Close" title="ปิดหน้าต่างนี้"></button>
       </div>
 
@@ -501,7 +527,7 @@
           <div class="feature-box">
             <div class="feature-icon bg-warning bg-opacity-10 text-warning"><i class="fas fa-bell"></i></div>
             <h6 class="fw-bold" style="color: var(--text-main);">Active Alerts</h6>
-            <p class="small mb-0" style="color: var(--text-muted);">ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมี Ticket ส่งเข้ามาใหม่</p>
+            <p class="small mb-0" style="color: var(--text-muted);">ระบบแจ้งเตือนเชิงรุกผ่านเสียง (Audio Chime) และ Pop-up หน้าจอเมื่อมี Ticket ส่งเข้ามาใหม่ — เปิด/ปิดได้ที่ปุ่มกระดิ่ง <i class="fas fa-bell text-warning"></i> บนแถบเมนูด้านบน</p>
           </div>
         </div>
         <div class="col-md-3">
@@ -525,7 +551,16 @@
         
         <div class="modal-body p-4">
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.5.0 - Smart Notify Banner 🔔</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.6.0 - Cleaner Navbar & Smart Bell 🔔📊</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>ออกแบบแถบเมนูด้านบนใหม่ทั้งหมด แยกฟิลเตอร์ (เวลา/สถานะ/ความสำคัญ/โครงการ) ออกมาเป็นแถบตัวกรองของตัวเอง ลดความแออัด อ่านง่ายและกดง่ายขึ้น</li>
+              <li>ย้ายสวิตช์ "เปิดระบบแจ้งเตือน" ออกจากหน้าคุณสมบัติระบบ มาเป็นปุ่มกระดิ่ง 🔔 บนแถบเมนู กดครั้งเดียวเปิด/ปิดได้ทันที พร้อมจุดไฟแสดงสถานะเปิดอยู่</li>
+              <li>ปุ่มสลับธีม (Dark/Light) ย้ายออกมาจากเมนู ... ให้เป็นไอคอนลัดกดง่ายอยู่บนแถบเมนูโดยตรง</li>
+              <li>เพิ่มปุ่มสลับมุมมองกราฟโดนัทภาพรวม ให้ดูสัดส่วนงานแยกตาม "ผู้รับผิดชอบ" ได้ นอกเหนือจากมุมมองตามสถานะเดิม</li>
+            </ul>
+          </div>
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.5.0 - Smart Notify Banner 🔔</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>ลบระบบ Auto-refresh อัตโนมัติออก เพื่อไม่ให้รบกวนการทำงาน</li>
               <li>เพิ่มระบบ Background Polling เช็คข้อมูลใหม่เบื้องหลังทุก 1 นาที โดยไม่ reload หน้า</li>
@@ -661,15 +696,35 @@
       <div id='stats' class="mt-4 d-flex flex-wrap justify-content-center"></div>
     </div>
 
-    <div class="main-panel">
-      <div class="chart-section">
-        <canvas id="ticketChart"></canvas>
+    <div class="main-panel-wrapper">
+      <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-3 px-2">
+        <h5 class="fw-bold mb-0" style="color: var(--text-main);">
+          <i class="fas fa-chart-pie text-primary me-2"></i>
+          <span id="donutChartTitle">ภาพรวมงานแยกตามสถานะ</span>
+        </h5>
+        <div class="d-flex align-items-center gap-2">
+          <span style="font-size:0.8rem; color:var(--text-muted);">แสดงตาม:</span>
+          <div class="btn-group" role="group" id="donutChartToggle">
+            <button type="button" class="btn btn-sm btn-bar-mode active" id="btnDonutStatus" onclick="setDonutMode('status')">
+              <i class="fas fa-flag me-1"></i>สถานะ
+            </button>
+            <button type="button" class="btn btn-sm btn-bar-mode" id="btnDonutTechnician" onclick="setDonutMode('technician')">
+              <i class="fas fa-user-tie me-1"></i>ผู้รับผิดชอบ
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="legend-section" id="customLegend">
+      <div class="main-panel">
+        <div class="chart-section">
+          <canvas id="ticketChart"></canvas>
+        </div>
+        <div class="legend-section" id="customLegend">
+        </div>
       </div>
     </div>
     
-    <div class="main-panel" style="margin-top: 20px; flex-direction: column; align-items: stretch;">
+    <div class="main-panel-wrapper">
+    <div class="main-panel" style="flex-direction: column; align-items: stretch;">
       <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <h5 class="fw-bold mb-0" style="color: var(--text-main);">
           <i class="fas fa-chart-bar text-primary me-2"></i>
@@ -691,6 +746,7 @@
         <canvas id="projectBarChart"></canvas>
       </div>
     </div>
+    </div>
   </div>
 
   <div class="offcanvas offcanvas-end" tabindex="-1" id="ticketSidebar">
@@ -706,7 +762,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <script>
-    const CURRENT_APP_VERSION = 'v1.5.0';
+    const CURRENT_APP_VERSION = 'v1.6.0';
     
     function checkAndShowChangelog() {
       const lastSeenVersion = localStorage.getItem('sysnectLastSeenVersion');
@@ -736,6 +792,7 @@
     let apiTotalCount = 0;
     let currentDataRangeDays = 120; // 🟢 จำนวนวันย้อนหลังของข้อมูลที่จะดึงจากเซิร์ฟเวอร์ (default 120 วัน)
     let barChartMode = 'project'; // 'project' | 'technician'
+    let donutChartMode = 'status'; // 🟢 'status' | 'technician' — โหมดแสดงผลกราฟโดนัทหลัก
     
     function setBarMode(mode) {
       barChartMode = mode;
@@ -748,18 +805,41 @@
       // วาดกราฟใหม่
       initChart(filteredProjectsData);
     }
+
+    // 🟢 สลับมุมมองกราฟโดนัทหลัก ระหว่าง "สถานะ" กับ "ผู้รับผิดชอบ"
+    function setDonutMode(mode) {
+      donutChartMode = mode;
+      document.getElementById('btnDonutStatus').classList.toggle('active', mode === 'status');
+      document.getElementById('btnDonutTechnician').classList.toggle('active', mode === 'technician');
+      document.getElementById('donutChartTitle').textContent =
+        mode === 'status' ? 'ภาพรวมงานแยกตามสถานะ' : 'ภาพรวมงานแยกตามผู้รับผิดชอบ';
+      initChart(filteredProjectsData);
+    }
     
     let knownTicketIds = new Set();
     let isFirstLoad = true;
     let pendingNewTickets = []; // เก็บ ticket ใหม่ที่รอ refresh
     let currentPdfHtmlContent = ''; // สำหรับเก็บโค้ด HTML ไว้ใช้ตอนกดยืนยัน Print
 
-    const alertSwitch = document.getElementById('alertSwitch');
-    if (localStorage.getItem('sysnectAlerts') === 'true') { alertSwitch.checked = true; }
+    // 🔔 ปุ่มกระดิ่งแจ้งเตือน (แทนที่สวิตช์เดิมในหน้าคุณสมบัติระบบ)
+    const alertBellBtn = document.getElementById('alertBellBtn');
+    const alertBellIcon = document.getElementById('alertBellIcon');
+    let alertsEnabled = localStorage.getItem('sysnectAlerts') === 'true';
 
-    alertSwitch.addEventListener('change', (e) => {
-        localStorage.setItem('sysnectAlerts', e.target.checked);
-        if (e.target.checked && "Notification" in window) Notification.requestPermission();
+    function updateBellUI() {
+        alertBellBtn.classList.toggle('active-alert', alertsEnabled);
+        alertBellIcon.className = alertsEnabled ? 'fas fa-bell' : 'fas fa-bell-slash';
+        alertBellBtn.title = alertsEnabled
+            ? 'การแจ้งเตือน: เปิดอยู่ (คลิกเพื่อปิด)'
+            : 'การแจ้งเตือน: ปิดอยู่ (คลิกเพื่อเปิด)';
+    }
+    updateBellUI();
+
+    alertBellBtn.addEventListener('click', () => {
+        alertsEnabled = !alertsEnabled;
+        localStorage.setItem('sysnectAlerts', alertsEnabled);
+        if (alertsEnabled && "Notification" in window) Notification.requestPermission();
+        updateBellUI();
     });
 
     function playNotificationSound() {
@@ -784,7 +864,7 @@
     }
 
     function showDesktopNotification(count, latestTitle) {
-        if (!alertSwitch.checked) return;
+        if (!alertsEnabled) return;
         if ("Notification" in window && Notification.permission === "granted") {
             new Notification("SYSNECT Alerts: แจ้งเตือนงานใหม่", {
                 body: `พบ Ticket ใหม่จำนวน ${count} รายการ\nล่าสุด: ${latestTitle}`,
@@ -850,10 +930,10 @@
     function updateThemeIcon() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         if(currentTheme === 'dark') {
-            themeIcon.className = 'fas fa-sun text-warning me-3';
+            themeIcon.className = 'fas fa-sun';
             document.documentElement.style.setProperty('--btn-close-filter', 'invert(1) grayscale(100%) brightness(200%)');
         } else {
-            themeIcon.className = 'fas fa-moon text-secondary me-3';
+            themeIcon.className = 'fas fa-moon';
             document.documentElement.style.setProperty('--btn-close-filter', 'none');
         }
     }
@@ -1219,17 +1299,60 @@
       const legendContainer = document.getElementById('customLegend');
       legendContainer.innerHTML = '';
       const order = ["New", "Assigned", "Pending", "Solved", "Closed"];
-      
-      order.forEach(status => {
-        const cColor = statusConfig[status].color;
-        const cCount = counts[status];
-        
-        // แก้ไขให้ส่ง type = 'status' เข้าไป
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+
+      // 🟢 เตรียมข้อมูลสำหรับกราฟโดนัท ตาม donutChartMode ('status' | 'technician')
+      const techPalette = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4', '#f97316', '#84cc16'];
+      const othersColor = '#94a3b8';
+      let donutLabels = [];   // label ที่แสดงบน legend / กราฟ
+      let donutValues = [];   // จำนวนรายการของแต่ละ label
+      let donutColors = [];   // สีของแต่ละชิ้น
+      let donutClickKeys = []; // ค่าที่ใช้ตอนคลิกเปิด sidebar (null = กลุ่มรวม เปิดไม่ได้)
+
+      if (donutChartMode === 'status') {
+        order.forEach(status => {
+          donutLabels.push(status.toUpperCase());
+          donutValues.push(counts[status]);
+          donutColors.push(statusConfig[status].color);
+          donutClickKeys.push(status);
+        });
+      } else {
+        // เรียงผู้รับผิดชอบจากมากไปน้อย โชว์ Top 8 คน ที่เหลือรวมเป็น "อื่นๆ"
+        const sortedTechs = Object.keys(technicianCounts).sort((a, b) => technicianCounts[b] - technicianCounts[a]);
+        const TOP_N = 8;
+        const topTechs = sortedTechs.slice(0, TOP_N);
+        const restTechs = sortedTechs.slice(TOP_N);
+
+        topTechs.forEach((tech, i) => {
+          donutLabels.push(tech);
+          donutValues.push(technicianCounts[tech]);
+          donutColors.push(techPalette[i % techPalette.length]);
+          donutClickKeys.push(tech);
+        });
+
+        if (restTechs.length > 0) {
+          const restTotal = restTechs.reduce((sum, t) => sum + technicianCounts[t], 0);
+          donutLabels.push(`อื่นๆ (${restTechs.length} คน)`);
+          donutValues.push(restTotal);
+          donutColors.push(othersColor);
+          donutClickKeys.push(null); // กลุ่มรวม ไม่ผูกกับผู้รับผิดชอบรายเดียว จึงเปิด sidebar ไม่ได้
+        }
+      }
+
+      // เติม Legend ฝั่งขวาของกราฟโดนัท
+      donutLabels.forEach((label, i) => {
+        const cColor = donutColors[i];
+        const cCount = donutValues[i];
+        const clickKey = donutClickKeys[i];
+        const isClickable = clickKey !== null;
+        const safeKey = isClickable ? String(clickKey).replace(/'/g, "\\'") : '';
+        const clickAttr = isClickable ? `onclick="openSidebar('${donutChartMode}', '${safeKey}')"` : '';
+
         const itemHtml = `
-          <div class="legend-item" onclick="openSidebar('status', '${status}')">
+          <div class="legend-item" ${clickAttr} style="${isClickable ? '' : 'cursor: default; opacity: 0.85;'}">
             <div class="legend-left">
               <div class="legend-color" style="background: ${cColor}; box-shadow: 0 0 5px ${cColor}80;"></div>
-              <span>${status.toUpperCase()}</span>
+              <span>${label}</span>
             </div>
             <span class="badge rounded-pill" style="background-color: ${cColor}15; color: ${cColor}; font-size: 0.9rem;">${cCount}</span>
           </div>
@@ -1237,23 +1360,17 @@
         legendContainer.insertAdjacentHTML('beforeend', itemHtml);
       });
 
-      // 1. วาดกราฟ Doughnut (Status)
+      // 1. วาดกราฟ Doughnut (สลับได้ระหว่าง สถานะ / ผู้รับผิดชอบ)
       const ctx = document.getElementById('ticketChart').getContext('2d');
       if (ticketChart) ticketChart.destroy();
-      
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
 
       ticketChart = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: order,
+          labels: donutLabels,
           datasets: [{
-            data: [counts.New, counts.Assigned, counts.Pending, counts.Solved, counts.Closed],
-            backgroundColor: [
-              statusConfig["New"].color, statusConfig["Assigned"].color,
-              statusConfig["Pending"].color, statusConfig["Solved"].color,
-              statusConfig["Closed"].color
-            ],
+            data: donutValues,
+            backgroundColor: donutColors,
             borderWidth: 0,
             spacing: 5,
             hoverOffset: 15
@@ -1270,7 +1387,9 @@
           onClick: (event, elements) => {
             if (elements.length > 0) {
               const clickedIndex = elements[0].index;
-              openSidebar('status', order[clickedIndex]); // แก้เป็น 'status'
+              const clickKey = donutClickKeys[clickedIndex];
+              if (clickKey === null || clickKey === undefined) return; // กลุ่ม "อื่นๆ" ไม่มีตัวกรองเดี่ยว
+              openSidebar(donutChartMode, clickKey);
             }
           }
         }
@@ -2169,4 +2288,4 @@
     };
   </script>
 </body>
-</html> 
+</html>
