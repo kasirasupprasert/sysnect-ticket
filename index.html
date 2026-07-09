@@ -155,8 +155,15 @@
     .kpi-total   { color: var(--text-main); }
     .kpi-urgent  { color: #ef4444; background: rgba(239,68,68,.05); border-color: rgba(239,68,68,.2); }
     .kpi-warning { color: #f59e0b; background: rgba(245,158,11,.05); border-color: rgba(245,158,11,.2); }
+    .kpi-caution { color: #ea580c; background: rgba(234,88,12,.05); border-color: rgba(234,88,12,.2); }
     .kpi-ok      { color: #10b981; background: rgba(16,185,129,.05); border-color: rgba(16,185,129,.2); }
     .kpi-replace { color: #8b5cf6; background: rgba(139,92,246,.05); border-color: rgba(139,92,246,.2); }
+    .kpi-lost    { color: #64748b; background: rgba(100,116,139,.06); border-color: rgba(100,116,139,.2); }
+
+    /* Sidebar count badges + category chip (asset "all" view) */
+    .sidebar-count-badge { margin-left: auto; background: rgba(255,255,255,0.08); color: var(--sidebar-text); font-size: 0.7rem; font-weight: 600; padding: 1px 8px; border-radius: 20px; min-width: 22px; text-align: center; }
+    .sidebar-link.active .sidebar-count-badge { background: rgba(59,130,246,0.2); color: var(--sidebar-active-text); }
+    .category-chip { font-size: 0.68rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; background: rgba(59,130,246,.1); color: #3b82f6; border: 1px solid rgba(59,130,246,.25); display: inline-flex; align-items: center; gap: 4px; }
 
     /* Asset Toolbar */
     .asset-filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; background-color: var(--bg-card); padding: 12px 20px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 20px;}
@@ -169,6 +176,12 @@
     .btn-advfilter { background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; padding: 6px 16px; font-size: 0.85rem; transition: 0.2s; }
     .btn-advfilter:hover, .btn-advfilter.has-active { border-color: #3b82f6; color: #3b82f6; }
     .btn-advfilter.has-active { background: rgba(59,130,246,.08); }
+
+    /* Time Range Picker (Time Settings Modal) */
+    .time-pill-group { display: flex; flex-wrap: wrap; gap: 8px; }
+    .time-pill-group .quick-pill { border-radius: 20px !important; }
+    .custom-range-box { display: none; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-top: 12px; }
+    .custom-range-box.show { display: block; }
 
     .view-toggle-group { display: flex; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 3px; }
     .view-toggle-btn { border: none; background: transparent; color: var(--text-muted); width: 34px; height: 30px; border-radius: 6px; transition: 0.2s; display: flex; align-items: center; justify-content: center;}
@@ -230,16 +243,17 @@
       </li>
       
       <li>
-        <a class="sidebar-link" data-bs-toggle="collapse" href="#assetSubmenu" role="button" aria-expanded="false" id="nav-assets-main">
+        <a class="sidebar-link" data-bs-toggle="collapse" href="#assetSubmenu" role="button" aria-expanded="false" id="nav-assets-main" onclick="switchView('assets', 'all')">
           <i class="fas fa-desktop icon-left"></i> <span>รายการทรัพย์สิน (Asset)</span>
           <i class="fas fa-chevron-down ms-auto" style="font-size: 0.7rem; opacity:0.7;"></i>
         </a>
         <div class="collapse" id="assetSubmenu">
           <ul class="list-unstyled mb-0 py-1">
-            <li><a class="sidebar-link sub-asset-link" id="nav-asset-computer" onclick="switchView('assets', 'computer')"><i class="fas fa-laptop me-2"></i> คอมพิวเตอร์</a></li>
-            <li><a class="sidebar-link sub-asset-link" id="nav-asset-network" onclick="switchView('assets', 'network')"><i class="fas fa-network-wired me-2"></i> อุปกรณ์เน็ตเวิร์ค</a></li>
-            <li><a class="sidebar-link sub-asset-link" id="nav-asset-printer" onclick="switchView('assets', 'printer')"><i class="fas fa-print me-2"></i> ปรินเตอร์</a></li>
-            <li><a class="sidebar-link sub-asset-link" id="nav-asset-phone" onclick="switchView('assets', 'phone')"><i class="fas fa-mobile-alt me-2"></i> โทรศัพท์</a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-all" onclick="switchView('assets', 'all')"><i class="fas fa-layer-group me-2"></i> อุปกรณ์ทั้งหมด <span class="sidebar-count-badge" id="count-all">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-computer" onclick="switchView('assets', 'computer')"><i class="fas fa-laptop me-2"></i> คอมพิวเตอร์ <span class="sidebar-count-badge" id="count-computer">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-network" onclick="switchView('assets', 'network')"><i class="fas fa-network-wired me-2"></i> อุปกรณ์เน็ตเวิร์ค <span class="sidebar-count-badge" id="count-network">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-printer" onclick="switchView('assets', 'printer')"><i class="fas fa-print me-2"></i> ปรินเตอร์ <span class="sidebar-count-badge" id="count-printer">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-phone" onclick="switchView('assets', 'phone')"><i class="fas fa-mobile-alt me-2"></i> โทรศัพท์ <span class="sidebar-count-badge" id="count-phone">-</span></a></li>
           </ul>
         </div>
       </li>
@@ -317,7 +331,7 @@
       <div class="toolbar-bar">
         <span class="filter-badge"><i class="fas fa-sliders-h"></i> ตัวกรองข้อมูล:</span>
         <div class="filter-select-group" data-bs-toggle="modal" data-bs-target="#timeSettingsModal">
-          <i class="far fa-calendar-alt"></i><span id="currentTimeLabel" class="filter-label-text">โหลด 120 วัน</span>
+          <i class="far fa-calendar-alt"></i><span id="currentTimeLabel" class="filter-label-text">วันนี้</span>
         </div>
         <div class="filter-select-group">
           <i class="fas fa-filter"></i>
@@ -401,6 +415,7 @@
               <button class="quick-pill active" data-range="all">ทั้งหมด</button>
               <button class="quick-pill" data-range="30">≤ 30 วัน</button>
               <button class="quick-pill" data-range="60">≤ 60 วัน</button>
+              <button class="quick-pill" data-range="90">≤ 90 วัน</button>
               <button class="quick-pill" data-range="replace">ควรเปลี่ยน</button>
             </div>
 
@@ -424,7 +439,7 @@
           <table class="table table-custom">
             <thead>
               <tr>
-                <th>#</th><th>Asset Tag</th><th>ชื่อ / รุ่น</th><th>ผู้ใช้งาน</th><th>หน่วยงาน / องค์กร</th><th>สถานที่</th><th>วันหมดประกัน</th><th>คงเหลือ</th><th>สถานะ</th>
+                <th>#</th><th>Asset Tag</th><th>ชื่อ / รุ่น</th><th>หมวดหมู่</th><th>ผู้ใช้งาน</th><th>หน่วยงาน / องค์กร</th><th>สถานที่</th><th>วันหมดประกัน</th><th>คงเหลือ</th><th>สถานะ</th>
               </tr>
             </thead>
             <tbody id="assetTableBody"></tbody>
@@ -443,15 +458,37 @@
 </div>
 
 <div class="modal fade" id="timeSettingsModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content" style="background:var(--bg-card); color:var(--text-main); border:1px solid var(--border-color); border-radius:12px;">
       <div class="modal-header border-bottom" style="border-color:var(--border-color)!important;">
-        <h6 class="modal-title fw-bold"><i class="fas fa-calendar-alt text-primary me-2"></i> ตั้งค่าเวลา Ticket</h6>
+        <h6 class="modal-title fw-bold"><i class="fas fa-calendar-alt text-primary me-2"></i> ตั้งค่าช่วงเวลาแสดงข้อมูล Ticket</h6>
         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" style="filter: var(--btn-close-filter);"></button>
       </div>
       <div class="modal-body p-3">
-        <label class="fw-bold mb-2 small text-primary">ดึงข้อมูลย้อนหลัง (วัน)</label>
-        <input type="number" id="modalFetchDays" class="form-control form-control-custom" value="120" min="1">
+        <label class="fw-bold mb-2 small text-primary">เลือกช่วงเวลาที่ต้องการแสดงผล</label>
+        <div class="time-pill-group" id="timePresetGroup">
+          <button type="button" class="quick-pill" data-preset="today" data-days="1">วันนี้</button>
+          <button type="button" class="quick-pill" data-preset="7" data-days="7">7 วันล่าสุด</button>
+          <button type="button" class="quick-pill" data-preset="30" data-days="30">30 วันล่าสุด</button>
+          <button type="button" class="quick-pill" data-preset="90" data-days="90">90 วันล่าสุด</button>
+          <button type="button" class="quick-pill" data-preset="120" data-days="120">120 วันล่าสุด</button>
+          <button type="button" class="quick-pill" data-preset="custom" id="btnCustomRangeToggle">กำหนดเอง...</button>
+        </div>
+
+        <div class="custom-range-box" id="customRangeBox">
+          <div class="row g-2">
+            <div class="col-6">
+              <label class="small fw-semibold mb-1" style="color:var(--text-muted);">วันที่เริ่มต้น</label>
+              <input type="date" id="customStartDate" class="form-control form-control-custom form-control-sm">
+            </div>
+            <div class="col-6">
+              <label class="small fw-semibold mb-1" style="color:var(--text-muted);">วันที่สิ้นสุด</label>
+              <input type="date" id="customEndDate" class="form-control form-control-custom form-control-sm">
+            </div>
+          </div>
+        </div>
+
+        <div class="small mt-3" style="color:var(--text-muted);"><i class="fas fa-circle-info me-1"></i>ระบบจะดึงข้อมูลจาก Server ให้ครอบคลุมช่วงเวลาที่เลือก แล้วกรองแสดงผลตามช่วงวันที่ที่กำหนด</div>
       </div>
       <div class="modal-footer border-top p-2" style="border-color:var(--border-color)!important;">
         <button type="button" class="btn btn-primary btn-sm px-3 rounded-2" id="btnApplyTimeFilter">บันทึก</button>
@@ -480,8 +517,9 @@
           <label class="fw-bold mb-2 small text-muted">สถานะประกัน</label>
           <select id="filterStatus" class="form-select form-select-custom shadow-none">
             <option value="all">ทั้งหมด</option>
-            <option value="urgent">ใกล้หมด / หมดประกันแล้ว</option>
+            <option value="urgent">ใกล้หมด / หมดประกันแล้ว (≤30 วัน)</option>
             <option value="warning">Warning (31-60 วัน)</option>
+            <option value="caution">Caution (61-90 วัน)</option>
             <option value="ok">ปกติ (90+ วัน)</option>
             <option value="replace">ควรเปลี่ยนเครื่อง</option>
             <option value="lost">รอทำลายทิ้ง</option>
@@ -679,11 +717,12 @@
      🛠 CORE LOGIC & STATE MANAGEMENT
      ============================================================ */
   let currentView = 'tickets'; 
-  let activeCategory = 'computer'; 
+  let activeCategory = 'all'; 
   let isTicketLoaded = false;
   let isAssetLoaded = false;
 
   const CATEGORIES = {
+    all: { label: 'อุปกรณ์ทั้งหมด', icon: 'fa-layer-group' },
     computer: { label: 'คอมพิวเตอร์', icon: 'fa-laptop' },
     network: { label: 'อุปกรณ์เน็ตเวิร์ค', icon: 'fa-network-wired' },
     printer: { label: 'ปรินเตอร์', icon: 'fa-print' },
@@ -760,8 +799,30 @@
   const TICKET_API_URL = 'https://n8n.sysnect.co.th/webhook/api/tickets';
   let projectsData = [];
   let filteredProjectsData = [];
-  let currentDataRangeDays = localStorage.getItem('sysnectDataRangeDays') || 120;
-  
+
+  // ── Time Range (แสดงข้อมูล) ──────────────────────────────
+  const TIME_PRESETS = {
+    today: { label: 'วันนี้', days: 1 },
+    '7':   { label: '7 วันล่าสุด', days: 7 },
+    '30':  { label: '30 วันล่าสุด', days: 30 },
+    '90':  { label: '90 วันล่าสุด', days: 90 },
+    '120': { label: '120 วันล่าสุด', days: 120 }
+  };
+  let activeTimePreset = localStorage.getItem('sysnectTimePreset') || 'today'; // default = วันนี้
+  let customStartDate = localStorage.getItem('sysnectCustomStart') || '';
+  let customEndDate = localStorage.getItem('sysnectCustomEnd') || '';
+  let currentDataRangeDays = Number(localStorage.getItem('sysnectDataRangeDays')) || (TIME_PRESETS[activeTimePreset] ? TIME_PRESETS[activeTimePreset].days : 1);
+
+  function todayStr() { return new Date().toLocaleDateString('sv-SE'); } // YYYY-MM-DD (local time)
+  function addDaysStr(days) { const d = new Date(); d.setDate(d.getDate() - days); return d.toLocaleDateString('sv-SE'); }
+
+  function getActiveTimeRangeLabel() {
+    if (activeTimePreset === 'custom' && customStartDate && customEndDate) {
+      return customStartDate === customEndDate ? customStartDate : `${customStartDate} → ${customEndDate}`;
+    }
+    return (TIME_PRESETS[activeTimePreset] || TIME_PRESETS['today']).label;
+  }
+
   let ticketChart;
   let projectBarChart;
   let barChartMode = 'project'; 
@@ -823,7 +884,20 @@
     const projVal = document.getElementById('projectFilter').value;
     const prioVal = document.getElementById('priorityFilter').value;
 
+    // ── คำนวณช่วงวันที่ที่ต้องการ "แสดงผล" (แยกจากช่วงที่ดึงข้อมูลจาก Server) ──
+    let rangeStart, rangeEnd;
+    if (activeTimePreset === 'custom' && customStartDate && customEndDate) {
+      rangeStart = customStartDate; rangeEnd = customEndDate;
+    } else if (activeTimePreset === 'today') {
+      rangeStart = rangeEnd = todayStr();
+    } else {
+      const preset = TIME_PRESETS[activeTimePreset] || TIME_PRESETS['today'];
+      rangeStart = addDaysStr(preset.days - 1); rangeEnd = todayStr();
+    }
+
     filteredProjectsData = projectsData.filter(t => {
+      const ticketDate = String(t.date || '').slice(0, 10);
+      if (ticketDate && (ticketDate < rangeStart || ticketDate > rangeEnd)) return false;
       if (searchVal && !`${t.title} ${t.id} ${t.project}`.toLowerCase().includes(searchVal)) return false;
       if (statVal !== 'all' && t.status !== statVal) return false;
       if (projVal !== 'all' && (t.project||"ไม่ระบุโครงการ") !== projVal) return false;
@@ -844,7 +918,7 @@
       return true;
     });
 
-    document.getElementById('ticketStatsText').innerHTML = `<i class="fas fa-list me-1"></i> รวม <b>${filteredProjectsData.length}</b> รายการ (ย้อนหลัง ${currentDataRangeDays} วัน)`;
+    document.getElementById('ticketStatsText').innerHTML = `<i class="fas fa-list me-1"></i> รวม <b>${filteredProjectsData.length}</b> รายการ (ช่วงเวลา: ${getActiveTimeRangeLabel()})`;
     initChart(filteredProjectsData);
   }
 
@@ -1171,6 +1245,7 @@
     urgent:     { label: 'ใกล้หมดประกัน',     color: '#ef4444', bg: 'rgba(239,68,68,.12)' },
     expired:    { label: 'หมดประกันแล้ว',      color: '#ef4444', bg: 'rgba(239,68,68,.12)' },
     warning:    { label: 'Warning',          color: '#f59e0b', bg: 'rgba(245,158,11,.14)' },
+    caution:    { label: 'Caution',          color: '#ea580c', bg: 'rgba(234,88,12,.14)' },
     ok:         { label: 'ปกติ',              color: '#10b981', bg: 'rgba(16,185,129,.13)' },
     replace:    { label: 'ควรเปลี่ยนเครื่อง',  color: '#8b5cf6', bg: 'rgba(139,92,246,.13)' },
     lost:       { label: 'รอทำลายทิ้ง',        color: '#64748b', bg: 'rgba(100,116,139,.15)' }
@@ -1204,10 +1279,22 @@
       lastUpdatedAt = new Date().toLocaleString('th-TH') + ' (Demo Data)';
     } finally {
       populateAdvancedFilterOptions();
+      updateSidebarAssetCounts();
       isAssetLoaded = true;
       applyAssetFilters();
       toggleLoading(false);
     }
+  }
+
+  // แสดง Total ของแต่ละหมวดหมู่ (รวมถึง "อุปกรณ์ทั้งหมด") บน Sidebar
+  function updateSidebarAssetCounts() {
+    const countAllEl = document.getElementById('count-all');
+    if (countAllEl) countAllEl.textContent = allAssets.length;
+    Object.keys(CATEGORIES).forEach(key => {
+      if (key === 'all') return;
+      const el = document.getElementById(`count-${key}`);
+      if (el) el.textContent = allAssets.filter(a => a.category === key).length;
+    });
   }
 
   function getWarrantyInfo(asset) {
@@ -1218,7 +1305,10 @@
     if (asset.manual_status === 'lost') { bucket='lost'; pillKey='lost'; }
     else if (asset.manual_status === 'replace') { bucket='replace'; pillKey='replace'; }
     else {
-      if (daysRemaining <= 30) bucket = 'urgent'; else if (daysRemaining <= 60) bucket = 'warning'; else bucket = 'ok';
+      if (daysRemaining <= 30) bucket = 'urgent';
+      else if (daysRemaining <= 60) bucket = 'warning';
+      else if (daysRemaining <= 90) bucket = 'caution';
+      else bucket = 'ok';
       pillKey = daysRemaining < 0 ? 'expired' : bucket;
     }
     return { daysRemaining, bucket, pillKey, style: ASSET_STATUS_CONFIG[pillKey] || ASSET_STATUS_CONFIG['ok'] };
@@ -1232,21 +1322,24 @@
   }
 
   function renderAssetKPIs(catAssets) {
-    const counts = { urgent: 0, warning: 0, ok: 0, replace: 0 };
+    const counts = { urgent: 0, warning: 0, caution: 0, ok: 0, replace: 0, lost: 0 };
     catAssets.forEach(a => { const b = getWarrantyInfo(a).bucket; if(counts[b] !== undefined) counts[b]++; });
     const tiles = [
-      { key: null, cls: 'kpi-total', label: 'ทั้งหมด (TOTAL)', val: catAssets.length, sub: 'อุปกรณ์ในหมวดหมู่นี้' },
+      { key: null, cls: 'kpi-total', label: 'ทั้งหมด (TOTAL)', val: catAssets.length, sub: activeCategory === 'all' ? 'อุปกรณ์ทุกหมวดหมู่' : 'อุปกรณ์ในหมวดหมู่นี้' },
       { key: 'urgent', cls: 'kpi-urgent', label: 'ใกล้หมดประกัน (≤30 วัน)', val: counts.urgent, sub: 'ต้องดำเนินการด่วน' },
       { key: 'warning', cls: 'kpi-warning', label: 'เฝ้าระวัง (31-60 วัน)', val: counts.warning, sub: 'เตรียมต่อประกัน' },
-      { key: 'replace', cls: 'kpi-replace', label: 'ควรเปลี่ยนเครื่อง', val: counts.replace, sub: 'อุปกรณ์เสื่อมสภาพ' }
+      { key: 'caution', cls: 'kpi-caution', label: 'Caution (61-90 วัน)', val: counts.caution, sub: 'ติดตามใกล้ชิด' },
+      { key: 'ok', cls: 'kpi-ok', label: 'ปกติ (90+ วัน)', val: counts.ok, sub: 'สถานะปกติ' },
+      { key: 'replace', cls: 'kpi-replace', label: 'ควรเปลี่ยนเครื่อง', val: counts.replace, sub: 'อุปกรณ์เสื่อมสภาพ' },
+      { key: 'lost', cls: 'kpi-lost', label: 'รอทำลายทิ้ง', val: counts.lost, sub: 'สูญหาย / ชำรุดเกินซ่อม' }
     ];
-    document.getElementById('kpiRow').innerHTML = tiles.map(t => `<div class="col-6 col-md-3"><div class="kpi-tile ${t.cls} ${activeKpiFilter===t.key?'active-kpi':''}" onclick="setActiveAssetKpi('${t.key}')"><div class="kpi-label">${t.label}</div><div class="kpi-value">${t.val}</div><div class="kpi-sub">${t.sub}</div></div></div>`).join('');
+    document.getElementById('kpiRow').innerHTML = tiles.map(t => `<div class="col-6 col-md-4 col-lg"><div class="kpi-tile ${t.cls} ${activeKpiFilter===t.key?'active-kpi':''}" onclick="setActiveAssetKpi('${t.key}')"><div class="kpi-label">${t.label}</div><div class="kpi-value">${t.val}</div><div class="kpi-sub">${t.sub}</div></div></div>`).join('');
   }
   
   function setActiveAssetKpi(key) { activeKpiFilter = (key === 'null' || activeKpiFilter === key) ? null : key; applyAssetFilters(); }
 
   function applyAssetFilters() {
-    const catAssets = allAssets.filter(a => a.category === activeCategory);
+    const catAssets = activeCategory === 'all' ? allAssets.slice() : allAssets.filter(a => a.category === activeCategory);
     renderAssetKPIs(catAssets);
 
     const term = document.getElementById('globalSearchInput').value.toLowerCase();
@@ -1256,6 +1349,7 @@
       if (activeKpiFilter && info.bucket !== activeKpiFilter) return false;
       if (activeQuickRange === '30' && info.daysRemaining > 30) return false;
       if (activeQuickRange === '60' && info.daysRemaining > 60) return false;
+      if (activeQuickRange === '90' && info.daysRemaining > 90) return false;
       if (activeQuickRange === 'replace' && info.bucket !== 'replace') return false;
       if (advFilter.org !== 'all' && a.org !== advFilter.org) return false;
       if (advFilter.location !== 'all' && a.location !== advFilter.location) return false;
@@ -1290,12 +1384,14 @@
     if (viewMode === 'grid') {
       grid.innerHTML = list.map(a => {
         const info = getWarrantyInfo(a);
-        return `<div class="col-sm-6 col-lg-4 col-xl-3"><div class="asset-card" style="border-top-color:${info.style.color};" onclick="openAssetDetail('${a.id}')"><div class="d-flex justify-content-between align-items-start mb-2"><span class="asset-tag-badge">${a.asset_tag}</span><span class="badge rounded-pill" style="font-size:0.65rem; background:${a.status==='Active'?'rgba(16,185,129,0.1)':'rgba(100,116,139,0.1)'}; color:${a.status==='Active'?'#10b981':'#64748b'};">${a.status}</span></div><div class="fw-bold text-main" style="font-size:0.95rem;">${a.name}</div><div class="text-muted small text-uppercase mb-2">${a.model||'-'}</div><div class="small text-muted mb-1"><i class="fas fa-user me-2 text-primary"></i>${a.assigned_user||'-'}</div><div class="small text-muted"><i class="fas fa-sitemap me-2 text-primary"></i>${a.org||'-'}</div><div class="warranty-box" style="background:${info.style.bg};"><div class="fw-bold" style="font-size:1.6rem; line-height:1; color:${info.style.color};">${Math.abs(info.daysRemaining)}</div><div><div class="fw-bold" style="font-size:0.65rem; color:${info.style.color};">${info.daysRemaining<0?'วันที่เลยกำหนด':'วันที่เหลือ'}</div><div class="fw-semibold text-main" style="font-size:0.8rem;">${a.warranty_end}</div></div></div><div class="d-flex justify-content-between align-items-center"><span class="badge rounded-pill" style="background:${info.style.bg}; color:${info.style.color}; font-weight:500;">${info.style.label}</span><span class="text-primary small fw-semibold">รายละเอียด <i class="fas fa-angle-right"></i></span></div></div></div>`;
+        const catInfo = CATEGORIES[a.category] || { label: a.category, icon: 'fa-question' };
+        return `<div class="col-sm-6 col-lg-4 col-xl-3"><div class="asset-card" style="border-top-color:${info.style.color};" onclick="openAssetDetail('${a.id}')"><div class="d-flex justify-content-between align-items-start mb-2"><span class="asset-tag-badge">${a.asset_tag}</span><span class="badge rounded-pill" style="font-size:0.65rem; background:${a.status==='Active'?'rgba(16,185,129,0.1)':'rgba(100,116,139,0.1)'}; color:${a.status==='Active'?'#10b981':'#64748b'};">${a.status}</span></div>${activeCategory==='all' ? `<span class="category-chip mb-2"><i class="fas ${catInfo.icon}"></i>${catInfo.label}</span>` : ''}<div class="fw-bold text-main mt-1" style="font-size:0.95rem;">${a.name}</div><div class="text-muted small text-uppercase mb-2">${a.model||'-'}</div><div class="small text-muted mb-1"><i class="fas fa-user me-2 text-primary"></i>${a.assigned_user||'-'}</div><div class="small text-muted"><i class="fas fa-sitemap me-2 text-primary"></i>${a.org||'-'}</div><div class="warranty-box" style="background:${info.style.bg};"><div class="fw-bold" style="font-size:1.6rem; line-height:1; color:${info.style.color};">${Math.abs(info.daysRemaining)}</div><div><div class="fw-bold" style="font-size:0.65rem; color:${info.style.color};">${info.daysRemaining<0?'วันที่เลยกำหนด':'วันที่เหลือ'}</div><div class="fw-semibold text-main" style="font-size:0.8rem;">${a.warranty_end}</div></div></div><div class="d-flex justify-content-between align-items-center"><span class="badge rounded-pill" style="background:${info.style.bg}; color:${info.style.color}; font-weight:500;">${info.style.label}</span><span class="text-primary small fw-semibold">รายละเอียด <i class="fas fa-angle-right"></i></span></div></div></div>`;
       }).join('');
     } else {
       document.getElementById('assetTableBody').innerHTML = list.map((a, i) => {
         const info = getWarrantyInfo(a);
-        return `<tr onclick="openAssetDetail('${a.id}')"><td>${i+1}</td><td><span class="asset-tag-badge">${a.asset_tag}</span></td><td><div class="fw-semibold text-main">${a.name}</div><div class="small text-muted">${a.model||'-'}</div></td><td>${a.assigned_user||'-'}</td><td>${a.org||'-'}</td><td>${a.location||'-'}</td><td>${a.warranty_end}</td><td style="color:${info.style.color}; font-weight:600;">${info.daysRemaining} วัน</td><td><span class="badge rounded-pill" style="background:${info.style.bg}; color:${info.style.color}; font-weight:500;">${info.style.label}</span></td></tr>`;
+        const catInfo = CATEGORIES[a.category] || { label: a.category, icon: 'fa-question' };
+        return `<tr onclick="openAssetDetail('${a.id}')"><td>${i+1}</td><td><span class="asset-tag-badge">${a.asset_tag}</span></td><td><div class="fw-semibold text-main">${a.name}</div><div class="small text-muted">${a.model||'-'}</div></td><td><span class="category-chip"><i class="fas ${catInfo.icon}"></i>${catInfo.label}</span></td><td>${a.assigned_user||'-'}</td><td>${a.org||'-'}</td><td>${a.location||'-'}</td><td>${a.warranty_end}</td><td style="color:${info.style.color}; font-weight:600;">${info.daysRemaining} วัน</td><td><span class="badge rounded-pill" style="background:${info.style.bg}; color:${info.style.color}; font-weight:500;">${info.style.label}</span></td></tr>`;
       }).join('');
     }
   }
@@ -1367,23 +1463,64 @@
     else if (currentView === 'assets') fetchAssetData();
   });
 
+  /* ============================================================
+     📅 TIME RANGE MODAL (Preset Pills + Custom Range)
+     ============================================================ */
+  let pendingTimePreset = activeTimePreset;
+
+  function renderTimePresetPills() {
+    document.querySelectorAll('#timePresetGroup .quick-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.preset === pendingTimePreset);
+    });
+    document.getElementById('customRangeBox').classList.toggle('show', pendingTimePreset === 'custom');
+  }
+
+  document.querySelectorAll('#timePresetGroup .quick-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      pendingTimePreset = btn.dataset.preset;
+      renderTimePresetPills();
+    });
+  });
+
+  document.getElementById('timeSettingsModal').addEventListener('show.bs.modal', () => {
+    pendingTimePreset = activeTimePreset;
+    document.getElementById('customStartDate').value = customStartDate || addDaysStr(6);
+    document.getElementById('customEndDate').value = customEndDate || todayStr();
+    document.getElementById('customEndDate').max = todayStr();
+    renderTimePresetPills();
+  });
+
   document.getElementById('btnApplyTimeFilter').addEventListener('click', () => {
-      const newDays = parseInt(document.getElementById('modalFetchDays').value) || 120;
-      document.getElementById('currentTimeLabel').innerHTML = `โหลดย้อนหลัง ${newDays} วัน`;
-      bootstrap.Modal.getInstance(document.getElementById('timeSettingsModal')).hide();
-      if (newDays !== currentDataRangeDays) {
-          currentDataRangeDays = newDays;
-          localStorage.setItem('sysnectDataRangeDays', currentDataRangeDays);
-          fetchDashboardData(); 
+      if (pendingTimePreset === 'custom') {
+        const startVal = document.getElementById('customStartDate').value;
+        const endVal = document.getElementById('customEndDate').value;
+        if (!startVal || !endVal) { alert('กรุณาระบุวันที่เริ่มต้นและสิ้นสุด'); return; }
+        if (startVal > endVal) { alert('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด'); return; }
+        customStartDate = startVal;
+        customEndDate = endVal;
+        activeTimePreset = 'custom';
+        const diffDays = Math.round((new Date(todayStr()) - new Date(startVal)) / 86400000) + 1;
+        currentDataRangeDays = Math.max(diffDays, 1);
+      } else {
+        activeTimePreset = pendingTimePreset;
+        customStartDate = '';
+        customEndDate = '';
+        currentDataRangeDays = (TIME_PRESETS[activeTimePreset] || TIME_PRESETS['today']).days;
       }
+
+      localStorage.setItem('sysnectTimePreset', activeTimePreset);
+      localStorage.setItem('sysnectCustomStart', customStartDate);
+      localStorage.setItem('sysnectCustomEnd', customEndDate);
+      localStorage.setItem('sysnectDataRangeDays', currentDataRangeDays);
+
+      document.getElementById('currentTimeLabel').textContent = getActiveTimeRangeLabel();
+      bootstrap.Modal.getInstance(document.getElementById('timeSettingsModal')).hide();
+      fetchDashboardData();
   });
 
   // Init App
   window.onload = () => {
-    const savedRange = localStorage.getItem('sysnectDataRangeDays') || '120';
-    document.getElementById('modalFetchDays').value = savedRange;
-    currentDataRangeDays = Number(savedRange) || 120;
-    document.getElementById('currentTimeLabel').innerHTML = `โหลดย้อนหลัง ${currentDataRangeDays} วัน`;
+    document.getElementById('currentTimeLabel').textContent = getActiveTimeRangeLabel();
     switchView('tickets');
   };
 
