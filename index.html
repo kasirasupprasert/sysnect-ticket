@@ -7,7 +7,6 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   
   <style>
@@ -15,6 +14,7 @@
        🎨 THEME VARIABLES
        ============================================================ */
     :root {
+      color-scheme: light;
       --bg-main: #f8fafc;
       --bg-nav: #0f172a;
       --bg-card: #ffffff;
@@ -34,6 +34,7 @@
     }
 
     [data-theme="dark"] {
+      color-scheme: dark;
       --bg-main: #0f172a;
       --bg-nav: #020617;  
       --bg-card: #1e293b;
@@ -49,6 +50,37 @@
 
     body { background-color: var(--bg-main); color: var(--text-main); font-family: 'Kanit', sans-serif; overflow-x: hidden; min-height: 100vh; transition: background-color 0.3s ease, color 0.3s ease; }
     
+    /* ============================================================
+       🔧 BOOTSTRAP OVERRIDES (บังคับให้ข้อความฟอร์มเปลี่ยนสีตามโหมด)
+       ============================================================ */
+    .text-muted { color: var(--text-muted) !important; }
+    .text-main { color: var(--text-main) !important; }
+    .form-check-label { color: var(--text-main) !important; }
+
+    /* แก้ปัญหาข้อความใน input หายตอนเปิด Dark Mode */
+    .form-control, .form-select, textarea {
+      background-color: var(--bg-main) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--border-color) !important;
+    }
+    .form-control:focus, .form-select:focus, textarea:focus {
+      background-color: var(--bg-main) !important;
+      color: var(--text-main) !important;
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 3px rgba(59,130,246,.15) !important;
+    }
+    .form-control::placeholder, textarea::placeholder {
+      color: var(--text-muted) !important;
+      opacity: 0.7 !important;
+    }
+    .form-select option {
+      background-color: var(--bg-card) !important;
+      color: var(--text-main) !important;
+    }
+    .modal-body label {
+      color: var(--text-muted) !important;
+    }
+
     /* ============================================================
        📐 LAYOUT & SIDEBAR
        ============================================================ */
@@ -194,7 +226,7 @@
     .warranty-box { display: flex; align-items: center; gap: 12px; border-radius: 8px; padding: 12px; margin-top: auto; margin-bottom: 12px; }
     
     /* Tables */
-    .table-custom { background-color: var(--bg-card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 0;}
+    .table-custom { background-color: var(--bg-card); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-color); margin-bottom: 0; --bs-table-color: var(--text-main); --bs-table-bg: transparent; --bs-table-striped-color: var(--text-main); --bs-table-striped-bg: var(--bg-main); --bs-table-hover-color: var(--text-main); --bs-table-hover-bg: var(--bg-main); --bs-table-active-color: var(--text-main); --bs-table-active-bg: var(--bg-main); --bs-table-border-color: var(--border-color); color: var(--text-main); }
     .table-custom th { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); background-color: var(--meta-bg); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
     .table-custom td { font-size: 0.85rem; padding: 12px 16px; border-bottom: 1px solid var(--border-color); vertical-align: middle; color: var(--text-main); }
     .table-custom tbody tr:hover { background-color: var(--bg-main); cursor: pointer;}
@@ -206,10 +238,6 @@
     .detail-row:last-child { border-bottom: none; }
     .detail-key { color: var(--text-muted); }
     .detail-val { font-weight: 500; text-align: right; color: var(--text-main); }
-    
-    /* Form Inputs */
-    .form-select-custom, .form-control-custom { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); }
-    .form-select-custom:focus, .form-control-custom:focus { background-color: var(--bg-main); color: var(--text-main); border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
     
     /* Scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px;}
@@ -251,9 +279,12 @@
           <ul class="list-unstyled mb-0 py-1">
             <li><a class="sidebar-link sub-asset-link" id="nav-asset-all" onclick="switchView('assets', 'all')"><i class="fas fa-layer-group me-2"></i> อุปกรณ์ทั้งหมด <span class="sidebar-count-badge" id="count-all">-</span></a></li>
             <li><a class="sidebar-link sub-asset-link" id="nav-asset-computer" onclick="switchView('assets', 'computer')"><i class="fas fa-laptop me-2"></i> คอมพิวเตอร์ <span class="sidebar-count-badge" id="count-computer">-</span></a></li>
-            <li><a class="sidebar-link sub-asset-link" id="nav-asset-network" onclick="switchView('assets', 'network')"><i class="fas fa-network-wired me-2"></i> อุปกรณ์เน็ตเวิร์ค <span class="sidebar-count-badge" id="count-network">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-monitor" onclick="switchView('assets', 'monitor')"><i class="fas fa-desktop me-2"></i> จอมอนิเตอร์ <span class="sidebar-count-badge" id="count-monitor">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-network" onclick="switchView('assets', 'network')"><i class="fas fa-network-wired me-2"></i> เน็ตเวิร์ค <span class="sidebar-count-badge" id="count-network">-</span></a></li>
             <li><a class="sidebar-link sub-asset-link" id="nav-asset-printer" onclick="switchView('assets', 'printer')"><i class="fas fa-print me-2"></i> ปรินเตอร์ <span class="sidebar-count-badge" id="count-printer">-</span></a></li>
             <li><a class="sidebar-link sub-asset-link" id="nav-asset-phone" onclick="switchView('assets', 'phone')"><i class="fas fa-mobile-alt me-2"></i> โทรศัพท์ <span class="sidebar-count-badge" id="count-phone">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-peripheral" onclick="switchView('assets', 'peripheral')"><i class="fas fa-keyboard me-2"></i> อุปกรณ์ต่อพ่วง <span class="sidebar-count-badge" id="count-peripheral">-</span></a></li>
+            <li><a class="sidebar-link sub-asset-link" id="nav-asset-rack" onclick="switchView('assets', 'rack')"><i class="fas fa-server me-2"></i> ตู้แร็ค <span class="sidebar-count-badge" id="count-rack">-</span></a></li>
           </ul>
         </div>
       </li>
@@ -261,12 +292,11 @@
       <li class="px-3 mb-2 mt-4 text-uppercase text-muted" style="font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;">Settings</li>
       <li>
         <a class="sidebar-link" data-bs-toggle="collapse" href="#settingsSubmenu" role="button" aria-expanded="false">
-          <i class="fas fa-cog icon-left"></i> <span>การตั้งค่า (Settings)</span>
+          <i class="fas fa-cog icon-left"></i> <span>ข้อมูลระบบ (System Information)</span>
           <i class="fas fa-chevron-down ms-auto" style="font-size: 0.7rem; opacity:0.7;"></i>
         </a>
         <div class="collapse" id="settingsSubmenu">
           <ul class="list-unstyled mb-0 py-1">
-            <li><a class="sidebar-link"><i class="fas fa-sliders-h me-2"></i> ตั้งค่าระบบ</a></li>
             <li><a class="sidebar-link" data-bs-toggle="modal" data-bs-target="#changelogModal"><i class="fas fa-history me-2 text-primary"></i> ประวัติการอัปเดต</a></li>
           </ul>
         </div>
@@ -286,7 +316,7 @@
 
   <div id="page-content">
     
-    <div id="loadingOverlay" class="loading-overlay">
+    <div id="loadingOverlay" class="loading-overlay hidden">
       <i class="fas fa-circle-notch loading-spinner" id="syncIcon"></i>
       <h4 class="fw-bold" style="letter-spacing:1px; color:var(--text-main);">กำลังประมวลผล</h4>
       <p class="text-muted mt-2" id="loadingText">รอสักครู่...</p>
@@ -363,6 +393,9 @@
             <h2 class="dashboard-title mb-1">Ticket Management Overview <div class="d-inline-flex align-items-center gap-1 ms-2 px-2 py-1 rounded-pill" style="background: rgba(16,185,129,0.1); color:#10b981; font-size:0.7rem; border:1px solid rgba(16,185,129,0.2);"><div class="live-dot"></div> LIVE</div></h2>
             <div class="text-muted small" id="ticketStatsText">กำลังโหลด...</div>
           </div>
+          <button class="btn btn-primary fw-semibold px-3" style="border-radius:8px;" onclick="openTicketForm()">
+            <i class="fas fa-plus me-2"></i>เพิ่ม Ticket
+          </button>
         </div>
 
         <div class="row g-4 mb-4">
@@ -425,6 +458,9 @@
           </div>
 
           <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-primary btn-sm fw-semibold px-3" style="border-radius:8px;" onclick="openAssetForm()">
+              <i class="fas fa-plus me-2"></i>เพิ่มอุปกรณ์<span id="addAssetCatLabel"></span>
+            </button>
             <span class="small fw-semibold text-primary" id="resultCountText">-</span>
             <div class="view-toggle-group">
               <button class="view-toggle-btn active" id="btnViewGrid" title="มุมมองการ์ด"><i class="fas fa-grip"></i></button>
@@ -459,9 +495,9 @@
 
 <div class="modal fade" id="timeSettingsModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background:var(--bg-card); color:var(--text-main); border:1px solid var(--border-color); border-radius:12px;">
+    <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
       <div class="modal-header border-bottom" style="border-color:var(--border-color)!important;">
-        <h6 class="modal-title fw-bold"><i class="fas fa-calendar-alt text-primary me-2"></i> ตั้งค่าช่วงเวลาแสดงข้อมูล Ticket</h6>
+        <h6 class="modal-title fw-bold text-main"><i class="fas fa-calendar-alt text-primary me-2"></i> ตั้งค่าช่วงเวลาแสดงข้อมูล Ticket</h6>
         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" style="filter: var(--btn-close-filter);"></button>
       </div>
       <div class="modal-body p-3">
@@ -478,17 +514,17 @@
         <div class="custom-range-box" id="customRangeBox">
           <div class="row g-2">
             <div class="col-6">
-              <label class="small fw-semibold mb-1" style="color:var(--text-muted);">วันที่เริ่มต้น</label>
-              <input type="date" id="customStartDate" class="form-control form-control-custom form-control-sm">
+              <label class="small fw-semibold mb-1 text-muted">วันที่เริ่มต้น</label>
+              <input type="date" id="customStartDate" class="form-control form-control-sm">
             </div>
             <div class="col-6">
-              <label class="small fw-semibold mb-1" style="color:var(--text-muted);">วันที่สิ้นสุด</label>
-              <input type="date" id="customEndDate" class="form-control form-control-custom form-control-sm">
+              <label class="small fw-semibold mb-1 text-muted">วันที่สิ้นสุด</label>
+              <input type="date" id="customEndDate" class="form-control form-control-sm">
             </div>
           </div>
         </div>
 
-        <div class="small mt-3" style="color:var(--text-muted);"><i class="fas fa-circle-info me-1"></i>ระบบจะดึงข้อมูลจาก Server ให้ครอบคลุมช่วงเวลาที่เลือก แล้วกรองแสดงผลตามช่วงวันที่ที่กำหนด</div>
+        <div class="small mt-3 text-muted"><i class="fas fa-circle-info me-1"></i>ระบบจะดึงข้อมูลจาก Server ให้ครอบคลุมช่วงเวลาที่เลือก แล้วกรองแสดงผลตามช่วงวันที่ที่กำหนด</div>
       </div>
       <div class="modal-footer border-top p-2" style="border-color:var(--border-color)!important;">
         <button type="button" class="btn btn-primary btn-sm px-3 rounded-2" id="btnApplyTimeFilter">บันทึก</button>
@@ -499,23 +535,23 @@
 
 <div class="modal fade" id="advFilterModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background:var(--bg-card); color:var(--text-main); border:1px solid var(--border-color); border-radius:12px;">
+    <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
       <div class="modal-header border-bottom" style="border-color:var(--border-color)!important;">
-        <h6 class="modal-title fw-bold"><i class="fas fa-sliders-h text-primary me-2"></i> ตัวกรองขั้นสูง (Assets)</h6>
+        <h6 class="modal-title fw-bold text-main"><i class="fas fa-sliders-h text-primary me-2"></i> ตัวกรองขั้นสูง (Assets)</h6>
         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" style="filter: var(--btn-close-filter);"></button>
       </div>
       <div class="modal-body p-4">
         <div class="mb-3">
           <label class="fw-bold mb-2 small text-muted">องค์กร / หน่วยงาน</label>
-          <select id="filterOrg" class="form-select form-select-custom shadow-none"><option value="all">ทั้งหมด</option></select>
+          <select id="filterOrg" class="form-select shadow-none"><option value="all">ทั้งหมด</option></select>
         </div>
         <div class="mb-3">
           <label class="fw-bold mb-2 small text-muted">สถานที่ตั้ง</label>
-          <select id="filterLocation" class="form-select form-select-custom shadow-none"><option value="all">ทั้งหมด</option></select>
+          <select id="filterLocation" class="form-select shadow-none"><option value="all">ทั้งหมด</option></select>
         </div>
         <div class="mb-3">
           <label class="fw-bold mb-2 small text-muted">สถานะประกัน</label>
-          <select id="filterStatus" class="form-select form-select-custom shadow-none">
+          <select id="filterStatus" class="form-select shadow-none">
             <option value="all">ทั้งหมด</option>
             <option value="urgent">ใกล้หมด / หมดประกันแล้ว (≤30 วัน)</option>
             <option value="warning">Warning (31-60 วัน)</option>
@@ -527,7 +563,7 @@
         </div>
         <div class="mb-1">
           <label class="fw-bold mb-2 small text-muted">เรียงลำดับ</label>
-          <select id="filterSort" class="form-select form-select-custom shadow-none">
+          <select id="filterSort" class="form-select shadow-none">
             <option value="days_asc">วันคงเหลือ (น้อย → มาก)</option>
             <option value="days_desc">วันคงเหลือ (มาก → น้อย)</option>
             <option value="name_asc">ชื่ออุปกรณ์ (ก → ฮ)</option>
@@ -544,15 +580,25 @@
 
 <div class="modal fade" id="changelogModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
+      <div class="modal-content" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px;">
         <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-          <h5 class="modal-title fw-bold"><i class="fas fa-bullhorn text-primary me-2"></i> มีอะไรใหม่ในเวอร์ชันนี้?</h5>
+          <h5 class="modal-title fw-bold text-main"><i class="fas fa-bullhorn text-primary me-2"></i> มีอะไรใหม่ในเวอร์ชันนี้?</h5>
           <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close" style="filter: var(--btn-close-filter);"></button>
         </div>
         
         <div class="modal-body p-4">
+          <!-- v1.7.1 (ล่าสุด) -->
           <div class="mb-4">
-            <h6 class="fw-bold text-primary mb-1">v1.7.0 - Unified Asset Dashboard & Lazy Load 🖥️📦</h6>
+            <h6 class="fw-bold text-primary mb-1">v1.7.1 - Data Management & Asset Updates 📝</h6>
+            <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
+              <li>เพิ่มฟังก์ชันสำหรับการเพิ่ม (Add) และแก้ไข (Edit) ข้อมูลในระบบ</li>
+              <li>เพิ่มรายการข้อมูลและรายละเอียดในส่วนของ Asset (ทรัพย์สิน) เพิ่มเติม เพื่อให้ครอบคลุมการใช้งานมากยิ่งขึ้น</li>
+            </ul>
+          </div>
+
+          <!-- v1.7.0 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-1" style="color: var(--text-main);">v1.7.0 - Unified Asset Dashboard & Lazy Load 🖥️📦</h6>
             <ul class="small mb-0 ps-3" style="color: var(--text-muted);">
               <li>ปรับโฉมและโครงสร้างหน้าเว็บใหม่ทั้งหมด (Unified Dashboard) ให้มีความเรียบง่าย คลีน และรวมทุกฟังก์ชันไว้ในหน้าเดียว</li>
               <li>เพิ่มหน้ารายการทรัพย์สิน (Asset) สำหรับติดตามข้อมูลอุปกรณ์ ตรวจสอบวันหมดอายุ และสถานะการรับประกันต่างๆ</li>
@@ -685,18 +731,191 @@
     </div>
   </div>
 
-<div class="modal fade" id="exportPreviewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-scrollable">
-    <div class="modal-content" style="background-color: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-color); border-radius: 16px;">
-      <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
-        <h5 class="modal-title fw-bold"><i class="fas fa-file-pdf text-danger me-2"></i> ตัวอย่างข้อมูลที่จะสร้างเป็น PDF (Preview)</h5>
+<div class="modal fade" id="ticketFormModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
+      <div class="modal-header border-bottom" style="border-color:var(--border-color)!important;">
+        <h6 class="modal-title fw-bold text-main" id="ticketFormModalTitle"><i class="fas fa-headset text-primary me-2"></i> เพิ่ม / แก้ไข Ticket</h6>
         <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" style="filter: var(--btn-close-filter);"></button>
       </div>
-      <div class="modal-body p-4" id="exportPreviewContent" style="background-color: #ffffff; color: #334155;">
+      <div class="modal-body p-4 text-main">
+        <input type="hidden" id="tf_id">
+        <div class="mb-3">
+          <label class="fw-bold mb-1 small text-muted">ชื่อเรื่อง / หัวข้อ *</label>
+          <input type="text" id="tf_title" class="form-control shadow-none" placeholder="เช่น เครื่องพิมพ์ขัดข้อง">
+        </div>
+        <div class="mb-3">
+          <label class="fw-bold mb-1 small text-muted">คำอธิบาย / รายละเอียด</label>
+          <textarea id="tf_description" class="form-control shadow-none" rows="4" placeholder="อธิบายรายละเอียดปัญหา..."></textarea>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">หมวดหมู่ (Category)</label>
+            <input type="text" id="tf_category" class="form-control shadow-none" placeholder="เช่น Network, Hardware">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">สถานะ (Status)</label>
+            <select id="tf_status" class="form-select shadow-none">
+              <option value="New">New</option><option value="Assigned">Assigned</option>
+              <option value="Pending">Pending</option><option value="Solved">Solved</option><option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ความสำคัญ (Priority)</label>
+            <select id="tf_priority" class="form-select shadow-none">
+              <option value="Very High">ด่วนมาก (Very High)</option>
+              <option value="High">ด่วน (High)</option>
+              <option value="Medium" selected>ปานกลาง (Medium)</option>
+              <option value="Low">ทั่วไป (Low)</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">วันที่เปิด (Date)</label>
+            <input type="date" id="tf_date" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">โครงการ (Project)</label>
+            <input type="text" id="tf_project" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">รหัสโครงการ (Project Code)</label>
+            <input type="text" id="tf_project_code" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ผู้รับผิดชอบ (Technician)</label>
+            <input type="text" id="tf_technician" class="form-control shadow-none">
+          </div>
+        </div>
+        <div class="small mt-3 text-muted"><i class="fas fa-circle-info me-1"></i>ข้อมูลจะถูกส่งไปบันทึกผ่าน n8n webhook ที่เชื่อมกับ GLPI โปรดตรวจสอบให้ Workflow ฝั่ง Backend รองรับการสร้าง/แก้ไข Ticket ก่อนใช้งานจริง</div>
       </div>
-      <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก (Cancel)</button>
-        <button type="button" class="btn btn-danger" id="btnConfirmExportPDF"><i class="fas fa-print me-2"></i>พิมพ์ / ดาวน์โหลด PDF (Print)</button>
+      <div class="modal-footer border-top p-2" style="border-color:var(--border-color)!important;">
+        <button type="button" class="btn btn-light btn-sm px-3" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary btn-sm px-4" id="btnSaveTicket" onclick="saveTicketForm()"><i class="fas fa-save me-1"></i> บันทึก</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="assetFormModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+    <div class="modal-content" style="background:var(--bg-card); border:1px solid var(--border-color); border-radius:12px;">
+      <div class="modal-header border-bottom" style="border-color:var(--border-color)!important;">
+        <h6 class="modal-title fw-bold text-main" id="assetFormModalTitle"><i class="fas fa-desktop text-primary me-2"></i> เพิ่ม / แก้ไขอุปกรณ์</h6>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" style="filter: var(--btn-close-filter);"></button>
+      </div>
+      <div class="modal-body p-4 text-main">
+        <input type="hidden" id="af_id">
+        <h6 class="fw-bold text-primary text-uppercase mb-2" style="font-size:0.75rem;">ข้อมูลทั่วไป</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">หมวดหมู่ (Category) *</label>
+            <select id="af_category" class="form-select shadow-none"></select>
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">รหัสทรัพย์สิน (Asset Tag) *</label>
+            <input type="text" id="af_asset_tag" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ชื่ออุปกรณ์ (Name) *</label>
+            <input type="text" id="af_name" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">สถานะการใช้งาน (Status)</label>
+            <select id="af_status" class="form-select shadow-none">
+              <option value="Active">Active</option><option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-primary text-uppercase mb-2" style="font-size:0.75rem;">ข้อมูลอุปกรณ์ (Hardware)</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ผู้ผลิต (Manufacturer)</label>
+            <input type="text" id="af_manufacturer" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">รุ่น (Model)</label>
+            <input type="text" id="af_model" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ประเภท (Type)</label>
+            <input type="text" id="af_type" class="form-control shadow-none" placeholder="เช่น Notebook, Desktop, L3 Switch">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">Serial No.</label>
+            <input type="text" id="af_serial" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">UUID</label>
+            <input type="text" id="af_uuid" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ขนาด (Size)</label>
+            <input type="text" id="af_size" class="form-control shadow-none" placeholder="เช่น 24 นิ้ว, 15.6 นิ้ว">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ประเภทการจัดการ (Management Type)</label>
+            <input type="text" id="af_management_type" class="form-control shadow-none" placeholder="เช่น Unit management">
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-primary text-uppercase mb-2" style="font-size:0.75rem;">ผู้ใช้งาน / สถานที่ตั้ง</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">ชื่อผู้ใช้งาน (Assigned User)</label>
+            <input type="text" id="af_assigned_user" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">หมายเลขติดต่อผู้ใช้งาน</label>
+            <input type="text" id="af_contact_number" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">หน่วยงาน / องค์กรที่รับผิดชอบ</label>
+            <input type="text" id="af_org" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">สาขา - ที่ตั้ง (Location)</label>
+            <input type="text" id="af_location" class="form-control shadow-none">
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-primary text-uppercase mb-2" style="font-size:0.75rem;">การรับประกัน / สถานะพิเศษ</h6>
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">วันหมดประกัน (Warranty End)</label>
+            <input type="date" id="af_warranty_end" class="form-control shadow-none">
+          </div>
+          <div class="col-md-6">
+            <label class="fw-bold mb-1 small text-muted">สถานะพิเศษ</label>
+            <select id="af_manual_status" class="form-select shadow-none">
+              <option value="">ปกติ (ใช้วันหมดประกันคำนวณ)</option>
+              <option value="replace">ควรเปลี่ยนเครื่อง</option>
+              <option value="lost">รอทำลายทิ้ง</option>
+            </select>
+          </div>
+        </div>
+
+        <h6 class="fw-bold text-primary text-uppercase mb-2" style="font-size:0.75rem;">พอร์ตเชื่อมต่อ (ถ้ามี)</h6>
+        <div class="d-flex flex-wrap gap-3 mb-3" id="af_ports_group">
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="ไมค์" id="af_port_mic"><label class="form-check-label small" for="af_port_mic">ไมค์</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="ลำโพง" id="af_port_speaker"><label class="form-check-label small" for="af_port_speaker">ลำโพง</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="Sub-D" id="af_port_subd"><label class="form-check-label small" for="af_port_subd">Sub-D</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="BNC" id="af_port_bnc"><label class="form-check-label small" for="af_port_bnc">BNC</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="DVI" id="af_port_dvi"><label class="form-check-label small" for="af_port_dvi">DVI</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="Pivot" id="af_port_pivot"><label class="form-check-label small" for="af_port_pivot">Pivot</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="HDMI" id="af_port_hdmi"><label class="form-check-label small" for="af_port_hdmi">HDMI</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="DisplayPort" id="af_port_dp"><label class="form-check-label small" for="af_port_dp">DisplayPort</label></div>
+        </div>
+
+        <div class="mb-1">
+          <label class="fw-bold mb-1 small text-muted">Comment</label>
+          <textarea id="af_comment" class="form-control shadow-none" rows="3"></textarea>
+        </div>
+        <div class="small mt-3 text-muted"><i class="fas fa-circle-info me-1"></i>ข้อมูลจะถูกส่งไปบันทึกผ่าน n8n webhook ที่เชื่อมกับ GLPI โปรดตรวจสอบให้ Workflow ฝั่ง Backend รองรับการสร้าง/แก้ไขอุปกรณ์ก่อนใช้งานจริง</div>
+      </div>
+      <div class="modal-footer border-top p-2" style="border-color:var(--border-color)!important;">
+        <button type="button" class="btn btn-light btn-sm px-3" data-bs-dismiss="modal">ยกเลิก</button>
+        <button type="button" class="btn btn-primary btn-sm px-4" id="btnSaveAsset" onclick="saveAssetForm()"><i class="fas fa-save me-1"></i> บันทึก</button>
       </div>
     </div>
   </div>
@@ -704,10 +923,10 @@
 
 <div class="offcanvas offcanvas-end" tabindex="-1" id="ticketSidebar" style="width: 600px; max-width: 100%;">
   <div class="offcanvas-header" style="background-color: var(--bg-card); border-bottom: 1px solid var(--border-color);">
-    <h6 class="offcanvas-title fw-bold" id="sidebarTitle" style="color: var(--text-main);">Ticket / Asset Details</h6>
+    <h6 class="offcanvas-title fw-bold text-main" id="sidebarTitle">Ticket / Asset Details</h6>
     <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" style="filter: var(--btn-close-filter);"></button>
   </div>
-  <div class="offcanvas-body p-4" id="ticketListContainer"></div>
+  <div class="offcanvas-body p-4 text-main" id="ticketListContainer"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -721,12 +940,16 @@
   let isTicketLoaded = false;
   let isAssetLoaded = false;
 
+  // เพิ่มหมวดหมู่อุปกรณ์ยอดนิยมใน GLPI ให้ครบถ้วนมากขึ้น
   const CATEGORIES = {
     all: { label: 'อุปกรณ์ทั้งหมด', icon: 'fa-layer-group' },
     computer: { label: 'คอมพิวเตอร์', icon: 'fa-laptop' },
+    monitor: { label: 'จอมอนิเตอร์', icon: 'fa-desktop' },
     network: { label: 'อุปกรณ์เน็ตเวิร์ค', icon: 'fa-network-wired' },
     printer: { label: 'ปรินเตอร์', icon: 'fa-print' },
-    phone: { label: 'โทรศัพท์', icon: 'fa-mobile-alt' }
+    phone: { label: 'โทรศัพท์', icon: 'fa-mobile-alt' },
+    peripheral: { label: 'อุปกรณ์ต่อพ่วง', icon: 'fa-keyboard' },
+    rack: { label: 'ตู้แร็ค', icon: 'fa-server' }
   };
 
   function toggleLoading(show, text = 'กำลังโหลด...') {
@@ -742,7 +965,7 @@
     }
   }
 
-  // View Switcher (Handles Lazy Loading & Sidebar active states)
+  // View Switcher (Lazy Loading ของแท้ ทำงานเมื่อคลิกเท่านั้น)
   function switchView(view, category = null) {
     currentView = view;
     document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
@@ -751,6 +974,7 @@
 
     if (view === 'tickets') {
       document.getElementById('nav-tickets').classList.add('active');
+      // หากเข้าหน้า Ticket ครั้งแรก ให้ดึงข้อมูล
       if (!isTicketLoaded) fetchDashboardData();
       else filterAndRenderTickets(); 
     } 
@@ -763,7 +987,10 @@
       
       const catInfo = CATEGORIES[activeCategory];
       document.getElementById('assetPageTitle').innerHTML = `<i class="fas ${catInfo.icon} text-primary me-2"></i> ${catInfo.label}`;
+      const addLabelEl = document.getElementById('addAssetCatLabel');
+      if (addLabelEl) addLabelEl.textContent = activeCategory !== 'all' ? ` (${catInfo.label})` : '';
 
+      // หากเข้าหน้า Asset ครั้งแรกสุด ให้เริ่มดึงข้อมูล (Lazy Load)
       if (!isAssetLoaded) fetchAssetData();
       else applyAssetFilters();
     }
@@ -794,13 +1021,12 @@
   });
 
   /* ============================================================
-     🎫 TICKETS LOGIC (From Backup)
+     🎫 TICKETS LOGIC
      ============================================================ */
   const TICKET_API_URL = 'https://n8n.sysnect.co.th/webhook/api/tickets';
   let projectsData = [];
   let filteredProjectsData = [];
 
-  // ── Time Range (แสดงข้อมูล) ──────────────────────────────
   const TIME_PRESETS = {
     today: { label: 'วันนี้', days: 1 },
     '7':   { label: '7 วันล่าสุด', days: 7 },
@@ -808,12 +1034,12 @@
     '90':  { label: '90 วันล่าสุด', days: 90 },
     '120': { label: '120 วันล่าสุด', days: 120 }
   };
-  let activeTimePreset = localStorage.getItem('sysnectTimePreset') || 'today'; // default = วันนี้
+  let activeTimePreset = localStorage.getItem('sysnectTimePreset') || 'today';
   let customStartDate = localStorage.getItem('sysnectCustomStart') || '';
   let customEndDate = localStorage.getItem('sysnectCustomEnd') || '';
   let currentDataRangeDays = Number(localStorage.getItem('sysnectDataRangeDays')) || (TIME_PRESETS[activeTimePreset] ? TIME_PRESETS[activeTimePreset].days : 1);
 
-  function todayStr() { return new Date().toLocaleDateString('sv-SE'); } // YYYY-MM-DD (local time)
+  function todayStr() { return new Date().toLocaleDateString('sv-SE'); }
   function addDaysStr(days) { const d = new Date(); d.setDate(d.getDate() - days); return d.toLocaleDateString('sv-SE'); }
 
   function getActiveTimeRangeLabel() {
@@ -884,7 +1110,6 @@
     const projVal = document.getElementById('projectFilter').value;
     const prioVal = document.getElementById('priorityFilter').value;
 
-    // ── คำนวณช่วงวันที่ที่ต้องการ "แสดงผล" (แยกจากช่วงที่ดึงข้อมูลจาก Server) ──
     let rangeStart, rangeEnd;
     if (activeTimePreset === 'custom' && customStartDate && customEndDate) {
       rangeStart = customStartDate; rangeEnd = customEndDate;
@@ -1114,7 +1339,7 @@
     
     listContainer.innerHTML = '';
     if(filteredTickets.length === 0) {
-      listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4 opacity-50"></i><h5 class="fw-bold" style="color: var(--text-main);">No Records Found</h5><p class="small">ไม่มีข้อมูลตามเงื่อนไขที่ค้นหา</p></div>';
+      listContainer.innerHTML = '<div class="text-center text-muted mt-5 pt-5"><i class="fas fa-box-open fa-4x mb-4 opacity-50"></i><h5 class="fw-bold text-main">No Records Found</h5><p class="small">ไม่มีข้อมูลตามเงื่อนไขที่ค้นหา</p></div>';
     } else {
       filteredTickets.forEach((ticket, index) => {
         const color = statusConfig[ticket.status].color;
@@ -1137,7 +1362,7 @@
                   <div class="text-primary fw-bold text-break" style="font-size: 0.85rem;">TICKET #${realId} <i class="fas fa-external-link-square-alt ms-1"></i></div>
                 </a>
                 <a href="${glpiLink}" target="_blank" class="ticket-title-link d-block" title="เปิดตั๋วใบนี้บน GLPI">
-                  <h5 class="fw-bold mb-0 lh-base text-break" style="font-size: 1.1rem; color:var(--text-main);">${ticket.category || 'General Operations'}</h5>
+                  <h5 class="fw-bold mb-0 lh-base text-break text-main" style="font-size: 1.1rem;">${ticket.category || 'General Operations'}</h5>
                 </a>
               </div>
               <div class="d-flex flex-column align-items-end gap-2" style="flex-shrink: 0;">
@@ -1151,7 +1376,12 @@
               <span class="meta-tag"><i class="far fa-calendar me-1 text-muted"></i> ${ticket.date || "-"}</span>
             </div>
             <div class="desc-block">
-              <p class="mb-0 text-wrap text-break" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6; word-break: break-word;">${cleanSummary}</p>
+              <p class="mb-0 text-wrap text-break text-muted" style="font-size: 0.85rem; line-height: 1.6; word-break: break-word;">${cleanSummary}</p>
+            </div>
+            <div class="text-end mt-3">
+              <button type="button" class="btn btn-sm btn-outline-primary fw-semibold" style="border-radius:6px;" onclick="openTicketForm('${String(ticket.id).replace(/'/g,"\\'")}')">
+                <i class="fas fa-pen me-1"></i> แก้ไข Ticket
+              </button>
             </div>
           </div>
         `;
@@ -1161,74 +1391,87 @@
     new bootstrap.Offcanvas(document.getElementById('ticketSidebar')).show();
   }
 
-  // --- PDF Export Logic from Backup ---
-  document.getElementById('btnExportPDF').addEventListener('click', (e) => {
-    e.preventDefault();
-    if (filteredProjectsData.length === 0) { alert("ไม่มีข้อมูลสำหรับส่งออก (Export) กรุณาปรับเงื่อนไขการค้นหา"); return; }
-    
-    function getPrioText(t) {
-      let p = String(t.priority || "3").toLowerCase();
-      if (p.includes('very high') || p.includes('major') || p === '5' || p === '6') return { label: "ด่วนมาก", color: "#ef4444", bg: "#fef2f2", icon: "🔴" };
-      if (p.includes('high') || p === '4') return { label: "ด่วน (สูง)", color: "#f59e0b", bg: "#fffbeb", icon: "🟠" };
-      if (p.includes('low') || p === '2' || p === '1') return { label: "ทั่วไป (ต่ำ)", color: "#64748b", bg: "#f8fafc", icon: "⚪" };
-      return { label: "ปานกลาง", color: "#3b82f6", bg: "#eff6ff", icon: "🔵" };
+  function openTicketForm(ticketId = null) {
+    const modalTitle = document.getElementById('ticketFormModalTitle');
+    document.getElementById('tf_id').value = '';
+    document.getElementById('tf_title').value = '';
+    document.getElementById('tf_description').value = '';
+    document.getElementById('tf_category').value = '';
+    document.getElementById('tf_status').value = 'New';
+    document.getElementById('tf_priority').value = 'Medium';
+    document.getElementById('tf_date').value = todayStr();
+    document.getElementById('tf_project').value = '';
+    document.getElementById('tf_project_code').value = '';
+    document.getElementById('tf_technician').value = '';
+
+    if (ticketId !== null) {
+      const t = projectsData.find(x => String(x.id) === String(ticketId));
+      if (t) {
+        modalTitle.innerHTML = `<i class="fas fa-pen text-primary me-2"></i> แก้ไข Ticket #${t.id}`;
+        document.getElementById('tf_id').value = t.id;
+        document.getElementById('tf_title').value = t.title || '';
+        document.getElementById('tf_description').value = stripHTML(String(t.description || t.ai_summary || ''));
+        document.getElementById('tf_category').value = t.category || '';
+        document.getElementById('tf_status').value = t.status || 'New';
+        document.getElementById('tf_priority').value = t.priority || 'Medium';
+        document.getElementById('tf_date').value = String(t.date || '').slice(0, 10) || todayStr();
+        document.getElementById('tf_project').value = t.project || '';
+        document.getElementById('tf_project_code').value = t.project_code || '';
+        document.getElementById('tf_technician').value = t.technician || '';
+      }
+    } else {
+      modalTitle.innerHTML = `<i class="fas fa-plus text-primary me-2"></i> เพิ่ม Ticket ใหม่`;
     }
-    function getStatusStyle(s) {
-      const map = { 'New': { color: '#3b82f6', bg: '#eff6ff' }, 'Assigned': { color: '#f59e0b', bg: '#fffbeb' }, 'Pending': { color: '#ef4444', bg: '#fef2f2' }, 'Solved': { color: '#10b981', bg: '#f0fdf4' }, 'Closed': { color: '#64748b', bg: '#f8fafc' } };
-      return map[s] || { color: '#64748b', bg: '#f8fafc' };
+    new bootstrap.Modal(document.getElementById('ticketFormModal')).show();
+  }
+
+  async function saveTicketForm() {
+    const idVal = document.getElementById('tf_id').value;
+    const isEdit = !!idVal;
+    const titleVal = document.getElementById('tf_title').value.trim();
+    if (!titleVal) { alert('กรุณาระบุชื่อเรื่อง / หัวข้อ'); return; }
+
+    const payload = {
+      id: isEdit ? idVal : undefined,
+      title: titleVal,
+      description: document.getElementById('tf_description').value.trim(),
+      category: document.getElementById('tf_category').value.trim(),
+      status: document.getElementById('tf_status').value,
+      priority: document.getElementById('tf_priority').value,
+      date: document.getElementById('tf_date').value,
+      project: document.getElementById('tf_project').value.trim(),
+      project_code: document.getElementById('tf_project_code').value.trim(),
+      technician: document.getElementById('tf_technician').value.trim()
+    };
+
+    const saveBtn = document.getElementById('btnSaveTicket');
+    saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> กำลังบันทึก...';
+
+    const endpoint = isEdit ? `${TICKET_API_URL}/update` : TICKET_API_URL;
+    let serverOk = false;
+    try {
+      const res = await fetch(endpoint, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      serverOk = res.ok;
+    } catch (e) {
+      console.warn('Ticket Save API Error (ตกไปอัปเดตข้อมูลในเครื่องแทน):', e);
     }
-    const exportDateStr = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
-    const allDates = filteredProjectsData.map(t => t.date).filter(Boolean).sort();
-    const dateRange = allDates.length > 0 ? (allDates[0] === allDates[allDates.length-1] ? allDates[0] : allDates[0] + ' ถึง ' + allDates[allDates.length-1]) : '-';
-    
-    const counts = { New:0, Assigned:0, Pending:0, Solved:0, Closed:0 };
-    filteredProjectsData.forEach(t => { if(counts[t.status] !== undefined) counts[t.status]++; else counts.New++; });
-    
-    let tbodyHtml = '';
-    filteredProjectsData.forEach((t, idx) => {
-      let realId = String(t.id || "-");
-      let longText = String(t.title || "");
-      if (/^\d+$/.test(longText)) { realId = longText; longText = String(t.id || "-"); } else if (!/^\d+$/.test(realId)) { const m = realId.match(/\b\d{6,}\b/); if (m) realId = m[0]; }
-      let ticketLabel = longText && longText !== realId ? longText : '';
-      if (!ticketLabel) { ticketLabel = stripHTML(String(t.ai_summary || t.description || "")).trim(); }
-      ticketLabel = ticketLabel.split('\n')[0].trim();
-      if (ticketLabel.length > 120) ticketLabel = ticketLabel.substring(0, 120) + '…';
-      const cleanSummary = ticketLabel || '—';
-      const prioInfo = getPrioText(t);
-      const statStyle = getStatusStyle(t.status);
-      const rowBg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
-      const dash = (v) => (v !== null && v !== undefined && String(v).trim() !== '') ? String(v).trim() : '-';
-      
-      tbodyHtml += `<tr style="background:${rowBg}; vertical-align:middle;">
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-weight:700;color:#6366f1;font-size:10px;">#${realId}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;">${dash(t.date)}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;">${(t.status==='Closed'||t.status==='Solved') ? dash(t.date_closed) : '-'}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;">${cleanSummary}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;text-align:center;">${dash(t.project_code)}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;font-size:10px;">${dash(t.project)}</td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:center;"><span style="display:inline-block;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;color:${prioInfo.color};background:${prioInfo.bg};border:1px solid ${prioInfo.color}40;">${prioInfo.icon} ${prioInfo.label}</span></td>
-        <td style="padding:6px 8px;border:1px solid #e2e8f0;text-align:center;"><span style="display:inline-block;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;color:${statStyle.color};background:${statStyle.bg};border:1px solid ${statStyle.color}40;">${t.status.toUpperCase()}</span></td>
-      </tr>`;
-    });
 
-    const previewHtml = `<div style="font-family:'Kanit',sans-serif; color:#334155; font-size:0.85rem;">
-      <div style="text-align:right; margin-bottom:8px; color:#64748b; font-size:0.78rem;">ส่งออก: ${exportDateStr} | ${filteredProjectsData.length} รายการ</div>
-      <table style="width:100%; border-collapse:collapse;">
-        <thead><tr style="background:#0f172a;"><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">ID</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">วันที่เปิด</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">วันที่ปิด</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;width:30%;">ชื่อ Ticket</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">รหัสโครงการ</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">โครงการ</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">ความสำคัญ</th><th style="padding:9px;color:#fff;font-size:11px;border:1px solid #1e293b;">สถานะ</th></tr></thead>
-        <tbody>${tbodyHtml}</tbody>
-      </table></div>`;
-      
-    document.getElementById('exportPreviewContent').innerHTML = previewHtml;
-    window.currentPdfHtmlContent = `<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><title>Ticket History Report</title><link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Kanit',sans-serif;background:#fff;color:#334155;}table{width:100%;border-collapse:collapse;}th{background:#0f172a;color:#fff;font-size:11px;padding:8px;}td{font-size:10px;border:1px solid #e2e8f0;padding:8px;}@media print{@page{size:A4 landscape;margin:10mm;}}</style></head><body><h2 style="margin-bottom:20px;">Ticket History Report - Sysnect</h2>${previewHtml}<script>window.onload=function(){setTimeout(function(){window.print();},600)};<\/script></body></html>`;
-    new bootstrap.Modal(document.getElementById('exportPreviewModal')).show();
-  });
+    if (isEdit) {
+      const idx = projectsData.findIndex(x => String(x.id) === String(idVal));
+      if (idx !== -1) projectsData[idx] = { ...projectsData[idx], ...payload, id: projectsData[idx].id };
+    } else {
+      const newId = 'TMP-' + Date.now();
+      projectsData.unshift({ ...payload, id: newId });
+    }
 
-  document.getElementById('btnConfirmExportPDF').addEventListener('click', () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.open(); printWindow.document.write(window.currentPdfHtmlContent); printWindow.document.close();
-    bootstrap.Modal.getInstance(document.getElementById('exportPreviewModal')).hide();
-  });
-
+    saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save me-1"></i> บันทึก';
+    bootstrap.Modal.getInstance(document.getElementById('ticketFormModal')).hide();
+    filterAndRenderTickets();
+  }
 
   /* ============================================================
      💻 ASSETS LOGIC
@@ -1256,12 +1499,13 @@
     const today = new Date();
     let seq = 1;
     Object.keys(CATEGORIES).forEach(catKey => {
-      for (let i = 0; i < (catKey==='computer'?25:10); i++) {
+      if(catKey === 'all') return;
+      for (let i = 0; i < (catKey==='computer'?25:15); i++) {
         const r = Math.random();
         let days = r<0.05 ? -20 : (r<0.15 ? 20 : (r<0.3? 50 : 250));
         let dEnd = new Date(); dEnd.setDate(today.getDate() + days);
         let mStat = r<0.05 ? 'replace' : (r<0.08 ? 'lost' : null);
-        assets.push({ id: `${catKey}-${seq}`, category: catKey, asset_tag: `TAG-${2200+seq}`, name: `Asset ${catKey.toUpperCase()} ${seq}`, model: 'Enterprise Model X', serial: `SN${1000+seq}`, status: mStat==='lost'?'Inactive':'Active', org: r>0.5?'IT Dept':'Finance', location: r>0.5?'Bangkok HQ':'Rayong Branch', assigned_user: 'User '+seq, warranty_end: dEnd.toISOString().split('T')[0], manual_status: mStat }); seq++;
+        assets.push({ id: `${catKey}-${seq}`, category: catKey, asset_tag: `TAG-${2200+seq}`, name: `Asset ${catKey.toUpperCase()} ${seq}`, manufacturer: 'Generic Co.', model: 'Enterprise Model X', type: CATEGORIES[catKey].label, serial: `SN${1000+seq}`, uuid: '', size: '', management_type: 'Unit management', status: mStat==='lost'?'Inactive':'Active', org: r>0.5?'IT Dept':'Finance', location: r>0.5?'Bangkok HQ':'Rayong Branch', assigned_user: 'User '+seq, contact_number: '', comment: '', ports: [], warranty_end: dEnd.toISOString().split('T')[0], manual_status: mStat }); seq++;
       }
     }); return assets;
   }
@@ -1286,7 +1530,6 @@
     }
   }
 
-  // แสดง Total ของแต่ละหมวดหมู่ (รวมถึง "อุปกรณ์ทั้งหมด") บน Sidebar
   function updateSidebarAssetCounts() {
     const countAllEl = document.getElementById('count-all');
     if (countAllEl) countAllEl.textContent = allAssets.length;
@@ -1402,8 +1645,7 @@
     const info = getWarrantyInfo(a);
     document.getElementById('sidebarTitle').textContent = "รายละเอียดอุปกรณ์: " + a.name;
     
-    // คำนวณลิงก์ GLPI ตามหมวดหมู่ (computer, networkequipment, printer, phone)
-    const glpiCategoryEndpoint = { computer: 'computer', network: 'networkequipment', printer: 'printer', phone: 'phone' };
+    const glpiCategoryEndpoint = { computer: 'computer', monitor: 'monitor', network: 'networkequipment', printer: 'printer', phone: 'phone', peripheral: 'peripheral', rack: 'rack' };
     const realId = a.id.split('-').length > 1 ? a.id.split('-')[1] : a.id; 
     const glpiUrl = `https://itservicedesk.sysnect.co.th/front/${glpiCategoryEndpoint[a.category] || 'computer'}.form.php?id=${realId}`;
 
@@ -1420,16 +1662,27 @@
         </div>
       </div>
       <h6 class="fw-bold text-primary text-uppercase" style="font-size:0.75rem;">ข้อมูลอุปกรณ์</h6>
+      <div class="detail-row"><span class="detail-key">ผู้ผลิต (Manufacturer)</span><span class="detail-val">${a.manufacturer||'-'}</span></div>
       <div class="detail-row"><span class="detail-key">รุ่น (Model)</span><span class="detail-val">${a.model||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">ประเภท (Type)</span><span class="detail-val">${a.type||'-'}</span></div>
       <div class="detail-row"><span class="detail-key">Serial</span><span class="detail-val">${a.serial||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">UUID</span><span class="detail-val">${a.uuid||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">ขนาด (Size)</span><span class="detail-val">${a.size||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">ประเภทการจัดการ</span><span class="detail-val">${a.management_type||'-'}</span></div>
       <div class="detail-row"><span class="detail-key">สถานะ</span><span class="detail-val">${a.status}</span></div>
+      ${(a.ports && a.ports.length) ? `<div class="detail-row"><span class="detail-key">พอร์ตเชื่อมต่อ</span><span class="detail-val">${a.ports.join(', ')}</span></div>` : ''}
       <h6 class="fw-bold text-primary text-uppercase mt-4" style="font-size:0.75rem;">ผู้ใช้งาน / สถานที่ตั้ง</h6>
       <div class="detail-row"><span class="detail-key">ผู้ใช้งาน</span><span class="detail-val">${a.assigned_user||'-'}</span></div>
-      <div class="detail-row"><span class="detail-key">องค์กร</span><span class="detail-val">${a.org||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">เบอร์ติดต่อผู้ใช้งาน</span><span class="detail-val">${a.contact_number||'-'}</span></div>
+      <div class="detail-row"><span class="detail-key">องค์กร / หน่วยงานที่รับผิดชอบ</span><span class="detail-val">${a.org||'-'}</span></div>
       <div class="detail-row"><span class="detail-key">สถานที่</span><span class="detail-val">${a.location||'-'}</span></div>
+      ${a.comment ? `<h6 class="fw-bold text-primary text-uppercase mt-4" style="font-size:0.75rem;">Comment</h6><div class="small text-muted" style="white-space:pre-wrap;">${a.comment}</div>` : ''}
       
-      <div class="mt-4 text-center">
-        <a href="${glpiUrl}" target="_blank" class="btn btn-primary w-100 fw-semibold" style="border-radius: 8px;">
+      <div class="mt-4 d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary w-50 fw-semibold" style="border-radius: 8px;" onclick="openAssetForm('${String(a.id).replace(/'/g,"\\'")}')">
+          <i class="fas fa-pen me-2"></i> แก้ไข
+        </button>
+        <a href="${glpiUrl}" target="_blank" class="btn btn-primary w-50 fw-semibold" style="border-radius: 8px;">
           <i class="fas fa-external-link-square-alt me-2"></i> เปิดดูใน GLPI
         </a>
       </div>
@@ -1437,7 +1690,137 @@
     new bootstrap.Offcanvas(document.getElementById('ticketSidebar')).show();
   }
 
-  // Assets View Filters
+  function populateAssetFormCategoryOptions(selected) {
+    const sel = document.getElementById('af_category');
+    sel.innerHTML = Object.keys(CATEGORIES).filter(k => k !== 'all')
+      .map(k => `<option value="${k}">${CATEGORIES[k].label}</option>`).join('');
+    sel.value = selected;
+  }
+
+  function openAssetForm(assetId = null) {
+    const modalTitle = document.getElementById('assetFormModalTitle');
+    document.getElementById('af_id').value = '';
+    document.getElementById('af_asset_tag').value = '';
+    document.getElementById('af_name').value = '';
+    document.getElementById('af_status').value = 'Active';
+    document.getElementById('af_manufacturer').value = '';
+    document.getElementById('af_model').value = '';
+    document.getElementById('af_type').value = '';
+    document.getElementById('af_serial').value = '';
+    document.getElementById('af_uuid').value = '';
+    document.getElementById('af_size').value = '';
+    document.getElementById('af_management_type').value = '';
+    document.getElementById('af_assigned_user').value = '';
+    document.getElementById('af_contact_number').value = '';
+    document.getElementById('af_org').value = '';
+    document.getElementById('af_location').value = '';
+    document.getElementById('af_warranty_end').value = '';
+    document.getElementById('af_manual_status').value = '';
+    document.getElementById('af_comment').value = '';
+    document.querySelectorAll('#af_ports_group input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+    const defaultCat = (activeCategory && activeCategory !== 'all') ? activeCategory : Object.keys(CATEGORIES).filter(k => k !== 'all')[0];
+    populateAssetFormCategoryOptions(defaultCat);
+
+    if (assetId !== null) {
+      const a = allAssets.find(x => String(x.id) === String(assetId));
+      if (a) {
+        modalTitle.innerHTML = `<i class="fas fa-pen text-primary me-2"></i> แก้ไขอุปกรณ์: ${a.name}`;
+        document.getElementById('af_id').value = a.id;
+        document.getElementById('af_category').value = a.category;
+        document.getElementById('af_asset_tag').value = a.asset_tag || '';
+        document.getElementById('af_name').value = a.name || '';
+        document.getElementById('af_status').value = a.status || 'Active';
+        document.getElementById('af_manufacturer').value = a.manufacturer || '';
+        document.getElementById('af_model').value = a.model || '';
+        document.getElementById('af_type').value = a.type || '';
+        document.getElementById('af_serial').value = a.serial || '';
+        document.getElementById('af_uuid').value = a.uuid || '';
+        document.getElementById('af_size').value = a.size || '';
+        document.getElementById('af_management_type').value = a.management_type || '';
+        document.getElementById('af_assigned_user').value = a.assigned_user || '';
+        document.getElementById('af_contact_number').value = a.contact_number || '';
+        document.getElementById('af_org').value = a.org || '';
+        document.getElementById('af_location').value = a.location || '';
+        document.getElementById('af_warranty_end').value = a.warranty_end || '';
+        document.getElementById('af_manual_status').value = a.manual_status || '';
+        document.getElementById('af_comment').value = a.comment || '';
+        (a.ports || []).forEach(p => {
+          document.querySelectorAll('#af_ports_group input[type="checkbox"]').forEach(cb => { if (cb.value === p) cb.checked = true; });
+        });
+      }
+    } else {
+      modalTitle.innerHTML = `<i class="fas fa-plus text-primary me-2"></i> เพิ่มอุปกรณ์ใหม่ (${CATEGORIES[defaultCat].label})`;
+    }
+    new bootstrap.Modal(document.getElementById('assetFormModal')).show();
+  }
+
+  async function saveAssetForm() {
+    const idVal = document.getElementById('af_id').value;
+    const isEdit = !!idVal;
+    const nameVal = document.getElementById('af_name').value.trim();
+    const tagVal = document.getElementById('af_asset_tag').value.trim();
+    if (!nameVal || !tagVal) { alert('กรุณาระบุชื่ออุปกรณ์และรหัสทรัพย์สิน'); return; }
+
+    const ports = Array.from(document.querySelectorAll('#af_ports_group input[type="checkbox"]:checked')).map(cb => cb.value);
+
+    const payload = {
+      id: isEdit ? idVal : undefined,
+      category: document.getElementById('af_category').value,
+      asset_tag: tagVal,
+      name: nameVal,
+      status: document.getElementById('af_status').value,
+      manufacturer: document.getElementById('af_manufacturer').value.trim(),
+      model: document.getElementById('af_model').value.trim(),
+      type: document.getElementById('af_type').value.trim(),
+      serial: document.getElementById('af_serial').value.trim(),
+      uuid: document.getElementById('af_uuid').value.trim(),
+      size: document.getElementById('af_size').value.trim(),
+      management_type: document.getElementById('af_management_type').value.trim(),
+      assigned_user: document.getElementById('af_assigned_user').value.trim(),
+      contact_number: document.getElementById('af_contact_number').value.trim(),
+      org: document.getElementById('af_org').value.trim(),
+      location: document.getElementById('af_location').value.trim(),
+      warranty_end: document.getElementById('af_warranty_end').value,
+      manual_status: document.getElementById('af_manual_status').value || null,
+      comment: document.getElementById('af_comment').value.trim(),
+      ports: ports
+    };
+
+    const saveBtn = document.getElementById('btnSaveAsset');
+    saveBtn.disabled = true; saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> กำลังบันทึก...';
+
+    const endpoint = isEdit ? `${ASSET_API_URL}/update` : ASSET_API_URL;
+    let serverOk = false;
+    try {
+      const res = await fetch(endpoint, {
+        method: isEdit ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      serverOk = res.ok;
+    } catch (e) {
+      console.warn('Asset Save API Error (ตกไปอัปเดตข้อมูลในเครื่องแทน):', e);
+    }
+
+    if (isEdit) {
+      const idx = allAssets.findIndex(x => String(x.id) === String(idVal));
+      if (idx !== -1) allAssets[idx] = { ...allAssets[idx], ...payload, id: allAssets[idx].id };
+    } else {
+      const newId = payload.category + '-' + Date.now();
+      allAssets.unshift({ ...payload, id: newId });
+    }
+
+    saveBtn.disabled = false; saveBtn.innerHTML = '<i class="fas fa-save me-1"></i> บันทึก';
+    bootstrap.Modal.getInstance(document.getElementById('assetFormModal')).hide();
+    populateAdvancedFilterOptions();
+    updateSidebarAssetCounts();
+    applyAssetFilters();
+  }
+
+  /* ============================================================
+     GLOBAL EVENTS
+     ============================================================ */
   document.querySelectorAll('#quickFilterGroup .quick-pill').forEach(btn => {
     btn.addEventListener('click', () => { document.querySelectorAll('#quickFilterGroup .quick-pill').forEach(b => b.classList.remove('active')); btn.classList.add('active'); activeQuickRange = btn.dataset.range; applyAssetFilters(); });
   });
@@ -1446,9 +1829,6 @@
   document.getElementById('btnApplyAdvFilter').addEventListener('click', () => { advFilter.org = document.getElementById('filterOrg').value; advFilter.location = document.getElementById('filterLocation').value; advFilter.status = document.getElementById('filterStatus').value; advFilter.sort = document.getElementById('filterSort').value; applyAssetFilters(); });
   document.getElementById('btnResetAdvFilter').addEventListener('click', () => { advFilter = { org: 'all', location: 'all', status: 'all', sort: 'days_asc' }; ['filterOrg', 'filterLocation', 'filterStatus'].forEach(id => document.getElementById(id).value = 'all'); document.getElementById('filterSort').value = 'days_asc'; applyAssetFilters(); });
 
-  /* ============================================================
-     GLOBAL EVENTS (Search, Refresh, Time Filter)
-     ============================================================ */
   document.getElementById('globalSearchInput').addEventListener('input', () => {
     if (currentView === 'tickets') filterAndRenderTickets();
     else if (currentView === 'assets') applyAssetFilters();
@@ -1464,7 +1844,7 @@
   });
 
   /* ============================================================
-     📅 TIME RANGE MODAL (Preset Pills + Custom Range)
+     📅 TIME RANGE MODAL
      ============================================================ */
   let pendingTimePreset = activeTimePreset;
 
@@ -1518,9 +1898,9 @@
       fetchDashboardData();
   });
 
-  // Init App
   window.onload = () => {
     document.getElementById('currentTimeLabel').textContent = getActiveTimeRangeLabel();
+    // โหลดหน้าแรกเฉพาะ Tickets โดยที่ Assets จะถูกโหลดก็ต่อเมื่อผู้ใช้กดแถบด้านซ้าย (Lazy load)
     switchView('tickets');
   };
 
